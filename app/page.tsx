@@ -6,7 +6,6 @@ import { LatestAuctionSection } from "@/components/latest-auction-section"
 import { FaqSection } from "@/components/faq-section"
 import { ArticlesSection } from "@/components/articles-section"
 import { TestimonialSection } from "@/components/testimonial-section"
-import { ContactSection } from "@/components/contact-section"
 
 export default function Home() {
   return (
@@ -19,7 +18,6 @@ export default function Home() {
       <FaqSection />
       <ArticlesSection />
       <TestimonialSection />
-      <ContactSection />
     </div>
   )
 }
