@@ -1,116 +1,97 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
-
-const categories = [
-  { name: "Jewelry", href: "/category/jewelry" },
-  { name: "Watches", href: "/category/watches" },
-  { name: "Estates", href: "/category/estates" },
-  { name: "Antiques", href: "/category/antiques" },
-  { name: "Fine Art", href: "/category/fine-art" },
-]
-
-const quickLinks = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Auctions", href: "/auctions" },
-  { name: "Blog", href: "/blog" },
-  { name: "FAQ", href: "/faq" },
-]
-
-const contactInfo = [
-  { info: "info@luxuryauctions.com" },
-  { info: "+1 (555) 123-4567" },
-  { info: "123 Auction Lane, New York, NY 10001" },
-]
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
   return (
-    <footer className="border-t bg-[#f5f0e8]">
-      <div className="container py-8 md:py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <Image src="/placeholder.svg?height=32&width=32" alt="Logo" width={32} height={32} className="h-8 w-8" />
-              <span className="font-semibold">Luxury Auctions</span>
-            </Link>
-            <p className="text-sm text-muted-foreground">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum
-              tristique.
-            </p>
-            <div className="flex gap-4">
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Facebook className="h-5 w-5" />
-                <span className="sr-only">Facebook</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Instagram className="h-5 w-5" />
-                <span className="sr-only">Instagram</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Linkedin className="h-5 w-5" />
-                <span className="sr-only">LinkedIn</span>
-              </Link>
+    <footer className="bg-[#635746] text-white pt-52 pb-8 -mt-36">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+        <div>
+          <Image
+            src="/assets/logo.png"
+            alt="Diamond Auctions Logo"
+            className="mb-4"
+            width={46}
+            height={39}
+          />
+          <p className="text-gray-300 mb-4">
+            Join us on social media for exclusive updates, auction previews, and
+            special offers!
+          </p>
+          <div className="flex space-x-4">
+            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+              <Facebook className="w-4 h-4" />
             </div>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase">Quick Links</h3>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-foreground">
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase">Categories</h3>
-            <ul className="space-y-2">
-              {categories.map((category) => (
-                <li key={category.name}>
-                  <Link href={category.href} className="text-sm text-muted-foreground hover:text-foreground">
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase">Contact us</h3>
-            <ul className="space-y-2">
-              {contactInfo.map((item, index) => (
-                <li key={index} className="text-sm text-muted-foreground">
-                  {item.info}
-                </li>
-              ))}
-            </ul>
+            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+              <Instagram className="w-4 h-4" />
+            </div>
+            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+              <Twitter className="w-4 h-4" />
+            </div>
+            <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
+              <Linkedin className="w-4 h-4" />
+            </div>
           </div>
         </div>
 
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Luxury Auctions. All rights reserved.</p>
-          <div className="mt-2 flex justify-center gap-4">
-            <Link href="/privacy" className="hover:text-foreground">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-foreground">
-              Terms of Service
-            </Link>
-            <Link href="/cookies" className="hover:text-foreground">
-              Cookies
-            </Link>
+        <div>
+          <h3 className="font-semibold text-lg mb-3">Quick Links</h3>
+          <ul className="space-y-2 text-gray-300">
+            <li>Home</li>
+            <li>Auctions</li>
+            <li>About Us</li>
+            <li>FAQ</li>
+            <li>Blogs</li>
+            <li>Contact</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-lg mb-3">Categories</h3>
+          <ul className="space-y-2 text-gray-300">
+            <li>Round</li>
+            <li>Princess</li>
+            <li>Emerald</li>
+            <li>Asscher</li>
+            <li>Oval</li>
+            <li>Marquise</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-lg mb-3">Contact us</h3>
+          <div className="flex items-start gap-2 text-gray-300 mb-2">
+            <Mail size={16} className="mt-1" />
+            <span>info@diamondauctionsllc.com</span>
+          </div>
+          <div className="flex items-start gap-2 text-gray-300 mb-2">
+            <MapPin size={16} className="mt-1" />
+            <span>546 Market Street PMB 830066</span>
+          </div>
+          <div className="flex items-start gap-2 text-gray-300">
+            <Phone size={16} className="mt-1" />
+            <span>(000)0005555445</span>
           </div>
         </div>
       </div>
+
+      <hr className="my-6 border-gray-600" />
+
+      <div className="flex flex-col md:flex-row justify-between text-xs text-gray-400 max-w-7xl mx-auto px-6 md:px-16">
+        <p>© 2025 Agency All rights reserved.</p>
+        <div className="space-x-4">
+          <span>Privacy Policy</span>
+          <span>Conditions</span>
+          <span>Support</span>
+        </div>
+      </div>
     </footer>
-  )
+  );
 }

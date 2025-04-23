@@ -1,49 +1,110 @@
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Heart } from "lucide-react";
 
 interface AuctionCardProps {
-  image: string
-  title: string
-  currentBid?: string
-  timeLeft?: string
-  badges?: string[]
+  image: string;
+  title: string;
+  currentBid?: string;
+  timeLeft?: string;
+  badges?: string | undefined;
 }
 
-export function AuctionCard({ image, title, currentBid, timeLeft, badges = [] }: AuctionCardProps) {
+export function AuctionCard({
+  image,
+  title,
+  currentBid,
+  badges,
+}: AuctionCardProps) {
   return (
-    <Card className="overflow-hidden border-none bg-[#f5f0e8]">
+    <Card className="overflow-hidden border-none bg-[#dfc5a2]">
       <div className="relative aspect-square overflow-hidden">
         <Image
           src={image || "/placeholder.svg"}
           alt={title}
           width={300}
           height={300}
-          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          className="h-full w-full mx-auto object-cover transition-transform duration-300 hover:scale-105"
         />
         {badges && badges.length > 0 && (
           <div className="absolute left-2 top-2 flex flex-wrap gap-1">
-            {badges.map((badge, index) => (
-              <Badge key={index} variant="secondary" className="bg-black/70 text-white">
-                {badge}
-              </Badge>
-            ))}
+            <Badge
+              variant="secondary"
+              className="bg-black/50 text-white flex gap-1 items-center"
+            >
+              <Image
+                src={"/assets/live.png"}
+                alt="live"
+                height={10}
+                width={10}
+              />
+              {badges}
+            </Badge>
           </div>
         )}
-        {timeLeft && (
-          <div className="absolute right-2 top-2 rounded bg-black/70 px-2 py-1 text-xs text-white">{timeLeft}</div>
-        )}
+        <div className="absolute right-2 top-2 bg-black/50 px-2 py-1 text-xs text-white h-[24px] w-[24px] rounded-full flex flex-col justify-center items-center">
+          <Heart className="h-[20px] w-[20px]" />
+        </div>
+
+        {/* timer */}
+        <div className=" absolute bottom-2 flex translate-x-2 items-center gap-4 font-semibold text-white">
+
+          <div>
+            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+              20
+            </div>
+            <h1 className="text-center">DAY</h1>
+          </div>
+
+          :
+
+          <div>
+            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+              20
+            </div>
+            <h1 className="text-center">HR</h1>
+          </div>
+
+          :
+
+         <div>
+            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+              20
+            </div>
+            <h1 className="text-center">MIN</h1>
+          </div>
+
+          :
+
+          <div>
+            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+              20
+            </div>
+            <h1 className="text-center">SEC</h1>
+          </div>
+          
+        </div>
       </div>
-      <CardContent className="p-4">
-        <h3 className="font-medium">{title}</h3>
-        {currentBid && <p className="text-sm text-muted-foreground">Current bid: {currentBid}</p>}
+
+      <CardContent className="my-2">
+        <h1 className="text-[#645949]">Round Brilliant</h1>
+        <h3 className="font-medium text-xl my-1">{title}</h3>
+        {currentBid && (
+          <p className="text-sm text-white font-semibold">
+            Current bid: {currentBid}
+          </p>
+        )}
       </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Button variant="outline" className="w-full border-[#8a7357] text-[#8a7357]">
+      <CardFooter>
+        <Button
+          variant="outline"
+          className="w-full bg-[#645949] text-white font-semibold"
+        >
           Bid now
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

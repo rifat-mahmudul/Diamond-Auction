@@ -1,16 +1,29 @@
 import { Button } from "@/components/ui/button"
+import { MoveRight } from "lucide-react"
+import Image from "next/image"
 
 export function ContactSection() {
   return (
-    <section className="bg-[#e8e1d5] py-12 md:py-16">
-      <div className="container">
-        <div className="mx-auto max-w-2xl text-center">
+    <section className="mt-44">
+      <div className="container rounded-2xl text-white bg-[#c8b291] flex justify-between relative p-16">
+        <div
+        className=" -mt-52"
+        >
+          <Image 
+          src={'/assets/women.png'}
+          alt="women"
+          width={336}
+          height={462}
+          />
+        </div>
+
+        <div className="mx-auto max-w-2xl">
           <h2 className="mb-4 text-2xl font-bold tracking-tight md:text-3xl">Get in touch with us</h2>
-          <p className="mb-6 text-muted-foreground">
+          <p className="mb-6">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum
             tristique. Duis cursus, mi quis viverra ornare.
           </p>
-          <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white">Contact Us</Button>
+          <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white">Get Started <MoveRight /></Button>
         </div>
       </div>
     </section>

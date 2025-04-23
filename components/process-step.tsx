@@ -1,22 +1,32 @@
-import type { ReactNode } from "react"
+import Image from "next/image";
 
 interface ProcessStepProps {
-  number: string
-  title: string
-  description: string
-  icon: ReactNode
-  color: string
+  number: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
 }
 
-export function ProcessStep({ number, title, description, icon, color }: ProcessStepProps) {
+export function ProcessStep({
+  number,
+  title,
+  description,
+  icon,
+  color,
+}: ProcessStepProps) {
   return (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <div className={`flex h-16 w-16 items-center justify-center rounded-full ${color}`}>{icon}</div>
-      <div className="relative">
-        <div className="absolute -left-3 -top-6 text-4xl font-bold opacity-20">{number}</div>
-        <h3 className="text-lg font-semibold">{title}</h3>
+    <div className="p-5 rounded-lg" style={{ backgroundColor: color }}>
+      <div className="flex justify-between items-start">
+        <Image src={icon} alt="work 1" height={70} width={60} />
+
+        <Image src={number} alt="work 1" height={144} width={138} />
       </div>
-      <p className="text-sm text-muted-foreground">{description}</p>
+
+      <h1 className="text-2xl font-semibold">{title}</h1>
+      <p className="mt-4">
+      {description}
+      </p>
     </div>
-  )
+  );
 }

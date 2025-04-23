@@ -1,28 +1,33 @@
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 
 interface CategoryCardProps {
-  icon: string
-  title: string
-  href: string
+  icon: string;
+  title: string;
+  href: string;
 }
 
 export function CategoryCard({ icon, title, href }: CategoryCardProps) {
   return (
     <Link
       href={href}
-      className="flex flex-col items-center justify-center gap-3 rounded-lg bg-[#e8e1d5] p-4 text-center transition-all hover:bg-[#d9d0c0]"
+      className="flex flex-col items-center justify-center gap-3 bg-[#645949] p-4 text-center transition-all hover:bg-[#645949]/90 h-[106px] w-[170px] relative mt-10"
     >
-      <div className="relative h-12 w-12">
+      <div className=" absolute w-[80%] -top-10 rounded-md">
         <Image
           src={icon || "/placeholder.svg"}
           alt={title}
-          width={48}
-          height={48}
-          className="h-full w-full object-contain"
+          width={80}
+          height={130}
+          className="w-full rounded-md"
         />
       </div>
-      <span className="text-sm font-medium">{title}</span>
+
+      <div className="mt-10">
+        <h1 className="text-[16px] font-medium  text-white">{title}</h1>
+
+        <h1 className="text-[16px] font-medium text-white">6 Items</h1>
+      </div>
     </Link>
-  )
+  );
 }
