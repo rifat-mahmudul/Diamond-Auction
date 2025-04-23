@@ -1,36 +1,44 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { MoveRight } from "lucide-react";
 
 interface ArticleCardProps {
-  image: string
-  title: string
-  description: string
-  href: string
+  image: string;
+  title: string;
+  description: string;
+  href: string;
 }
 
-export function ArticleCard({ image, title, description, href }: ArticleCardProps) {
+export function ArticleCard({
+  image,
+  title,
+  description,
+}: ArticleCardProps) {
   return (
-    <Card className="overflow-hidden border-none bg-[#f5f0e8]">
+    <Card className="overflow-hidden border-none text-white p-0 bg-[#645949]">
       <div className="relative aspect-video overflow-hidden">
+        <div className=" absolute left-2 top-2 bg-[#645949] px-4 rounded-md">
+          12 Dec 2025
+        </div>
+
         <Image
           src={image || "/placeholder.svg"}
           alt={title}
           width={400}
           height={225}
-          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          className="h-full w-full object-cover transition-transform"
         />
       </div>
+
       <CardContent className="p-4">
-        <h3 className="mb-2 font-medium">{title}</h3>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <h3 className="mb-2 font-medium text-xl">{title}</h3>
+        <p className="text-sm text-gray-200">{description}</p>
       </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Button variant="outline" size="sm" asChild className="border-[#8a7357] text-[#8a7357]">
-          <Link href={href}>Read more</Link>
-        </Button>
-      </CardFooter>
+
+      <Button className="-mt-5">
+        Read more <MoveRight />
+      </Button>
     </Card>
-  )
+  );
 }

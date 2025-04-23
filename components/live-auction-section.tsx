@@ -3,47 +3,49 @@
 import { useState } from "react"
 import { SectionHeader } from "@/components/section-header"
 import { AuctionCard } from "@/components/auction-card"
+import { useQuery } from "@tanstack/react-query"
+import useAxios from "@/hooks/useAxios"
 
 const auctions = [
   {
     id: 1,
-    image: "/placeholder.svg?height=300&width=300",
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
     currentBid: "$5,000",
     timeLeft: "2h 15m",
-    badges: ["New", "Hot"],
+    badges: "live",
   },
   {
     id: 2,
-    image: "/placeholder.svg?height=300&width=300",
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
     currentBid: "$3,200",
     timeLeft: "4h 30m",
-    badges: ["Featured"],
+    badges: "live",
   },
   {
     id: 3,
-    image: "/placeholder.svg?height=300&width=300",
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
     currentBid: "$7,800",
     timeLeft: "1h 45m",
-    badges: ["Popular"],
+    badges: "live",
   },
   {
     id: 4,
-    image: "/placeholder.svg?height=300&width=300",
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
     currentBid: "$4,500",
     timeLeft: "3h 20m",
-    badges: ["Limited"],
+    badges: "live",
   },
   {
     id: 5,
-    image: "/placeholder.svg?height=300&width=300",
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
     currentBid: "$6,300",
     timeLeft: "5h 10m",
-    badges: ["Rare"],
+    badges: "live",
   },
 ]
 
@@ -61,8 +63,22 @@ export function LiveAuctionSection() {
 
   const visibleAuctions = auctions.slice(currentIndex, currentIndex + itemsToShow)
 
+
+  //api calling here 
+  const axiosInstance = useAxios();
+
+  const {data : liveAuctionData} = useQuery({
+    queryKey : ["live-auction"],
+    queryFn : async () => {
+      const {data} = await axiosInstance.get(`/auctions/get-all-auctions`);
+      return data;
+    } 
+  })
+
+  console.log(liveAuctionData);
+
   return (
-    <section className="container py-12 md:py-16">
+    <section className="container">
       <SectionHeader title="Live Auction" showControls={true} onPrev={handlePrev} onNext={handleNext} />
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

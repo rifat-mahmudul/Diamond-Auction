@@ -1,81 +1,82 @@
 import { Button } from "@/components/ui/button"
 import { SectionHeader } from "@/components/section-header"
 import { AuctionCard } from "@/components/auction-card"
+import { MoveRight } from "lucide-react"
 
 const auctions = [
   {
-    id: 1,
-    image: "/placeholder.svg?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$5,000",
-    timeLeft: "2h 15m",
-    badges: ["New", "Hot"],
-  },
-  {
-    id: 2,
-    image: "/placeholder.svg?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$3,200",
-    timeLeft: "4h 30m",
-    badges: ["Featured"],
-  },
-  {
-    id: 3,
-    image: "/placeholder.svg?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$7,800",
-    timeLeft: "1h 45m",
-    badges: ["Popular"],
-  },
-  {
-    id: 4,
-    image: "/placeholder.svg?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$4,500",
-    timeLeft: "3h 20m",
-    badges: ["Limited"],
-  },
-  {
     id: 5,
-    image: "/placeholder.svg?height=300&width=300",
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
     currentBid: "$6,300",
     timeLeft: "5h 10m",
-    badges: ["Rare"],
+    badges: "live",
   },
   {
-    id: 6,
-    image: "/placeholder.svg?height=300&width=300",
+    id: 5,
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
-    currentBid: "$9,100",
-    timeLeft: "6h 40m",
-    badges: ["Exclusive"],
+    currentBid: "$6,300",
+    timeLeft: "5h 10m",
+    badges: "live",
   },
   {
-    id: 7,
-    image: "/placeholder.svg?height=300&width=300",
+    id: 5,
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
-    currentBid: "$2,800",
-    timeLeft: "8h 15m",
-    badges: ["New"],
+    currentBid: "$6,300",
+    timeLeft: "5h 10m",
+    badges: "live",
   },
   {
-    id: 8,
-    image: "/placeholder.svg?height=300&width=300",
+    id: 5,
+    image: "/assets/CartImg.png?height=300&width=300",
     title: "Classic and timeless",
-    currentBid: "$11,200",
-    timeLeft: "1h 05m",
-    badges: ["Premium"],
+    currentBid: "$6,300",
+    timeLeft: "5h 10m",
+    badges: "live",
+  },
+  {
+    id: 5,
+    image: "/assets/CartImg.png?height=300&width=300",
+    title: "Classic and timeless",
+    currentBid: "$6,300",
+    timeLeft: "5h 10m",
+    badges: "live",
+  },
+  {
+    id: 5,
+    image: "/assets/CartImg.png?height=300&width=300",
+    title: "Classic and timeless",
+    currentBid: "$6,300",
+    timeLeft: "5h 10m",
+    badges: "live",
+  },
+  {
+    id: 5,
+    image: "/assets/CartImg.png?height=300&width=300",
+    title: "Classic and timeless",
+    currentBid: "$6,300",
+    timeLeft: "5h 10m",
+    badges: "live",
+  },
+  {
+    id: 5,
+    image: "/assets/CartImg.png?height=300&width=300",
+    title: "Classic and timeless",
+    currentBid: "$6,300",
+    timeLeft: "5h 10m",
+    badges: "live",
   },
 ]
 
 export function LatestAuctionSection() {
   return (
-    <section className="container py-12 md:py-16">
+    <section className="container mt-24">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <SectionHeader title="Latest Auction" />
-        <Button variant="outline" className="border-[#8a7357] text-[#8a7357]">
-          Explore All
+        <Button className="bg-[#645949]">
+          Explore All <MoveRight />
         </Button>
       </div>
 
