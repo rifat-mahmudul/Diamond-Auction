@@ -13,7 +13,7 @@ import { Menu, Search } from "lucide-react";
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Auctions", href: "/auctions" },
-  { name: "About Us", href: "/about" },
+  { name: "About Us", href: "/about-us" },
   { name: "FAQ", href: "/faq" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
