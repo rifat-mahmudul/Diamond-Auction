@@ -1,30 +1,31 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
+import { Blog } from "@/app/blog/_components/type";
+import Link from "next/link";
+
 
 interface ArticleCardProps {
-  image: string;
-  title: string;
-  description: string;
-  href: string;
+  article: Blog;  // Assuming Blog is the type for your article
+  index?: number; // Optional index prop for ordering
 }
 
-export function ArticleCard({
-  image,
-  title,
-  description,
-}: ArticleCardProps) {
+export function ArticleCard({ article }: ArticleCardProps) {
+  const { image, title, _id, content } = article;
   return (
-    <Card className="overflow-hidden border-none text-white p-0 bg-[#645949]">
+    <Card className="overflow-hidden border-none text-white p-0 bg-[#645949] w-[370px] h-[371px]">
       <div className="relative aspect-video overflow-hidden">
         <div className=" absolute left-2 top-2 bg-[#645949] px-4 rounded-md">
-          12 Dec 2025
+          {new Date(article?.updatedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
         </div>
 
         <Image
-          src={image || "/placeholder.svg"}
-          alt={title}
+          src={image || "/assets/manCard.png"}
+          alt="Article Image"
           width={400}
           height={225}
           className="h-full w-full object-cover transition-transform"
@@ -33,12 +34,12 @@ export function ArticleCard({
 
       <CardContent className="p-4">
         <h3 className="mb-2 font-medium text-xl">{title}</h3>
-        <p className="text-sm text-gray-200">{description}</p>
+        <p className="text-sm text-gray-200 line-clamp-2">{content}</p>
       </CardContent>
 
-      <Button className="-mt-5">
-        Read more <MoveRight />
-      </Button>
+      <Link href={`/blog/${_id}`} className="flex items-center p-4">
+        Read more <MoveRight  className="mt-[3px]"/>
+      </Link> 
     </Card>
   );
 }
