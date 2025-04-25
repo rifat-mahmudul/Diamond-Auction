@@ -1,5 +1,5 @@
 import { HeroSection } from "@/components/hero-section"
-import { LiveAuctionSection } from "@/components/live-auction-section"
+import { LiveAuctionSection } from "@/Shared/live-auction-section"
 import { AuctionCategoriesSection } from "@/components/auction-categories-section"
 import { HowItWorksSection } from "@/components/how-it-works-section"
 import { LatestAuctionSection } from "@/components/latest-auction-section"
