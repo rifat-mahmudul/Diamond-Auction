@@ -75,7 +75,6 @@ export function LiveAuctionSection() {
     } 
   })
 
-  console.log(liveAuctionData);
 
   return (
     <section className="container">
