@@ -1,0 +1,441 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Layout from "@/components/dashboard/layout";
+import { apiService } from "@/lib/api-service";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Pagination } from "@/components/dashboard/pagination";
+import { toast } from "sonner";
+
+interface Auction {
+  _id: string;
+  title: string;
+  category: {
+    _id: string;
+    name: string;
+  };
+  sku: string;
+  seller: {
+    _id: string;
+    username: string;
+    sellerId?: string;
+    displayName?: string;
+  };
+  startTime: string;
+  endTime: string;
+  currentBid: number;
+  bidCount: number;
+  status: string;
+  approved: boolean;
+}
+
+export default function AuctionsPage() {
+  const [activeTab, setActiveTab] = useState("active");
+  const [auctions, setAuctions] = useState<Auction[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchAuctions = async () => {
+    setIsLoading(true);
+    try {
+      let response;
+      switch (activeTab) {
+        case "active":
+          response = await apiService.getActiveAuctions();
+          break;
+        case "pending":
+          response = await apiService.getPendingAuctions();
+          break;
+        case "scheduled":
+          response = await apiService.getScheduledAuctions();
+          break;
+        case "end":
+          response = await apiService.getEndedAuctions();
+          break;
+        default:
+          response = await apiService.getAllAuctions();
+      }
+
+      if (
+        (response.status === true || response.status === "success") &&
+        response.data
+      ) {
+        setAuctions(response.data as Auction[]);
+        setTotalPages(response.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching auctions:", error);
+      toast.error("Failed to fetch auctions");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAuctions();
+  }, [activeTab, currentPage]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleAcceptAuction = async (id: string) => {
+    try {
+      const response = await apiService.acceptAuction(id);
+      if (response.status === true) {
+        toast.success("Auction accepted successfully");
+        fetchAuctions();
+      }
+    } catch (error) {
+      console.error("Error accepting auction:", error);
+      toast.error("Failed to accept auction");
+    }
+  };
+
+  const handleRejectAuction = async (id: string) => {
+    try {
+      const response = await apiService.rejectAuction(id);
+      if (response.status === true) {
+        toast.success("Auction rejected successfully");
+        fetchAuctions();
+      }
+    } catch (error) {
+      console.error("Error rejecting auction:", error);
+      toast.error("Failed to reject auction");
+    }
+  };
+
+  const handleDeleteAuction = async (id: string) => {
+    try {
+      const response = await apiService.deleteAuction(id);
+      if (response.status === true) {
+        toast.success("Auction deleted successfully");
+        fetchAuctions();
+      }
+    } catch (error) {
+      console.error("Error deleting auction:", error);
+      toast.success("Failed to delete auction");
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")} ${String(
+      date.getHours()
+    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}PM`;
+  };
+
+  return (
+    <Layout>
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Auctions</h1>
+          <p className="text-muted-foreground">Manage your auction Listings</p>
+        </div>
+
+        <Tabs
+          defaultValue="active"
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9]">
+            <TabsTrigger
+              value="active"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+            >
+              Active
+            </TabsTrigger>
+            <TabsTrigger
+              value="pending"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+            >
+              Pending
+            </TabsTrigger>
+            <TabsTrigger
+              value="scheduled"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+            >
+              Scheduled
+            </TabsTrigger>
+            <TabsTrigger
+              value="end"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+            >
+              End
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="active" className="mt-4">
+            <AuctionsTable
+              auctions={auctions}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+            />
+          </TabsContent>
+
+          <TabsContent value="pending" className="mt-4">
+            <PendingAuctionsTable
+              auctions={auctions}
+              onAccept={handleAcceptAuction}
+              onReject={handleRejectAuction}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+            />
+          </TabsContent>
+
+          <TabsContent value="scheduled" className="mt-4">
+            <AuctionsTable
+              auctions={auctions}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+            />
+          </TabsContent>
+
+          <TabsContent value="end" className="mt-4">
+            <AuctionsTable
+              auctions={auctions}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+            />
+          </TabsContent>
+        </Tabs>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </Layout>
+  );
+}
+
+interface AuctionsTableProps {
+  auctions: Auction[];
+  onDelete: (id: string) => void;
+  formatDate: (date: string) => string;
+}
+
+function AuctionsTable({ auctions, onDelete, formatDate }: AuctionsTableProps) {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Auction</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>SKU</TableHead>
+            <TableHead>Seller</TableHead>
+            <TableHead>Start Date</TableHead>
+            <TableHead>End Date</TableHead>
+            <TableHead>Current Bid</TableHead>
+            <TableHead>Bids</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {auctions.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={9} className="text-center py-4">
+                No auctions found
+              </TableCell>
+            </TableRow>
+          ) : (
+            auctions.map((auction) => (
+              <TableRow key={auction._id}>
+                <TableCell className="font-medium">
+                  Classic and timeless
+                </TableCell>
+                <TableCell>Round Brilliant</TableCell>
+                <TableCell>{auction.sku || "#212-121"}</TableCell>
+                <TableCell>
+                  {auction.seller?.displayName || `Mr. John #2561`}
+                </TableCell>
+                <TableCell>
+                  {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
+                </TableCell>
+                <TableCell>
+                  {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
+                </TableCell>
+                <TableCell>${auction.currentBid || 12450}</TableCell>
+                <TableCell>{auction.bidCount || 12}</TableCell>
+                <TableCell>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete the auction.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onDelete(auction._id)}
+                          className="bg-red-500 hover:bg-red-700"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+interface PendingAuctionsTableProps extends AuctionsTableProps {
+  onAccept: (id: string) => void;
+  onReject: (id: string) => void;
+}
+
+function PendingAuctionsTable({
+  auctions,
+  onAccept,
+  onReject,
+  onDelete,
+  formatDate,
+}: PendingAuctionsTableProps) {
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Auction</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>SKU</TableHead>
+            <TableHead>Seller</TableHead>
+            <TableHead>Start Date</TableHead>
+            <TableHead>End Date</TableHead>
+            <TableHead>Current Bid</TableHead>
+            <TableHead>Bids</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {auctions.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={9} className="text-center py-4">
+                No pending auctions found
+              </TableCell>
+            </TableRow>
+          ) : (
+            auctions.map((auction) => (
+              <TableRow key={auction._id}>
+                <TableCell className="font-medium">
+                  Classic and timeless
+                </TableCell>
+                <TableCell>Round Brilliant</TableCell>
+                <TableCell>{auction.sku || "#212-121"}</TableCell>
+                <TableCell>
+                  {auction.seller?.displayName || `Mr. John #2561`}
+                </TableCell>
+                <TableCell>
+                  {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
+                </TableCell>
+                <TableCell>
+                  {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
+                </TableCell>
+                <TableCell>${auction.currentBid || 12450}</TableCell>
+                <TableCell>{auction.bidCount || 12}</TableCell>
+                <TableCell className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-green-600 border-green-600 hover:bg-green-50"
+                    onClick={() => onAccept(auction._id)}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 border-red-600 hover:bg-red-50"
+                    onClick={() => onReject(auction._id)}
+                  >
+                    Reject
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete the auction.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onDelete(auction._id)}
+                          className="bg-red-500 hover:bg-red-700"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
