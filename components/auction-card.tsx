@@ -19,7 +19,7 @@ export function AuctionCard({
   badges,
 }: AuctionCardProps) {
   return (
-    <Card className="overflow-hidden border-none bg-[#dfc5a2]">
+    <Card className="overflow-hidden border-none bg-[#dfc5a2] p-2">
       <div className="relative aspect-square overflow-hidden">
         <Image
           src={image || "/placeholder.svg"}
