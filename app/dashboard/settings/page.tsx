@@ -22,18 +22,21 @@ export default function SettingsPage() {
         <div className="space-y-4">
           <SettingCard
             title="Personal Information"
-            href="/settings/personal-information"
+            href="/dashboard/settings/personal-information"
           />
           <SettingCard
             title="Change Password"
-            href="/settings/change-password"
+            href="/dashboard/settings/change-password"
           />
-          <SettingCard title="About Us" href="/settings/about-us" />
+          <SettingCard title="About Us" href="/dashboard/settings/about-us" />
           <SettingCard
             title="Terms & conditions"
-            href="/settings/terms-conditions"
+            href="/dashboard/settings/terms-conditions"
           />
-          <SettingCard title="Privacy Policy" href="/settings/privacy-policy" />
+          <SettingCard
+            title="Privacy Policy"
+            href="/dashboard/settings/privacy-policy"
+          />
         </div>
       </div>
     </Layout>
