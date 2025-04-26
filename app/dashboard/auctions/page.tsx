@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Layout from "@/components/layout";
+import Layout from "@/components/dashboard/layout";
 import { apiService } from "@/lib/api-service";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -25,8 +25,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { Pagination } from "@/components/pagination";
+import { Pagination } from "@/components/dashboard/pagination";
+import { toast } from "sonner";
 
 interface Auction {
   _id: string;
@@ -56,7 +56,6 @@ export default function AuctionsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
   const fetchAuctions = async () => {
     setIsLoading(true);
@@ -83,16 +82,12 @@ export default function AuctionsPage() {
         (response.status === true || response.status === "success") &&
         response.data
       ) {
-        setAuctions(response.data);
+        setAuctions(response.data as Auction[]);
         setTotalPages(response.totalPages || 1);
       }
     } catch (error) {
       console.error("Error fetching auctions:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch auctions",
-      });
+      toast.error("Failed to fetch auctions");
     } finally {
       setIsLoading(false);
     }
@@ -115,19 +110,12 @@ export default function AuctionsPage() {
     try {
       const response = await apiService.acceptAuction(id);
       if (response.status === true) {
-        toast({
-          title: "Success",
-          description: "Auction accepted successfully",
-        });
+        toast.success("Auction accepted successfully");
         fetchAuctions();
       }
     } catch (error) {
       console.error("Error accepting auction:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to accept auction",
-      });
+      toast.error("Failed to accept auction");
     }
   };
 
@@ -135,19 +123,12 @@ export default function AuctionsPage() {
     try {
       const response = await apiService.rejectAuction(id);
       if (response.status === true) {
-        toast({
-          title: "Success",
-          description: "Auction rejected successfully",
-        });
+        toast.success("Auction rejected successfully");
         fetchAuctions();
       }
     } catch (error) {
       console.error("Error rejecting auction:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to reject auction",
-      });
+      toast.error("Failed to reject auction");
     }
   };
 
@@ -155,19 +136,12 @@ export default function AuctionsPage() {
     try {
       const response = await apiService.deleteAuction(id);
       if (response.status === true) {
-        toast({
-          title: "Success",
-          description: "Auction deleted successfully",
-        });
+        toast.success("Auction deleted successfully");
         fetchAuctions();
       }
     } catch (error) {
       console.error("Error deleting auction:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete auction",
-      });
+      toast.success("Failed to delete auction");
     }
   };
 
