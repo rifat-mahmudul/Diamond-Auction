@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Heart, Minus, Plus } from "lucide-react";
+import { CalendarClock, Heart, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +13,8 @@ import AuctionCountdown from "./auction-countdown";
 import { formatCurrency } from "@/lib/format";
 import AuctionImageGallery from "./auction-image-gallery";
 import BidHistory from "./bid-history";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface AuctionDetailsProps {
     auctionId: string;
@@ -197,104 +199,175 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                         {auction.description}
                     </p>
 
-                    <div className="space-y-1 text-[#645949] pb-6">
-                        <p className="text-base pb-2">Current bid:</p>
-                        <p className="text-2xl font-semibold">
-                            {formatCurrency(auction.currentBid)}
-                        </p>
-                    </div>
-
-                    {!isAuctionEnded && (
-                        <div className="text-[#645949]">
-                            <div>
-                                <p className="text-sm font-medium mb-3">Time left:</p>
-                                <AuctionCountdown endTime={auction.endTime} />
-                            </div>
-
-                            <div className="space-y-3 text-[#645949] pb-6">
-                                <p className="text-base">
-                                    Auction ends: {format(new Date(auction.endTime), "MMM d, yyyy h:mm a")}
-                                </p>
-                                <p className="text-base">
-                                    Timezone: UTC{" "}
-                                    {new Date().getTimezoneOffset() === 0 ? "0" : ""}
-                                </p>
-                            </div>
-
-                            <div className="space-y-6">
-                                <p className="text-base font-medium">
-                                    {auction.reserveMet
-                                        ? "Reserve price has been met"
-                                        : "Reserve price not met"}
-                                </p>
-                                <p className="text-xs pb-2 text-muted-foreground">
-                                    (Enter more than or equal to:{" "}
-                                    {formatCurrency(auction.currentBid)})
-                                </p>
-                            </div>
-
-                            <div className="flex justify-between items-center space-x-2">
-                                <div className="w-2/3 flex justify-between items-center space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={handleDecrement}
-                                        disabled={!auction || isPlacingBid}
-                                        className="text-white w-12 bg-[#645949] hover:bg-[#645949]/90"
-                                    >
-                                        <Minus className="h-6 w-6" />
-                                    </Button>
-                                    <Input
-                                        type="text"
-                                        value={bidAmount || ""}
-                                        onChange={handleInputChange}
-                                        placeholder={auction ? auction.currentBid.toString() : ""}
-                                        className="text-center"
-                                    />
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={handleIncrement}
-                                        disabled={!auction || isPlacingBid}
-                                        className="text-white w-12 bg-[#645949] hover:bg-[#645949]/90"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                    </Button>
+                    {auction.status === "live"
+                        ?
+                        (
+                            <div className="">
+                                <div className="space-y-1 text-[#645949] pb-6">
+                                    <p className="text-base pb-2">Current bid:</p>
+                                    <p className="text-2xl font-semibold">
+                                        {formatCurrency(auction.currentBid)}
+                                    </p>
                                 </div>
-                                <Button
-                                    className="text-white w-52 bg-[#645949] hover:bg-[#645949]/90"
-                                    onClick={handleBid}
-                                    disabled={
-                                        !bidAmount ||
-                                        Number.parseFloat(bidAmount) <= auction.currentBid ||
-                                        isPlacingBid
-                                    }
-                                >
-                                    {isPlacingBid ? "Bidding..." : "Bid"}
-                                </Button>
+
+                                {!isAuctionEnded && (
+                                    <div className="text-[#645949]">
+                                        <div>
+                                            <p className="text-sm font-medium mb-3">Time left:</p>
+                                            <AuctionCountdown endTime={auction.endTime} />
+                                        </div>
+
+                                        <div className="space-y-3 text-[#645949] pb-6">
+                                            <p className="text-base">
+                                                Auction ends: {format(new Date(auction.endTime), "MMM d, yyyy h:mm a")}
+                                            </p>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            <p className="text-base font-medium">
+                                                {auction.reserveMet
+                                                    ? "Reserve price has been met"
+                                                    : "Reserve price not met"}
+                                            </p>
+                                            <p className="text-xs pb-2 text-muted-foreground">
+                                                (Enter more than or equal to:{" "}
+                                                {formatCurrency(auction.currentBid)})
+                                            </p>
+                                        </div>
+
+                                        <div className="flex justify-between items-center space-x-2">
+                                            <div className="w-2/3 flex justify-between items-center space-x-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={handleDecrement}
+                                                    disabled={!auction || isPlacingBid}
+                                                    className="text-white w-12 bg-[#645949] hover:bg-[#645949]/90"
+                                                >
+                                                    <Minus className="h-6 w-6" />
+                                                </Button>
+                                                <Input
+                                                    type="text"
+                                                    value={bidAmount || ""}
+                                                    onChange={handleInputChange}
+                                                    placeholder={auction ? auction.currentBid.toString() : ""}
+                                                    className="text-center"
+                                                />
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={handleIncrement}
+                                                    disabled={!auction || isPlacingBid}
+                                                    className="text-white w-12 bg-[#645949] hover:bg-[#645949]/90"
+                                                >
+                                                    <Plus className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                            <Button
+                                                className="text-white w-52 bg-[#645949] hover:bg-[#645949]/90"
+                                                onClick={handleBid}
+                                                disabled={
+                                                    !bidAmount ||
+                                                    Number.parseFloat(bidAmount) <= auction.currentBid ||
+                                                    isPlacingBid
+                                                }
+                                            >
+                                                {isPlacingBid ? "Bidding..." : "Bid"}
+                                            </Button>
+                                        </div>
+
+                                        {isBidSuccess && (
+                                            <div className="mt-4 text-green-500">Bid placed successfully!</div>
+                                        )}
+                                        {isBidError && (
+                                            <div className="mt-4 text-red-500">
+                                                Error placing bid: {bidError?.message}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {isAuctionEnded && (
+                                    <div className="p-4 bg-muted rounded-md">
+                                        <p className="font-medium">This auction has ended</p>
+                                        {auction.winner === auction.seller._id ? (
+                                            <p>YOU WON the bid: {formatCurrency(auction.currentBid)}</p>
+                                        ) : (
+                                            <p>Final bid: {formatCurrency(auction.currentBid)}</p>
+                                        )}
+                                    </div>
+                                )}
                             </div>
-
-                            {isBidSuccess && (
-                                <div className="mt-4 text-green-500">Bid placed successfully!</div>
-                            )}
-                            {isBidError && (
-                                <div className="mt-4 text-red-500">
-                                    Error placing bid: {bidError?.message}
+                        )
+                        :
+                        auction.status === "pending" || auction.status === "scheduled" ? (
+                            <Card className="border border-[#a39a85] overflow-hidden bg-[#f5f1e8]">
+                                <div className="bg-[#8a8170] py-3 px-4">
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="text-[#f5f1e8] font-semibold text-lg">Auction Coming Soon</h3>
+                                        <Badge variant="outline" className="bg-[#f5f1e8]/10 text-[#f5f1e8] border-[#f5f1e8]/30">
+                                            Exclusive
+                                        </Badge>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    )}
 
-                    {isAuctionEnded && (
-                        <div className="p-4 bg-muted rounded-md">
-                            <p className="font-medium">This auction has ended</p>
-                            {auction.winner === auction.seller._id ? (
-                                <p>YOU WON the bid: {formatCurrency(auction.currentBid)}</p>
-                            ) : (
-                                <p>Final bid: {formatCurrency(auction.currentBid)}</p>
-                            )}
-                        </div>
-                    )}
+                                <CardContent className="p-5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-[#e6e0d4] rounded-full p-2.5">
+                                            <CalendarClock className="h-5 w-5 text-[#8a8170]" />
+                                        </div>
+                                        <p className="text-[#5d5545] font-medium">This item will be available for auction soon</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )
+                            :
+                            auction.status === "completed" ? (
+                                <Card className="border border-[#a39a85] overflow-hidden bg-[#f5f1e8]">
+                                    <div className="bg-[#8a8170] py-3 px-4">
+                                        <div className="flex justify-between items-center">
+                                            <h3 className="text-[#f5f1e8] font-semibold text-lg">Auction Has Completed</h3>
+                                            <Badge variant="outline" className="bg-[#f5f1e8]/10 text-[#f5f1e8] border-[#f5f1e8]/30">
+                                                Exclusive
+                                            </Badge>
+                                        </div>
+                                    </div>
+
+                                    <CardContent className="p-5">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-[#e6e0d4] rounded-full p-2.5">
+                                                <CalendarClock className="h-5 w-5 text-[#8a8170]" />
+                                            </div>
+                                            <p className="text-[#5d5545] font-medium">This item will not be available for auction</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )
+                                :
+                                auction.status === "cancelled" ? (
+                                    <Card className="border border-[#a39a85] overflow-hidden bg-[#f5f1e8]">
+                                        <div className="bg-[#8a8170] py-3 px-4">
+                                            <div className="flex justify-between items-center">
+                                                <h3 className="text-[#f5f1e8] font-semibold text-lg">Auction Has Been Cancelled</h3>
+                                                <Badge variant="outline" className="bg-[#f5f1e8]/10 text-[#f5f1e8] border-[#f5f1e8]/30">
+                                                    Exclusive
+                                                </Badge>
+                                            </div>
+                                        </div>
+
+                                        <CardContent className="p-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="bg-[#e6e0d4] rounded-full p-2.5">
+                                                    <CalendarClock className="h-5 w-5 text-[#8a8170]" />
+                                                </div>
+                                                <p className="text-[#5d5545] font-medium">This item will not be available for auction</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )
+                                    : null
+                    }
+
                 </div>
             </div>
 
