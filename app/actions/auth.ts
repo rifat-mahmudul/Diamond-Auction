@@ -23,7 +23,7 @@ export async function registerUser(userData: {
     });
 
     const data = await response.json();
-    console.log("signup data", data);
+    // console.log("signup data", data);
 
     if (!response.ok) {
       return {
@@ -69,7 +69,8 @@ export async function loginUser(credentials: {
 
     // Store tokens in cookies
     const cookieStore = cookies();
-    cookieStore.set("refreshToken", data.data.refreshToken, {
+    console.log(data.refreshToken,"response ref")
+    cookieStore.set("refreshToken", data.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, // 1 week
