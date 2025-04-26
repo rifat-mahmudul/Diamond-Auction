@@ -132,11 +132,11 @@ class ApiService {
   }
 
   async acceptAuction(id: string) {
-    return this.request(`/admin/auctions/${id}/accept`, "PUT");
+    return this.request(`/admin/auctions/${id}/accept`, "POST");
   }
 
   async rejectAuction(id: string) {
-    return this.request(`/admin/auctions/${id}/reject`, "PUT");
+    return this.request(`/admin/auctions/${id}/reject`, "POST");
   }
 
   async deleteAuction(id: string) {

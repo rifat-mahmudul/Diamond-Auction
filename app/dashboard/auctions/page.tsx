@@ -135,28 +135,28 @@ export default function AuctionsPage() {
           onValueChange={handleTabChange}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9]">
+          <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16">
             <TabsTrigger
               value="active"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               Active
             </TabsTrigger>
             <TabsTrigger
               value="pending"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               Pending
             </TabsTrigger>
             <TabsTrigger
               value="scheduled"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               Scheduled
             </TabsTrigger>
             <TabsTrigger
               value="end"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               End
             </TabsTrigger>
@@ -233,19 +233,19 @@ function AuctionsTable({
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Auction</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Seller</TableHead>
-            <TableHead>Start Date</TableHead>
-            <TableHead>End Date</TableHead>
-            <TableHead>Current Bid</TableHead>
-            <TableHead>Bids</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="bg-[#F9FAFB] h-14 border-none">
+            <TableHead className="text-center">Auction</TableHead>
+            <TableHead className="text-center">Category</TableHead>
+            <TableHead className="text-center">SKU</TableHead>
+            <TableHead className="text-center">Seller</TableHead>
+            <TableHead className="text-center">Start Date</TableHead>
+            <TableHead className="text-center">End Date</TableHead>
+            <TableHead className="text-center">Current Bid</TableHead>
+            <TableHead className="text-center">Bids</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -257,14 +257,15 @@ function AuctionsTable({
             </TableRow>
           ) : (
             auctions.map((auction) => (
-              <TableRow key={auction._id}>
+              <TableRow key={auction._id} className="text-center h-16 !border-b">
                 <TableCell className="font-medium">
-                  Classic and timeless
+                  {auction.title}
                 </TableCell>
-                <TableCell>Round Brilliant</TableCell>
+                <TableCell>{auction.category?.name}</TableCell>
                 <TableCell>{auction.sku || "#212-121"}</TableCell>
                 <TableCell>
-                  {auction.seller?.displayName || `Mr. John #2561`}
+                  <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
+                  #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
                 </TableCell>
                 <TableCell>
                   {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
@@ -319,6 +320,7 @@ interface PendingAuctionsTableProps extends AuctionsTableProps {
   onReject: (id: string) => void;
 }
 
+
 function PendingAuctionsTable({
   auctions,
   onAccept,
@@ -335,20 +337,22 @@ function PendingAuctionsTable({
     );
   }
 
+  console.log(auctions)
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Auction</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Seller</TableHead>
-            <TableHead>Start Date</TableHead>
-            <TableHead>End Date</TableHead>
-            <TableHead>Current Bid</TableHead>
-            <TableHead>Bids</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="bg-[#F9FAFB] h-14 border-none">
+            <TableHead className="text-center">Auction</TableHead>
+            <TableHead className="text-center">Category</TableHead>
+            <TableHead className="text-center">SKU</TableHead>
+            <TableHead className="text-center">Seller</TableHead>
+            <TableHead className="text-center">Start Date</TableHead>
+            <TableHead className="text-center">End Date</TableHead>
+            <TableHead className="text-center">Current Bid</TableHead>
+            <TableHead className="text-center">Bids</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -360,14 +364,15 @@ function PendingAuctionsTable({
             </TableRow>
           ) : (
             auctions.map((auction) => (
-              <TableRow key={auction._id}>
+              <TableRow key={auction._id} className="text-center h-16 !border-b">
                 <TableCell className="font-medium">
-                  Classic and timeless
+                  {auction.title}
                 </TableCell>
-                <TableCell>Round Brilliant</TableCell>
+                <TableCell className="capitalize">{auction.category.name}</TableCell>
                 <TableCell>{auction.sku || "#212-121"}</TableCell>
                 <TableCell>
-                  {auction.seller?.displayName || `Mr. John #2561`}
+                  <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
+                  #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
                 </TableCell>
                 <TableCell>
                   {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
@@ -377,7 +382,7 @@ function PendingAuctionsTable({
                 </TableCell>
                 <TableCell>${auction.currentBid || 12450}</TableCell>
                 <TableCell>{auction.bidCount || 12}</TableCell>
-                <TableCell className="flex space-x-2">
+                <TableCell className="flex space-x-2 justify-center">
                   <Button
                     variant="outline"
                     size="sm"
