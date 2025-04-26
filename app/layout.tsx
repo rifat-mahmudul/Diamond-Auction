@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import AppProvider from "@/Provider/AppProvider";
 import { ContactSection } from "@/components/contact-section";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,6 +38,7 @@ export default function RootLayout({
           {children}
           <ContactSection />
           <Footer />
+          <Toaster />
         </AppProvider>
       </body>
     </html>
