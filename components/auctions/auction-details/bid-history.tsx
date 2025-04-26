@@ -66,14 +66,14 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
                 </div>
             </div>
 
-            <div className="border rounded-none overflow-hidden bg-[#f9f4e8]">
+            <div className="border rounded-none overflow-x-auto bg-[#f9f4e8]">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-[#f9f4e8] hover:bg-[#f9f4e8]">
-                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4">Date</TableHead>
-                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4">Bid</TableHead>
-                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4">User</TableHead>
-                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4">Auto</TableHead>
+                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[120px]">Date</TableHead>
+                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[100px]">Bid</TableHead>
+                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[100px]">User</TableHead>
+                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[80px]">Auto</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
