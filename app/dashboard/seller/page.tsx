@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
 import { User } from "lucide-react";
+import { useAllSellers } from "@/hooks/use-queries";
 import { toast } from "sonner";
 
 interface Seller {
@@ -44,35 +45,42 @@ interface Seller {
 }
 
 export default function SellersPage() {
+  const { data: sellersData, isLoading } = useAllSellers();
+
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  // const [isLoading, setIsLoading] = useState(false)
 
-  // Mock data for sellers since we don't have a specific endpoint
-  const mockSellers: Seller[] = Array.from({ length: 8 }, (_, i) => ({
-    _id: `seller-${i}`,
-    username: "John Smith",
-    contact: {
-      email: "john.smith@example.com",
-      phone: "+1 (555) 123-4567",
-    },
-    sellerId: "#25002",
-    joinDate: "2023-01-15",
-    totalAuctions: 48,
-    liveAuctions: 12,
-    totalSales: 10,
-    sellAmount: 12450,
-  }));
-
+  // If API doesn't return data, use mock data
   useEffect(() => {
-    // In a real app, you would fetch from API
-    setSellers(mockSellers);
-    setFilteredSellers(mockSellers);
-    setTotalPages(Math.ceil(mockSellers.length / 10));
-  }, [mockSellers]);
+    if (sellersData?.data) {
+      setSellers(sellersData.data);
+      setFilteredSellers(sellersData.data);
+      setTotalPages(sellersData.totalPages || 1);
+    } else if (!isLoading) {
+      // Mock data for sellers since we don't have a specific endpoint
+      const mockSellers: Seller[] = Array.from({ length: 8 }, (_, i) => ({
+        _id: `seller-${i}`,
+        username: "John Smith",
+        contact: {
+          email: "john.smith@example.com",
+          phone: "+1 (555) 123-4567",
+        },
+        sellerId: "#25002",
+        joinDate: "2023-01-15",
+        totalAuctions: 48,
+        liveAuctions: 12,
+        totalSales: 10,
+        sellAmount: 12450,
+      }));
+
+      setSellers(mockSellers);
+      setFilteredSellers(mockSellers);
+      setTotalPages(Math.ceil(mockSellers.length / 10));
+    }
+  }, [sellersData, isLoading]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -112,7 +120,7 @@ export default function SellersPage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search bidders..."
+              placeholder="Search sellers..."
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -125,86 +133,92 @@ export default function SellersPage() {
         </div>
 
         <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Seller</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Seller ID</TableHead>
-                <TableHead>Join Date</TableHead>
-                <TableHead>Total Auctions</TableHead>
-                <TableHead>Live Auctions</TableHead>
-                <TableHead>Total Sales</TableHead>
-                <TableHead>Sell Amount</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredSellers.length === 0 ? (
+          {isLoading ? (
+            <div className="p-8 flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-4">
-                    No sellers found
-                  </TableCell>
+                  <TableHead>Seller</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Seller ID</TableHead>
+                  <TableHead>Join Date</TableHead>
+                  <TableHead>Total Auctions</TableHead>
+                  <TableHead>Live Auctions</TableHead>
+                  <TableHead>Total Sales</TableHead>
+                  <TableHead>Sell Amount</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ) : (
-                filteredSellers.map((seller) => (
-                  <TableRow key={seller._id}>
-                    <TableCell className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                        <User className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <span className="font-medium">{seller.username}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span>{seller.contact.email}</span>
-                        <span className="text-muted-foreground">
-                          {seller.contact.phone}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{seller.sellerId}</TableCell>
-                    <TableCell>{seller.joinDate}</TableCell>
-                    <TableCell>{seller.totalAuctions}</TableCell>
-                    <TableCell>{seller.liveAuctions}</TableCell>
-                    <TableCell>{seller.totalSales}</TableCell>
-                    <TableCell>${seller.sellAmount}</TableCell>
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete the seller account.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteSeller(seller._id)}
-                              className="bg-red-500 hover:bg-red-700"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+              </TableHeader>
+              <TableBody>
+                {filteredSellers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-4">
+                      No sellers found
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  filteredSellers.map((seller) => (
+                    <TableRow key={seller._id}>
+                      <TableCell className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                          <User className="h-5 w-5 text-gray-500" />
+                        </div>
+                        <span className="font-medium">{seller.username}</span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span>{seller.contact.email}</span>
+                          <span className="text-muted-foreground">
+                            {seller.contact.phone}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{seller.sellerId}</TableCell>
+                      <TableCell>{seller.joinDate}</TableCell>
+                      <TableCell>{seller.totalAuctions}</TableCell>
+                      <TableCell>{seller.liveAuctions}</TableCell>
+                      <TableCell>{seller.totalSales}</TableCell>
+                      <TableCell>${seller.sellAmount}</TableCell>
+                      <TableCell>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete the seller account.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteSeller(seller._id)}
+                                className="bg-red-500 hover:bg-red-700"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          )}
         </div>
 
         <Pagination

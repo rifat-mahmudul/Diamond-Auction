@@ -4,7 +4,6 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
-import { apiService } from "@/lib/api-service";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import {
@@ -18,8 +17,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CategoryCard } from "@/components/category-card";
+import {
+  useAllCategories,
+  useCreateCategory,
+  useDeleteCategory,
+} from "@/hooks/use-queries";
 import { toast } from "sonner";
-import Image from "next/image";
 
 interface Category {
   _id: string;
@@ -29,8 +32,11 @@ interface Category {
 }
 
 export default function CategoriesPage() {
+  const { data: categoriesData, isLoading } = useAllCategories();
+  const createCategoryMutation = useCreateCategory();
+  const deleteCategoryMutation = useDeleteCategory();
+
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({
     name: "",
@@ -39,24 +45,11 @@ export default function CategoriesPage() {
   });
   const [previewUrl, setPreviewUrl] = useState("");
 
-  const fetchCategories = async () => {
-    setIsLoading(true);
-    try {
-      const response = await apiService.getAllCategories();
-      if (response.status === true && response.data) {
-        setCategories(response.data as Category[]);
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      toast.error("Failed to fetch categories");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if (categoriesData?.data) {
+      setCategories(categoriesData.data as Category[]);
+    }
+  }, [categoriesData]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -85,32 +78,17 @@ export default function CategoriesPage() {
     formData.append("description", newCategory.description);
     formData.append("image", newCategory.image);
 
-    try {
-      const response = await apiService.createCategory(formData);
-      if (response.status === true) {
-        toast.success("Category added successfully");
+    createCategoryMutation.mutate(formData, {
+      onSuccess: () => {
         setIsAddDialogOpen(false);
         setNewCategory({ name: "", description: "", image: null });
         setPreviewUrl("");
-        fetchCategories();
-      }
-    } catch (error) {
-      console.error("Error adding category:", error);
-      toast.error("Failed to add category");
-    }
+      },
+    });
   };
 
   const handleDeleteCategory = async (id: string) => {
-    try {
-      const response = await apiService.deleteCategory(id);
-      if (response.status === true) {
-        toast.success("Category deleted successfully");
-        fetchCategories();
-      }
-    } catch (error) {
-      console.error("Error deleting category:", error);
-      toast.error("Failed to delete category");
-    }
+    deleteCategoryMutation.mutate(id);
   };
 
   return (
@@ -162,11 +140,10 @@ export default function CategoriesPage() {
                   <div className="border rounded-md p-4">
                     {previewUrl ? (
                       <div className="flex flex-col items-center gap-4">
-                        <Image
+                        <img
                           src={previewUrl || "/placeholder.svg"}
                           alt="Preview"
                           className="max-h-40 object-contain"
-                          fill
                         />
                         <Button
                           type="button"
@@ -182,7 +159,7 @@ export default function CategoriesPage() {
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                          <Image
+                          <img
                             src="/placeholder.svg?height=40&width=40"
                             alt="Upload"
                           />
@@ -214,8 +191,9 @@ export default function CategoriesPage() {
                   <Button
                     type="submit"
                     className="bg-[#6b614f] hover:bg-[#5c5343]"
+                    disabled={createCategoryMutation.isPending}
                   >
-                    Save
+                    {createCategoryMutation.isPending ? "Saving..." : "Save"}
                   </Button>
                 </div>
               </form>
@@ -223,19 +201,24 @@ export default function CategoriesPage() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category._id}
-              category={category}
-              onDelete={handleDeleteCategory}
-              onUpdate={fetchCategories}
-              icon="default-icon" // Replace with appropriate icon value
-              title={category.name}
-              href={`/categories/${category._id}`} // Replace with appropriate URL structure
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center p-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6b614f]"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categories.map((category) => (
+              <CategoryCard
+                key={category._id}
+                category={category}
+                onDelete={handleDeleteCategory}
+                icon={category.image} // Replace with the appropriate icon value
+                title={category.name}
+                href={`/categories/${category._id}`} // Replace with the appropriate href value
+              />
+            ))}
+          </div>
+        )}
       </div>
     </Layout>
   );
