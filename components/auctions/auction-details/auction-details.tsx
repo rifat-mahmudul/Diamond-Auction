@@ -80,6 +80,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         return response.json(); // Or handle the response as needed
     }
 
+
     const {
         mutate,
         status,
@@ -91,7 +92,8 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         mutationFn: placeBid,
         onSuccess: (data) => {
             setBidAmount("");
-            queryClient.invalidateQueries({ queryKey: ["bidHistory", auctionId] });
+            console.log(data);
+            queryClient.invalidateQueries({ queryKey: ["bidHistory"] });
         },
         onError: (err) => {
             console.error("Error placing bid:", err.message);
@@ -102,6 +104,8 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const isPlacingBid = status === 'pending';
 
 
+
+    // Handle Bidding
     const handleBid = () => {
         if (bidAmount && Number.parseFloat(bidAmount) > auction?.currentBid) {
             mutate({
@@ -123,11 +127,17 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setBidAmount(event.target.value);
     };
+    
+
+
 
     // Calculate time remaining
     const now = new Date();
     const endTime = auction ? new Date(auction.endTime) : null;
     const isAuctionEnded = endTime ? now > endTime : false;
+
+
+
 
     // Handle bid increment/decrement
     const handleIncrement = () => {
