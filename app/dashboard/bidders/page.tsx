@@ -47,6 +47,8 @@ export default function BiddersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  console.log(isLoading);
+  
 
   const fetchBidders = async () => {
     setIsLoading(true);

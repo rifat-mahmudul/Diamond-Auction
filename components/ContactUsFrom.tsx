@@ -47,7 +47,7 @@ const postContactForm = async (data: FormValues) => {
 }
 
 export default function ContactForm() {
-  
+
     // Initialize the form
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -67,8 +67,8 @@ export default function ContactForm() {
         onSuccess: () => {
             form.reset()
             toast.success("Message sent successfully", {
-                position : 'top-right',
-            }) 
+                position: 'top-right',
+            })
             // alert("Message sent successfully")
         },
         onError: (error) => {
@@ -128,7 +128,7 @@ export default function ContactForm() {
 
                 {/* Form Section */}
                 <div className="px-8 md:w-3/5">
-                
+
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -227,7 +227,7 @@ export default function ContactForm() {
                                     <FormItem>
                                         <FormLabel className="text-base text-[#645949] font-medium">Message</FormLabel>
                                         <FormControl>
-                                            <Textarea placeholder="Write your message.." className="min-h-[120px] !border-b-2 border-[#645949] rounded-none border-t-0 border-l-0 border-r-0" {...field}  />
+                                            <Textarea placeholder="Write your message.." className="min-h-[120px] !border-b-2 border-[#645949] rounded-none border-t-0 border-l-0 border-r-0" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
