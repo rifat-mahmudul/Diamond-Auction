@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
-import { apiService } from "@/lib/api-service";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -26,7 +25,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
-import { toast } from "sonner";
+import {
+  useActiveAuctions,
+  usePendingAuctions,
+  useScheduledAuctions,
+  useEndedAuctions,
+  useAcceptAuction,
+  useRejectAuction,
+  useDeleteAuction,
+} from "@/hooks/use-queries";
 
 interface Auction {
   _id: string;
@@ -55,47 +62,31 @@ export default function AuctionsPage() {
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchAuctions = async () => {
-    setIsLoading(true);
-    try {
-      let response;
-      switch (activeTab) {
-        case "active":
-          response = await apiService.getActiveAuctions();
-          break;
-        case "pending":
-          response = await apiService.getPendingAuctions();
-          break;
-        case "scheduled":
-          response = await apiService.getScheduledAuctions();
-          break;
-        case "end":
-          response = await apiService.getEndedAuctions();
-          break;
-        default:
-          response = await apiService.getAllAuctions();
-      }
+  // TanStack Query hooks
+  const activeAuctionsQuery = useActiveAuctions();
+  const pendingAuctionsQuery = usePendingAuctions();
+  const scheduledAuctionsQuery = useScheduledAuctions();
+  const endedAuctionsQuery = useEndedAuctions();
 
-      if (
-        (response.status === true || response.status === "success") &&
-        response.data
-      ) {
-        setAuctions(response.data as Auction[]);
-        setTotalPages(response.totalPages || 1);
-      }
-    } catch (error) {
-      console.error("Error fetching auctions:", error);
-      toast.error("Failed to fetch auctions");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const acceptAuctionMutation = useAcceptAuction();
+  const rejectAuctionMutation = useRejectAuction();
+  const deleteAuctionMutation = useDeleteAuction();
+
+  // Determine which query to use based on active tab
+  const currentQuery = {
+    active: activeAuctionsQuery,
+    pending: pendingAuctionsQuery,
+    scheduled: scheduledAuctionsQuery,
+    end: endedAuctionsQuery,
+  }[activeTab] as typeof activeAuctionsQuery;
 
   useEffect(() => {
-    fetchAuctions();
-  }, [activeTab, currentPage]);
+    if (currentQuery?.data?.data) {
+      setAuctions(currentQuery.data.data as Auction[]);
+      setTotalPages(currentQuery.data.totalPages || 1);
+    }
+  }, [currentQuery?.data, activeTab]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -107,42 +98,15 @@ export default function AuctionsPage() {
   };
 
   const handleAcceptAuction = async (id: string) => {
-    try {
-      const response = await apiService.acceptAuction(id);
-      if (response.status === true) {
-        toast.success("Auction accepted successfully");
-        fetchAuctions();
-      }
-    } catch (error) {
-      console.error("Error accepting auction:", error);
-      toast.error("Failed to accept auction");
-    }
+    acceptAuctionMutation.mutate(id);
   };
 
   const handleRejectAuction = async (id: string) => {
-    try {
-      const response = await apiService.rejectAuction(id);
-      if (response.status === true) {
-        toast.success("Auction rejected successfully");
-        fetchAuctions();
-      }
-    } catch (error) {
-      console.error("Error rejecting auction:", error);
-      toast.error("Failed to reject auction");
-    }
+    rejectAuctionMutation.mutate(id);
   };
 
   const handleDeleteAuction = async (id: string) => {
-    try {
-      const response = await apiService.deleteAuction(id);
-      if (response.status === true) {
-        toast.success("Auction deleted successfully");
-        fetchAuctions();
-      }
-    } catch (error) {
-      console.error("Error deleting auction:", error);
-      toast.success("Failed to delete auction");
-    }
+    deleteAuctionMutation.mutate(id);
   };
 
   const formatDate = (dateString: string) => {
@@ -154,6 +118,8 @@ export default function AuctionsPage() {
       date.getHours()
     ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}PM`;
   };
+
+  const isLoading = currentQuery?.isLoading;
 
   return (
     <Layout>
@@ -201,6 +167,7 @@ export default function AuctionsPage() {
               auctions={auctions}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
 
@@ -211,6 +178,7 @@ export default function AuctionsPage() {
               onReject={handleRejectAuction}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
 
@@ -219,6 +187,7 @@ export default function AuctionsPage() {
               auctions={auctions}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
 
@@ -227,6 +196,7 @@ export default function AuctionsPage() {
               auctions={auctions}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
         </Tabs>
@@ -245,9 +215,23 @@ interface AuctionsTableProps {
   auctions: Auction[];
   onDelete: (id: string) => void;
   formatDate: (date: string) => string;
+  isLoading?: boolean;
 }
 
-function AuctionsTable({ auctions, onDelete, formatDate }: AuctionsTableProps) {
+function AuctionsTable({
+  auctions,
+  onDelete,
+  formatDate,
+  isLoading,
+}: AuctionsTableProps) {
+  if (isLoading) {
+    return (
+      <div className="rounded-md border p-8 flex justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -341,7 +325,16 @@ function PendingAuctionsTable({
   onReject,
   onDelete,
   formatDate,
+  isLoading,
 }: PendingAuctionsTableProps) {
+  if (isLoading) {
+    return (
+      <div className="rounded-md border p-8 flex justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-md border">
       <Table>
