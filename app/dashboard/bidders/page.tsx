@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
 import { useAllBidders, useDeleteBidder } from "@/hooks/use-queries";
+import { toast } from "sonner";
 
 interface Bidder {
   userId: string;
@@ -48,6 +49,28 @@ export default function BiddersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [isLoading, setIsLoading] = useState(false);
+  console.log(isLoading);
+  
+
+  const fetchBidders = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiService.getAllBidders();
+      if (response.status === true && response.data) {
+        setBidders(response.data as Bidder[]);
+        setFilteredBidders(response.data as Bidder[]);
+        setTotalPages(response.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching bidders:", error);
+      toast.error("Failed to fetch bidders");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     if (biddersData?.data) {
