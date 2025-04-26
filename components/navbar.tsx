@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useMobile } from "@/hooks/use-mobile";
+import { useMobile } from "@/hooks/use-mobile-nav";
 import { Menu, Search } from "lucide-react";
 
 const navLinks = [
@@ -55,7 +55,6 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-
           <div className="relative w-full max-w-sm">
             <Input
               placeholder="Search auctions..."
@@ -66,10 +65,7 @@ export function Navbar() {
             <Search className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 transform  text-white" />
           </div>
 
-          <Button
-            variant="default"
-            className="px-6 hidden lg:block"
-          >
+          <Button variant="default" className="px-6 hidden lg:block">
             Login
           </Button>
 

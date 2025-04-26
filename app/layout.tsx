@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
 import AppProvider from "@/Provider/AppProvider";
-import { ContactSection } from "@/components/contact-section";
+import LayoutShell from "./layout-shell";
 
 
 const roboto = Roboto({
@@ -28,10 +26,9 @@ export default function RootLayout({
         className={`${roboto.className} antialiased`}
       >
         <AppProvider>
-          <Navbar />
-          {children}
-          <ContactSection />
-          <Footer />
+          <LayoutShell>{children}</LayoutShell>
+          {/* <ContactSection />
+          <Footer /> */}
         </AppProvider>
       </body>
     </html>
