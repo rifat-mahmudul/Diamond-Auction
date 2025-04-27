@@ -67,7 +67,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU2Mzc4NzksImV4cCI6MTc0NjI0MjY3OX0.zLPAwxo0f0NFPuS-PkjIVL73cII6FFAmEY-aDmmE7po`,
+                    Authorization: `Bearer ${session?.data?.accessToken}`,
                 },
                 body: JSON.stringify({ amount }),
             }
@@ -226,7 +226,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                     </p>
                                 </div>
 
-                                {!isAuctionEnded && (
+                                {auction.status === "live" && (
                                     <div className="text-[#645949]">
                                         <div>
                                             <p className="text-sm font-medium mb-3">Time left:</p>

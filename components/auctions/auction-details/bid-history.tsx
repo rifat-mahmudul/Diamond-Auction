@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { formatCurrency } from "@/lib/format"
+import { useSession } from "next-auth/react"
 
 interface BidHistoryProps {
     auctionId: string
@@ -18,6 +19,11 @@ interface Bid {
 }
 
 export default function BidHistory({ auctionId }: BidHistoryProps) {
+
+    const session = useSession();
+
+    const token = session?.data?.accessToken;
+
     // Fetch bid history
     const { data: bidHistoryData, isLoading } = useQuery({
         queryKey: ["bidHistory", auctionId],
@@ -26,7 +32,7 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
                 `${process.env.NEXT_PUBLIC_API_URL}/bids/auction/${auctionId}/history`,
                 {
                     headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU2Mzc4NzksImV4cCI6MTc0NjI0MjY3OX0.zLPAwxo0f0NFPuS-PkjIVL73cII6FFAmEY-aDmmE7po`,
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             )
