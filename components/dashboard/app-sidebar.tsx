@@ -24,6 +24,7 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 
 interface AppSidebarProps {
   isMobile?: boolean;
@@ -178,7 +179,7 @@ export function AppSidebar({ isMobile = false }: AppSidebarProps) {
             </DialogTitle>
             <div className="flex gap-4 mt-6 w-full">
               <Button
-                onClick={handleLogout}
+                onClick={() => signOut({ callbackUrl: "/login" })}
                 className="flex-1 bg-[#6b614f] border border-white hover:bg-[#7d7260]"
                 variant="outline"
               >

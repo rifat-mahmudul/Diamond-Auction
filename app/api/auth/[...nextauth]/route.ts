@@ -7,7 +7,7 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text" }, // 🔁 updated from email
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -24,13 +24,13 @@ const handler = NextAuth({
           throw new Error(result.message || "Invalid credentials");
         }
 
-        // Return the user object that will be stored in the JWT
         return {
           id: result.data._id,
           name: result.data.username,
-          email: result.data.email || "", // Ensure email is included
+          email: result.data.email || "",
           role: result.data.role,
-          token: result.token,
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
         };
       },
     }),
@@ -45,7 +45,8 @@ const handler = NextAuth({
       if (user) {
         token.id = user.id;
         token.role = user.role;
-        token.accessToken = user.token;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
       }
       return token;
     },
@@ -54,6 +55,7 @@ const handler = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.accessToken = token.accessToken as string;
+        session.refreshToken = token.refreshToken as string;
       }
       return session;
     },
@@ -62,6 +64,7 @@ const handler = NextAuth({
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24 hours
   },
+  secret: process.env.NEXTAUTH_SECRET, // make sure it's set in your .env
 });
 
 export { handler as GET, handler as POST };
