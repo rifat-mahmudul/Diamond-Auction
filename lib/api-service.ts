@@ -1,6 +1,6 @@
 const BASE_URL = "http://localhost:5100/api/v1";
 const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDU1NzE0NjQsImV4cCI6MTc0NjE3NjI2NH0.z-1o55JULy7rIMdgNYq5jHuw61SWutMo-sY715WyG-M";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNzUzNDE1NmFiNjJiN2QzNzkyZGIiLCJpYXQiOjE3NDU3Mjg2NzAsImV4cCI6MTc0NjMzMzQ3MH0.uSH0P_UexURMTG6YdhHDHGU6B0XNew-N7zgsrqClX7M";
 
 export interface ApiResponse<T> {
   status: boolean | string;

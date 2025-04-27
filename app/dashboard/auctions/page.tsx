@@ -129,83 +129,86 @@ export default function AuctionsPage() {
           <p className="text-muted-foreground">Manage your auction Listings</p>
         </div>
 
-        <Tabs
-          defaultValue="active"
-          value={activeTab}
-          onValueChange={handleTabChange}
-          className="w-full"
-        >
-          <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16">
-            <TabsTrigger
-              value="active"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
-              Active
-            </TabsTrigger>
-            <TabsTrigger
-              value="pending"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
-              Pending
-            </TabsTrigger>
-            <TabsTrigger
-              value="scheduled"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
-              Scheduled
-            </TabsTrigger>
-            <TabsTrigger
-              value="end"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
-              End
-            </TabsTrigger>
-          </TabsList>
+        <div className="bg-white rounded-md">
 
-          <TabsContent value="active" className="mt-4">
-            <AuctionsTable
-              auctions={auctions}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
+          <Tabs
+            defaultValue="active"
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16 border border-[#645949]">
+              <TabsTrigger
+                value="active"
+                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+              >
+                Active
+              </TabsTrigger>
+              <TabsTrigger
+                value="pending"
+                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+              >
+                Pending
+              </TabsTrigger>
+              <TabsTrigger
+                value="scheduled"
+                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+              >
+                Scheduled
+              </TabsTrigger>
+              <TabsTrigger
+                value="end"
+                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+              >
+                End
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="pending" className="mt-4">
-            <PendingAuctionsTable
-              auctions={auctions}
-              onAccept={handleAcceptAuction}
-              onReject={handleRejectAuction}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
+            <TabsContent value="active" className="mt-4">
+              <AuctionsTable
+                auctions={auctions}
+                onDelete={handleDeleteAuction}
+                formatDate={formatDate}
+                isLoading={isLoading}
+              />
+            </TabsContent>
 
-          <TabsContent value="scheduled" className="mt-4">
-            <AuctionsTable
-              auctions={auctions}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
+            <TabsContent value="pending" className="mt-4">
+              <PendingAuctionsTable
+                auctions={auctions}
+                onAccept={handleAcceptAuction}
+                onReject={handleRejectAuction}
+                onDelete={handleDeleteAuction}
+                formatDate={formatDate}
+                isLoading={isLoading}
+              />
+            </TabsContent>
 
-          <TabsContent value="end" className="mt-4">
-            <AuctionsTable
-              auctions={auctions}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="scheduled" className="mt-4">
+              <AuctionsTable
+                auctions={auctions}
+                onDelete={handleDeleteAuction}
+                formatDate={formatDate}
+                isLoading={isLoading}
+              />
+            </TabsContent>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+            <TabsContent value="end" className="mt-4">
+              <AuctionsTable
+                auctions={auctions}
+                onDelete={handleDeleteAuction}
+                formatDate={formatDate}
+                isLoading={isLoading}
+              />
+            </TabsContent>
+          </Tabs>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </Layout>
   );
@@ -233,85 +236,83 @@ function AuctionsTable({
   }
 
   return (
-    <div className="rounded-md">
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-[#F9FAFB] h-14 border-none">
-            <TableHead className="text-center">Auction</TableHead>
-            <TableHead className="text-center">Category</TableHead>
-            <TableHead className="text-center">SKU</TableHead>
-            <TableHead className="text-center">Seller</TableHead>
-            <TableHead className="text-center">Start Date</TableHead>
-            <TableHead className="text-center">End Date</TableHead>
-            <TableHead className="text-center">Current Bid</TableHead>
-            <TableHead className="text-center">Bids</TableHead>
-            <TableHead className="text-center">Actions</TableHead>
+    <Table>
+      <TableHeader>
+        <TableRow className="bg-[#F9FAFB] h-14 border-none">
+          <TableHead className="text-center">Auction</TableHead>
+          <TableHead className="text-center">Category</TableHead>
+          <TableHead className="text-center">SKU</TableHead>
+          <TableHead className="text-center">Seller</TableHead>
+          <TableHead className="text-center">Start Date</TableHead>
+          <TableHead className="text-center">End Date</TableHead>
+          <TableHead className="text-center">Current Bid</TableHead>
+          <TableHead className="text-center">Bids</TableHead>
+          <TableHead className="text-center">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {auctions.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={9} className="text-center py-4">
+              No auctions found
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {auctions.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={9} className="text-center py-4">
-                No auctions found
+        ) : (
+          auctions.map((auction) => (
+            <TableRow key={auction._id} className="text-center h-16 !border-b border-[#E5E7EB]">
+              <TableCell className="font-medium">
+                {auction.title}
+              </TableCell>
+              <TableCell>{auction.category?.name}</TableCell>
+              <TableCell>{auction.sku || "#212-121"}</TableCell>
+              <TableCell>
+                <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
+                #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
+              </TableCell>
+              <TableCell>
+                {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
+              </TableCell>
+              <TableCell>
+                {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
+              </TableCell>
+              <TableCell>${auction.currentBid || 12450}</TableCell>
+              <TableCell>{auction.bidCount || 12}</TableCell>
+              <TableCell>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete the auction.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => onDelete(auction._id)}
+                        className="bg-red-500 hover:bg-red-700"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </TableCell>
             </TableRow>
-          ) : (
-            auctions.map((auction) => (
-              <TableRow key={auction._id} className="text-center h-16 !border-b">
-                <TableCell className="font-medium">
-                  {auction.title}
-                </TableCell>
-                <TableCell>{auction.category?.name}</TableCell>
-                <TableCell>{auction.sku || "#212-121"}</TableCell>
-                <TableCell>
-                  <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
-                  #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
-                </TableCell>
-                <TableCell>
-                  {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
-                </TableCell>
-                <TableCell>
-                  {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
-                </TableCell>
-                <TableCell>${auction.currentBid || 12450}</TableCell>
-                <TableCell>{auction.bidCount || 12}</TableCell>
-                <TableCell>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete the auction.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => onDelete(auction._id)}
-                          className="bg-red-500 hover:bg-red-700"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          ))
+        )}
+      </TableBody>
+    </Table>
   );
 }
 
@@ -337,103 +338,99 @@ function PendingAuctionsTable({
     );
   }
 
-  console.log(auctions)
-
   return (
-    <div className="rounded-md">
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-[#F9FAFB] h-14 border-none">
-            <TableHead className="text-center">Auction</TableHead>
-            <TableHead className="text-center">Category</TableHead>
-            <TableHead className="text-center">SKU</TableHead>
-            <TableHead className="text-center">Seller</TableHead>
-            <TableHead className="text-center">Start Date</TableHead>
-            <TableHead className="text-center">End Date</TableHead>
-            <TableHead className="text-center">Current Bid</TableHead>
-            <TableHead className="text-center">Bids</TableHead>
-            <TableHead className="text-center">Actions</TableHead>
+    <Table>
+      <TableHeader>
+        <TableRow className="bg-[#F9FAFB] h-14 border-none">
+          <TableHead className="text-center">Auction</TableHead>
+          <TableHead className="text-center">Category</TableHead>
+          <TableHead className="text-center">SKU</TableHead>
+          <TableHead className="text-center">Seller</TableHead>
+          <TableHead className="text-center">Start Date</TableHead>
+          <TableHead className="text-center">End Date</TableHead>
+          <TableHead className="text-center">Current Bid</TableHead>
+          <TableHead className="text-center">Bids</TableHead>
+          <TableHead className="text-center">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {auctions.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={9} className="text-center py-4">
+              No pending auctions found
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {auctions.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={9} className="text-center py-4">
-                No pending auctions found
+        ) : (
+          auctions.map((auction) => (
+            <TableRow key={auction._id} className="text-center h-16 !border-b">
+              <TableCell className="font-medium">
+                {auction.title}
+              </TableCell>
+              <TableCell className="capitalize">{auction.category.name}</TableCell>
+              <TableCell>{auction.sku || "#212-121"}</TableCell>
+              <TableCell>
+                <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
+                #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
+              </TableCell>
+              <TableCell>
+                {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
+              </TableCell>
+              <TableCell>
+                {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
+              </TableCell>
+              <TableCell>${auction.currentBid || 12450}</TableCell>
+              <TableCell>{auction.bidCount || 12}</TableCell>
+              <TableCell className="flex space-x-2 justify-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-green-600 border-green-600 hover:bg-green-50"
+                  onClick={() => onAccept(auction._id)}
+                >
+                  Accept
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 border-red-600 hover:bg-red-50"
+                  onClick={() => onReject(auction._id)}
+                >
+                  Reject
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete the auction.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => onDelete(auction._id)}
+                        className="bg-red-500 hover:bg-red-700"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </TableCell>
             </TableRow>
-          ) : (
-            auctions.map((auction) => (
-              <TableRow key={auction._id} className="text-center h-16 !border-b">
-                <TableCell className="font-medium">
-                  {auction.title}
-                </TableCell>
-                <TableCell className="capitalize">{auction.category.name}</TableCell>
-                <TableCell>{auction.sku || "#212-121"}</TableCell>
-                <TableCell>
-                  <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
-                  #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
-                </TableCell>
-                <TableCell>
-                  {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
-                </TableCell>
-                <TableCell>
-                  {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
-                </TableCell>
-                <TableCell>${auction.currentBid || 12450}</TableCell>
-                <TableCell>{auction.bidCount || 12}</TableCell>
-                <TableCell className="flex space-x-2 justify-center">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-green-600 border-green-600 hover:bg-green-50"
-                    onClick={() => onAccept(auction._id)}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 border-red-600 hover:bg-red-50"
-                    onClick={() => onReject(auction._id)}
-                  >
-                    Reject
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete the auction.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => onDelete(auction._id)}
-                          className="bg-red-500 hover:bg-red-700"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+          ))
+        )}
+      </TableBody>
+    </Table>
   );
 }
