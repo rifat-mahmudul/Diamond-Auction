@@ -32,6 +32,8 @@ export default function Dashboard() {
     liveAuctions: 20,
   });
 
+  console.log(setStats);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

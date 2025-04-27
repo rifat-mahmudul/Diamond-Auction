@@ -87,7 +87,6 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         isSuccess: isBidSuccess,
         isError: isBidError,
         error: bidError,
-        reset: resetBidMutation,
     } = useMutation({
         mutationFn: placeBid,
         onSuccess: (data) => {
