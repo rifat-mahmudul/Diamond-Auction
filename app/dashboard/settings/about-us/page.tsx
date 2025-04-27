@@ -14,6 +14,7 @@ import {
   useUpdateAboutUs,
   useCreateAboutUs,
 } from "@/hooks/use-queries";
+import Image from "next/image";
 
 export default function AboutUsPage() {
   const { data: aboutUsData, isLoading } = useAboutUs();
@@ -184,7 +185,7 @@ export default function AboutUsPage() {
                 <div className="border rounded-md p-4">
                   {missionImagePreview ? (
                     <div className="flex flex-col items-center gap-4">
-                      <img
+                      <Image
                         src={missionImagePreview || "/placeholder.svg"}
                         alt="Mission"
                         className="max-h-40 object-contain"
@@ -202,7 +203,7 @@ export default function AboutUsPage() {
                   ) : (
                     <div className="flex flex-col items-center gap-2">
                       <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                        <img
+                        <Image
                           src="/placeholder.svg?height=40&width=40"
                           alt="Upload"
                         />
@@ -248,7 +249,7 @@ export default function AboutUsPage() {
                 <div className="border rounded-md p-4">
                   {visionImagePreview ? (
                     <div className="flex flex-col items-center gap-4">
-                      <img
+                      <Image
                         src={visionImagePreview || "/placeholder.svg"}
                         alt="Vision"
                         className="max-h-40 object-contain"
@@ -266,7 +267,7 @@ export default function AboutUsPage() {
                   ) : (
                     <div className="flex flex-col items-center gap-2">
                       <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                        <img
+                        <Image
                           src="/placeholder.svg?height=40&width=40"
                           alt="Upload"
                         />
@@ -322,7 +323,7 @@ export default function AboutUsPage() {
 
               {missionImagePreview && (
                 <div className="border rounded-md p-4 flex justify-center">
-                  <img
+                  <Image
                     src={missionImagePreview || "/placeholder.svg"}
                     alt="Mission"
                     className="max-h-60 object-contain"
@@ -337,7 +338,7 @@ export default function AboutUsPage() {
 
               {visionImagePreview && (
                 <div className="border rounded-md p-4 flex justify-center">
-                  <img
+                  <Image
                     src={visionImagePreview || "/placeholder.svg"}
                     alt="Vision"
                     className="max-h-60 object-contain"

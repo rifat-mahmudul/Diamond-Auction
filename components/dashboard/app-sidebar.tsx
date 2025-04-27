@@ -25,11 +25,11 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-interface AppSidebarProps {
-  isMobile?: boolean;
-}
+// interface AppSidebarProps {
+//   isMobile?: boolean;
+// }
 
-export function AppSidebar({ isMobile = false }: AppSidebarProps) {
+export function AppSidebar() {
   const pathname = usePathname();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 

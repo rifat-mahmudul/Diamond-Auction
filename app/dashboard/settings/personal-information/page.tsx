@@ -12,11 +12,13 @@ import { useQuery } from "@tanstack/react-query"
 import { Pencil } from "lucide-react"
 import Layout from "@/components/dashboard/layout"
 import { toast } from "sonner"
+import Image from "next/image"
 
 export default function PersonalInformationPage() {
   const session = useSession()
   const userId = session.data?.user?.id
-  // const token = (session.data as any)?.user?.token
+  console.log(userId);
+  
 
   const { data: profileData, isLoading } = useQuery({
     queryKey: ["userProfile"],
@@ -153,7 +155,7 @@ export default function PersonalInformationPage() {
         <div className="border rounded-lg p-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200">
-              <img
+              <Image
                 src={previewUrl || "/placeholder.svg?height=80&width=80"}
                 alt="Profile"
                 className="w-full h-full object-cover"

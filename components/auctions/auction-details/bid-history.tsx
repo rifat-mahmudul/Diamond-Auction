@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
 import { formatCurrency } from "@/lib/format"
 
 interface BidHistoryProps {

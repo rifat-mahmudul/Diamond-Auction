@@ -29,6 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useAllBlogs, useCreateBlog, useDeleteBlog } from "@/hooks/use-queries";
+import Image from "next/image";
 
 interface Blog {
   _id: string;
@@ -160,7 +161,7 @@ export default function BlogsPage() {
                   <div className="border rounded-md p-4">
                     {previewUrl ? (
                       <div className="flex flex-col items-center gap-4">
-                        <img
+                        <Image
                           src={previewUrl || "/placeholder.svg"}
                           alt="Preview"
                           className="max-h-40 object-contain"
@@ -179,7 +180,7 @@ export default function BlogsPage() {
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                          <img
+                          <Image
                             src="/placeholder.svg?height=40&width=40"
                             alt="Upload"
                           />
@@ -250,7 +251,7 @@ export default function BlogsPage() {
                     <tr key={blog._id} className="border-t">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <img
+                          <Image
                             src={blog.image || "/placeholder.svg"}
                             alt={blog.title}
                             className="w-16 h-12 object-cover rounded"

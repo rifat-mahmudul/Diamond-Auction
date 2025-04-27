@@ -23,6 +23,7 @@ import {
   useDeleteCategory,
 } from "@/hooks/use-queries";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface Category {
   _id: string;
@@ -140,7 +141,7 @@ export default function CategoriesPage() {
                   <div className="border rounded-md p-4">
                     {previewUrl ? (
                       <div className="flex flex-col items-center gap-4">
-                        <img
+                        <Image
                           src={previewUrl || "/placeholder.svg"}
                           alt="Preview"
                           className="max-h-40 object-contain"
@@ -159,7 +160,7 @@ export default function CategoriesPage() {
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                          <img
+                          <Image
                             src="/placeholder.svg?height=40&width=40"
                             alt="Upload"
                           />
