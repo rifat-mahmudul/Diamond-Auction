@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
 import { Button } from "@/components/ui/button";
@@ -13,23 +12,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Pagination } from "@/components/dashboard/pagination";
 import {
   AlertDialog,
-  AlertDialogAction, 
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useAllBlogs, useCreateBlog, useDeleteBlog } from "@/hooks/use-queries";
+import { useAllBlogs, useCreateBlog, useUpdateBlog, useDeleteBlog } from "@/hooks/use-queries"; // <-- assume you have useUpdateBlog
 import Image from "next/image";
+import AddEditBlogs from "./_components/addEditBlogs";
+import DeleteModal from "./_components/detetemodal";
 
 interface Blog {
   _id: string;
@@ -43,13 +34,16 @@ interface Blog {
 export default function BlogsPage() {
   const { data: blogsData, isLoading } = useAllBlogs();
   const createBlogMutation = useCreateBlog();
+  const updateBlogMutation = useUpdateBlog(); // <-- added
   const deleteBlogMutation = useDeleteBlog();
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [newBlog, setNewBlog] = useState({
+  const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
+
+  const [formBlog, setFormBlog] = useState({
     title: "",
     content: "",
     image: null as File | null,
@@ -66,9 +60,8 @@ export default function BlogsPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setNewBlog({ ...newBlog, image: file });
+      setFormBlog({ ...formBlog, image: file });
 
-      // Create preview URL
       const reader = new FileReader();
       reader.onload = () => {
         setPreviewUrl(reader.result as string);
@@ -77,36 +70,61 @@ export default function BlogsPage() {
     }
   };
 
-  const handleAddBlog = async (e: React.FormEvent) => {
+  const handleAddOrEditBlog = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!newBlog.title || !newBlog.content || !newBlog.image) {
+    if (!formBlog.title || !formBlog.content || (!formBlog.image && !editingBlog)) {
       return;
     }
 
     const formData = new FormData();
-    formData.append("title", newBlog.title);
-    formData.append("content", newBlog.content);
-    formData.append("image", newBlog.image);
+    formData.append("title", formBlog.title);
+    formData.append("content", formBlog.content);
+    if (formBlog.image) {
+      formData.append("image", formBlog.image);
+    }
 
-    createBlogMutation.mutate(formData, {
-      onSuccess: () => {
-        setIsAddDialogOpen(false);
-        setNewBlog({ title: "", content: "", image: null });
-        setPreviewUrl("");
-      },
-    });
+    if (editingBlog) {
+      updateBlogMutation.mutate(
+        { id: editingBlog._id, data: formData },
+        {
+          onSuccess: () => {
+            setIsDialogOpen(false);
+            setEditingBlog(null);
+            setFormBlog({ title: "", content: "", image: null });
+            setPreviewUrl("");
+          },
+        }
+      );
+    } else {
+      createBlogMutation.mutate(formData, {
+        onSuccess: () => {
+          setIsDialogOpen(false);
+          setFormBlog({ title: "", content: "", image: null });
+          setPreviewUrl("");
+        },
+      });
+    }
   };
 
   const handleDeleteBlog = async (id: string) => {
     deleteBlogMutation.mutate(id);
   };
 
+  const handleEditClick = (blog: Blog) => {
+    setEditingBlog(blog);
+    setFormBlog({
+      title: blog.title,
+      content: blog.content,
+      image: null,
+    });
+    setPreviewUrl(blog.image);
+    setIsDialogOpen(true);
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return `${date.getDate()} ${date.toLocaleString("default", {
-      month: "short",
-    })}, ${date.getFullYear()}`;
+    return `${date.getDate()} ${date.toLocaleString("default", { month: "short" })}, ${date.getFullYear()}`;
   };
 
   return (
@@ -114,114 +132,38 @@ export default function BlogsPage() {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              Blogs Management
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight">Blogs Management</h1>
             <p className="text-muted-foreground">Manage your Blogs</p>
           </div>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            if (!open) {
+              setEditingBlog(null);
+              setFormBlog({ title: "", content: "", image: null });
+              setPreviewUrl("");
+            }
+            setIsDialogOpen(open);
+          }}>
             <DialogTrigger asChild>
               <Button className="bg-[#6b614f] hover:bg-[#5c5343]">
                 <Plus className="mr-2 h-4 w-4" /> Add Blog
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[50%]">
               <DialogHeader>
-                <DialogTitle>Add Blog</DialogTitle>
+                <DialogTitle>{editingBlog ? "Edit Blog" : "Add Blog"}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAddBlog} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Blog Title</Label>
-                  <Input
-                    id="title"
-                    value={newBlog.title}
-                    onChange={(e) =>
-                      setNewBlog({ ...newBlog, title: e.target.value })
-                    }
-                    placeholder="Type Blog Title here..."
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="content">Description</Label>
-                  <Textarea
-                    id="content"
-                    value={newBlog.content}
-                    onChange={(e) =>
-                      setNewBlog({
-                        ...newBlog,
-                        content: e.target.value,
-                      })
-                    }
-                    placeholder="Type Blog description here..."
-                    className="min-h-[200px]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="image">Thumbnail</Label>
-                  <div className="border rounded-md p-4">
-                    {previewUrl ? (
-                      <div className="flex flex-col items-center gap-4">
-                        <Image
-                          src={previewUrl || "/placeholder.svg"}
-                          alt="Preview"
-                          className="max-h-40 object-contain"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => {
-                            setPreviewUrl("");
-                            setNewBlog({ ...newBlog, image: null });
-                          }}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                          <Image
-                            src="/placeholder.svg?height=40&width=40"
-                            alt="Upload"
-                            width={40}
-                            height={40}
-                          />
-                        </div>
-                        <p className="text-sm text-center text-muted-foreground">
-                          Drag and drop image here, or click add image
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() =>
-                            document
-                              .getElementById("blog-image-upload")
-                              ?.click()
-                          }
-                        >
-                          Add Image
-                        </Button>
-                        <input
-                          id="blog-image-upload"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageChange}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    className="bg-[#6b614f] hover:bg-[#5c5343]"
-                    disabled={createBlogMutation.isPending}
-                  >
-                    {createBlogMutation.isPending ? "Saving..." : "Save"}
-                  </Button>
-                </div>
-              </form>
+              <AddEditBlogs
+                handleAddBlog={handleAddOrEditBlog}
+                newBlog={formBlog}
+                setNewBlog={setFormBlog}
+                previewUrl={previewUrl}
+                setPreviewUrl={setPreviewUrl}
+                handleImageChange={handleImageChange}
+                createBlogMutation={createBlogMutation}
+                updateBlogMutation={updateBlogMutation}
+                editingBlog={!!editingBlog} // <--- FIX HERE
+              />
+
             </DialogContent>
           </Dialog>
         </div>
@@ -262,9 +204,10 @@ export default function BlogsPage() {
                           />
                           <div>
                             <h4 className="font-medium">{blog.title}</h4>
-                            <p className="text-sm text-muted-foreground line-clamp-2">
-                              {blog.content}
-                            </p>
+                            <p
+                              className="text-sm text-muted-foreground line-clamp-2"
+                              dangerouslySetInnerHTML={{ __html: blog.content }}
+                            />
                           </div>
                         </div>
                       </td>
@@ -276,6 +219,7 @@ export default function BlogsPage() {
                             variant="ghost"
                             size="icon"
                             className="text-blue-500 hover:text-blue-700"
+                            onClick={() => handleEditClick(blog)}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -289,26 +233,10 @@ export default function BlogsPage() {
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Are you sure?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will
-                                  permanently delete the blog post.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteBlog(blog._id)}
-                                  className="bg-red-500 hover:bg-red-700"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
+                            <DeleteModal
+                              blogId={blog._id}
+                              handleDeleteBlog={handleDeleteBlog}
+                            />
                           </AlertDialog>
                         </div>
                       </td>

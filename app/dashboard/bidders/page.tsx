@@ -160,6 +160,7 @@ export default function BiddersPage() {
           </Button>
         </div>
 
+<<<<<<< HEAD
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -236,12 +237,100 @@ export default function BiddersPage() {
             </TableBody>
           </Table>
         </div>
+=======
+        <div className="bg-white rounded-md">
+          <div className="rounded-md">
+            {isLoading ? (
+              <div className="p-8 flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#F9FAFB] h-14 border-none">
+                    <TableHead className="pl-20">Bidder</TableHead>
+                    <TableHead className="text-center">Contact</TableHead>
+                    <TableHead className="text-center">Join Date</TableHead>
+                    <TableHead className="text-center">Total Bids</TableHead>
+                    <TableHead className="text-center">Win Auctions</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredBidders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-4">
+                        No bidders found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredBidders.map((bidder) => (
+                      <TableRow key={bidder.userId} className="text-center h-20 !border-b border-[#E5E7EB]">
+                        <TableCell className="flex items-center gap-3 pl-6 pt-5">
+                          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                            <User className="h-5 w-5 text-gray-500" />
+                          </div>
+                          <span className="font-medium">{bidder.bidder}</span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span>{bidder.contact.email}</span>
+                            <span className="text-muted-foreground">
+                              {bidder.contact.phone}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{bidder.joinDate}</TableCell>
+                        <TableCell>{bidder.totalBids}</TableCell>
+                        <TableCell>{bidder.winAuctions}</TableCell>
+                        <TableCell>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete the bidder account.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() =>
+                                    handleDeleteBidder(bidder.userId)
+                                  }
+                                  className="bg-red-500 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+>>>>>>> c86df82a624a16d8eee002fc24cb5b27babdf0e7
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </Layout>
   );
