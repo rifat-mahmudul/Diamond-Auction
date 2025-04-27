@@ -216,7 +216,9 @@ export default function CategoriesPage() {
                         <Image
                           src={category.image || "/placeholder.svg"}
                           alt={category.name}
-                          className="h-full w-full object-cover"
+                          className="h-16 w-16 object-cover"
+                          height={100}
+                          width={100}
                         />
                       </div>
                     </td>
@@ -386,6 +388,8 @@ export default function CategoriesPage() {
                       src={previewUrl || "/placeholder.svg"}
                       alt="Preview"
                       className="max-h-40 object-contain"
+                      height={400}
+                      width={400}
                     />
                     <Button
                       type="button"
@@ -404,6 +408,8 @@ export default function CategoriesPage() {
                       <Image
                         src="/placeholder.svg?height=40&width=40"
                         alt="Upload"
+                        height={100}
+                        width={100}
                       />
                     </div>
                     <p className="text-sm text-center text-muted-foreground">
@@ -486,6 +492,8 @@ export default function CategoriesPage() {
                       src={editPreviewUrl || "/placeholder.svg"}
                       alt="Preview"
                       className="max-h-40 object-contain"
+                      height={400}
+                      width={400}
                     />
                     <Button
                       type="button"
