@@ -1,3 +1,4 @@
+
 const BASE_URL = "http://localhost:5100/api/v1";
 // const token =
 //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjU0ZDQxNTZiMWE2ZDIwMWVmZTkiLCJpYXQiOjE3NDU3Mjk3OTMsImV4cCI6MTc0NjMzNDU5M30._OnQBwQEQg5M49_TqsA0yNqp4WnSUTrg7r9w4EHTfYQ";
@@ -212,7 +213,12 @@ class ApiService {
 
   // Sellers
   async getAllSellers() {
-    return this.request("/admin/sellers/all");
+    return this.request("/admin/get-sellers");
+  }
+
+
+  async deleteSeller(id: string) {
+    return this.request(`/admin/delete-seller/${id}`, "DELETE");
   }
 }
 

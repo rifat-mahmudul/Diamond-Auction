@@ -22,7 +22,8 @@ interface AuctionItem {
   images: string[];
   title: string;
   currentBid: string;
-  timeLeft: string;
+  startTime: string;
+  endTime: string;
   badges?: string[];
 }
 
@@ -82,15 +83,9 @@ export default function AllAuction() {
   } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-      const res = await fetch(`${baseUrl}/admin/categories/with-auctions`, {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU1NTIxNzcsImV4cCI6MTc0NjE1Njk3N30.BTfUHFU6SD9xKkGJATNyvNQS92Ij-TnVHyGHkr7mma0`,
-        },
-      });
-      if (!res.ok)
-        throw new Error(`Failed to fetch categories: ${res.statusText}`);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const res = await fetch(`${baseUrl}/admin/categories/with-auctions`);
+      if (!res.ok) throw new Error(`Failed to fetch categories: ${res.statusText}`);
       return res.json();
     },
     select: (responseData) => responseData.data,
@@ -239,16 +234,15 @@ export default function AllAuction() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {filteredAuctions.map((auction: AuctionItem) => (
+              {filteredAuctions?.map((auction: AuctionItem) => (
                 <AuctionCard
                   key={auction._id}
                   image={auction.images[0]}
                   title={auction.title}
                   currentBid={auction.currentBid}
-                  timeLeft={auction.timeLeft}
-                  auctionId={auction._id.toString()}
-                  startTime=""
-                  endTime=""
+                  auctionId={(auction._id).toString()}
+                  startTime={auction.startTime}
+                  endTime={auction.endTime}
                 />
               ))}
             </div>
