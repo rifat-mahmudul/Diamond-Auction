@@ -1,120 +1,64 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import axios from "axios"
+import { Card, CardContent } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-// Static user ID for now
-const USER_ID = "67fe1177d638e66cd751a11d"
-
-// Dummy data for bid history
-const dummyBidHistory = [
-  {
-    id: 1,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Live(10th)",
-  },
-  {
-    id: 2,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Live(50th)",
-  },
-  {
-    id: 3,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Win(1st)",
-  },
-  {
-    id: 4,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Loss(2nd)",
-  },
-  {
-    id: 5,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Loss(2nd)",
-  },
-  {
-    id: 6,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Loss(2nd)",
-  },
-  {
-    id: 7,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Loss(5th)",
-  },
-  {
-    id: 8,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Win(1st)",
-  },
-  {
-    id: 9,
-    auctionName: "Black Diamond",
-    sku: "#212-121",
-    bid: "$5,000.00",
-    biddingTime: "8 Dec, 2025",
-    status: "Loss(3rd)",
-  },
-]
+// Define the type for bid data
+type Bid = {
+  id: number
+  auctionName: string
+  sku: string
+  bid: string
+  biddingTime: string
+  status: string
+}
 
 export default function BidHistoryPage() {
-  const [bidHistory, setBidHistory] = useState(dummyBidHistory)
-  const [loading, setLoading] = useState(false)
+  const [bidHistory, setBidHistory] = useState<Bid[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // In a real implementation, you would fetch the bid history from your API
-  // useEffect(() => {
-  //   const fetchBidHistory = async () => {
-  //     setLoading(true)
-  //     try {
-  //       const response = await fetch(`${BASE_URL}/bids/history/${USER_ID}`)
-  //       const data = await response.json()
-  //
-  //       if (data.status) {
-  //         setBidHistory(data.data)
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching bid history:", error)
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-  //
-  //   fetchBidHistory()
-  // }, [])
+  // Function to fetch data from the API
+  const fetchBidHistory = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/bids/user`)
+      if (response.data.status) {
+        setBidHistory(response.data.data)
+      } else {
+        setError("Failed to fetch bids.")
+      }
+    } catch (err) {
+      setError("An error occurred while fetching bids.")
+      console.log(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  console.log(bidHistory)
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    fetchBidHistory()
+  }, [])
 
   const getStatusColor = (status: string) => {
     if (status.startsWith("Win")) return "text-green-600"
     if (status.startsWith("Loss")) return "text-red-600"
     if (status.startsWith("Live")) return "text-blue-600"
     return ""
+  }
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>{error}</div>
   }
 
   return (
