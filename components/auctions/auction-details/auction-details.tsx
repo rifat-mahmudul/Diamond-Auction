@@ -93,7 +93,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         mutationFn: placeBid,
         onSuccess: (data) => {
             setBidAmount("");
-            console.log(data);
+            // console.log(data);
             queryClient.invalidateQueries({ queryKey: ["bidHistory"] });
         },
         onError: (err) => {

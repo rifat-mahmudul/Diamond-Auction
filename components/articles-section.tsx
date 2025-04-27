@@ -14,7 +14,9 @@ export function ArticlesSection() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch("http://localhost:5100/api/v1/admin/blogs/all");
+        const response = await fetch(
+          "http://localhost:5100/api/v1/admin/blogs/all"
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -23,7 +25,9 @@ export function ArticlesSection() {
         // Slice to get first 3 articles
         setArticles(res.data); // Get first 3 articles
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -31,7 +35,7 @@ export function ArticlesSection() {
 
     fetchArticles();
   }, []);
-  console.log(articles);
+  // console.log(articles);
 
   if (loading) {
     return <div className="container mt-24">Loading articles...</div>;
@@ -64,14 +68,9 @@ export function ArticlesSection() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {articles.slice(0, 3).map((article, index) => (
-            <ArticleCard
-              key={article._id}
-              article={article}
-              index={index}
-            />
+            <ArticleCard key={article._id} article={article} index={index} />
           ))}
         </div>
       </div>

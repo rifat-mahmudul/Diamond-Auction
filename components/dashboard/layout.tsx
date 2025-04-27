@@ -30,7 +30,8 @@ export default function Layout({ children }: LayoutProps) {
   const user = session?.user;
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/login" });
+    localStorage.clear();
+    signOut({ callbackUrl: "/login" });
   };
 
   return (

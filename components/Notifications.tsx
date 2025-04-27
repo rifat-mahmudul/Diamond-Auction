@@ -70,7 +70,7 @@ export default function NotificationsComponent() {
             }
 
             const data = await response.json()
-            console.log(data);
+            // console.log(data);
             
             // Map server response to match Notification interface
 

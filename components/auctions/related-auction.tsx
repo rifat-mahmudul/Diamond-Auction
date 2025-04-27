@@ -11,7 +11,6 @@ interface AuctionCategory {
 export default function RelatedAuction({ name }: AuctionCategory) {
     const {
         data: relatedAuctions,
-        status,
         error: errorRelatedAuctions,
     } = useQuery({
         queryKey: ["relatedAuctions"],
