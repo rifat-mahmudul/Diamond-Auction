@@ -84,7 +84,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <Card className="mb-8 bg-amber-50/50">
+      <Card className="mb-8 bg-[#eee5da] text-[#645949]">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
             <Avatar className="h-24 w-24 border-2 border-amber-200">
@@ -115,9 +115,9 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
+      <Card className="mb-8 bg-[#eee5da] p-8 text-[#645949]">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <h3 className="text-lg font-medium">Personal Information</h3>
+          <h3 className="text-xl font-bold mb-5">Personal Information</h3>
           <Button variant="outline" size="sm" asChild>
             <Link href="/accounts/settings">
               <Edit2 className="h-4 w-4 mr-2" /> Edit
@@ -150,9 +150,9 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-[#eee5da] p-8 text-[#645949]">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <h3 className="text-lg font-medium">Address</h3>
+          <h3 className="text-xl font-bold mb-5">Address</h3>
           <Button variant="outline" size="sm" asChild>
             <Link href="/accounts/settings">
               <Edit2 className="h-4 w-4 mr-2" /> Edit

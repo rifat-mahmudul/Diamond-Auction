@@ -119,12 +119,9 @@ export default function BidHistoryPage() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Bid History</CardTitle>
-      </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader className="bg-amber-100/50">
+        <Table className="">
+          <TableHeader className="bg-[#bcac98] text-black ">
             <TableRow>
               <TableHead>Auction Name</TableHead>
               <TableHead>SKU</TableHead>
@@ -134,7 +131,7 @@ export default function BidHistoryPage() {
               <TableHead className="text-right">View</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="bg-[#e7dfd3] ">
             {bidHistory.map((bid) => (
               <TableRow key={bid.id}>
                 <TableCell className="font-medium">{bid.auctionName}</TableCell>

@@ -1,6 +1,29 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useState } from "react"
 
 export default function PrivacyPolicyPage() {
+
+  const [privacyData, setPrivacyData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/policy`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjNkOGRlMTczNTI3NjI5NzQ2MGIiLCJpYXQiOjE3NDU2NjQ5MjUsImV4cCI6MTc0NjI2OTcyNX0.CqH9So7JTspw-P3l-W91lNMTn1gUTFRMkQm8siZIf2s`
+        }
+      });
+      const data = await response.json();
+
+      setPrivacyData(data.data);
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(privacyData)
+
   return (
     <Card>
       <CardHeader>
@@ -95,7 +118,7 @@ export default function PrivacyPolicyPage() {
           us remember your preferences, analyze site usage, and protect your data when you return to our site.
         </p>
 
-        <h3>Children's Privacy</h3>
+        <h3>Children&apos;s Privacy</h3>
         <p>
           Our site is not intended for children under the age of 13, and we do not knowingly collect personal
           information from children. If we become aware that we have inadvertently collected personal information from a
