@@ -15,6 +15,7 @@ import AuctionImageGallery from "./auction-image-gallery";
 import BidHistory from "./bid-history";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import RelatedAuction from "../related-auction";
 
 interface AuctionDetailsProps {
     auctionId: string;
@@ -56,6 +57,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     });
 
     const auction = auctionData?.data?.auction;
+
 
     // Handle bidding
     async function placeBid({ auctionId, amount }: PlaceBidParams) {
@@ -127,7 +129,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setBidAmount(event.target.value);
     };
-    
+
 
 
 
@@ -167,6 +169,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     if (!auction) {
         return <div>Auction not found.</div>;
     }
+
 
     return (
         <div className="space-y-8">
@@ -460,6 +463,9 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                     <BidHistory auctionId={auctionId} />
                 </TabsContent>
             </Tabs>
+
+
+            <RelatedAuction name={auction.category.name} />
         </div>
     );
 }
