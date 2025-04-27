@@ -1,6 +1,6 @@
 const BASE_URL = "http://localhost:5100/api/v1";
 const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDU1NzE0NjQsImV4cCI6MTc0NjE3NjI2NH0.z-1o55JULy7rIMdgNYq5jHuw61SWutMo-sY715WyG-M";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjU0ZDQxNTZiMWE2ZDIwMWVmZTkiLCJpYXQiOjE3NDU3Mjk3OTMsImV4cCI6MTc0NjMzNDU5M30._OnQBwQEQg5M49_TqsA0yNqp4WnSUTrg7r9w4EHTfYQ";
 
 // const token = cookies().get("refreshToken")?.value;
 
@@ -174,7 +174,7 @@ class ApiService {
   }
 
   async deleteCategory(id: string) {
-    return this.request(`/admin/categories/delete/${id}`, "DELETE");
+    return this.request(`/admin/categories/delate/${id}`, "DELETE");
   }
 
   // Blogs

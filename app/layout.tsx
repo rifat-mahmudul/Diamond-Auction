@@ -4,7 +4,6 @@ import "./globals.css";
 import AppProvider from "@/Provider/AppProvider";
 import LayoutShell from "./layout-shell";
 
-
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -22,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${roboto.className} antialiased`}
-      >
+      <body className={`${roboto.className} antialiased`}>
         <AppProvider>
           <LayoutShell>{children}</LayoutShell>
           {/* <ContactSection />

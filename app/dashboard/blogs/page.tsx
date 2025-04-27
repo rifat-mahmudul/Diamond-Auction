@@ -183,6 +183,8 @@ export default function BlogsPage() {
                           <Image
                             src="/placeholder.svg?height=40&width=40"
                             alt="Upload"
+                            width={40}
+                            height={40}
                           />
                         </div>
                         <p className="text-sm text-center text-muted-foreground">
@@ -255,6 +257,8 @@ export default function BlogsPage() {
                             src={blog.image || "/placeholder.svg"}
                             alt={blog.title}
                             className="w-16 h-12 object-cover rounded"
+                            width={40}
+                            height={40}
                           />
                           <div>
                             <h4 className="font-medium">{blog.title}</h4>
