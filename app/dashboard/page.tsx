@@ -31,6 +31,7 @@ export default function Dashboard() {
     bidders: 6020,
     liveAuctions: 20,
   });
+  console.log(setStats);
 
   console.log(setStats);
 

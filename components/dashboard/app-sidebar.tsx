@@ -26,11 +26,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
-interface AppSidebarProps {
-  isMobile?: boolean;
-}
+// interface AppSidebarProps {
+//   isMobile?: boolean;
+// }
+
+
+export function AppSidebar() {
 
 export function AppSidebar({  }: AppSidebarProps) {
+
   const pathname = usePathname();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 

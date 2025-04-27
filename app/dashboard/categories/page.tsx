@@ -22,6 +22,7 @@ import {
   useUpdateCategory,
 } from "@/hooks/use-queries";
 import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +34,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
 import Image from "next/image";
 
 interface Category {
@@ -177,12 +179,115 @@ export default function CategoriesPage() {
             <h1 className="text-2xl font-bold tracking-tight">Categories</h1>
             <p className="text-muted-foreground">Manage your Categories</p>
           </div>
+
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-[#6b614f] hover:bg-[#5c5343]">
+                <Plus className="mr-2 h-4 w-4" /> Add Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add Category</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAddCategory} className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Category Name</Label>
+                  <Input
+                    id="name"
+                    value={newCategory.name}
+                    onChange={(e) =>
+                      setNewCategory({ ...newCategory, name: e.target.value })
+                    }
+                    placeholder="Type category name here..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={newCategory.description}
+                    onChange={(e) =>
+                      setNewCategory({
+                        ...newCategory,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Type category description here..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="image">Thumbnail</Label>
+                  <div className="border rounded-md p-4">
+                    {previewUrl ? (
+                      <div className="flex flex-col items-center gap-4">
+                        <Image
+                          src={previewUrl || "/placeholder.svg"}
+                          alt="Preview"
+                          className="max-h-40 object-contain"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setPreviewUrl("");
+                            setNewCategory({ ...newCategory, image: null });
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
+                          <Image
+                            src="/placeholder.svg?height=40&width=40"
+                            alt="Upload"
+                          />
+                        </div>
+                        <p className="text-sm text-center text-muted-foreground">
+                          Drag and drop image here, or click add image
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() =>
+                            document.getElementById("image-upload")?.click()
+                          }
+                        >
+                          Add Image
+                        </Button>
+                        <input
+                          id="image-upload"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleImageChange}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    type="submit"
+                    className="bg-[#6b614f] hover:bg-[#5c5343]"
+                    disabled={createCategoryMutation.isPending}
+                  >
+                    {createCategoryMutation.isPending ? "Saving..." : "Save"}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
           <Button
             className="bg-[#6b614f] hover:bg-[#5c5343] gap-2"
             onClick={() => setIsAddDialogOpen(true)}
           >
             <Plus className="h-4 w-4" /> Add Category
           </Button>
+
         </div>
 
         {isLoading ? (
