@@ -6,6 +6,7 @@ import { apiService } from "@/lib/api-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingCart, Users, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useSession } from "next-auth/react";
 
 interface Auction {
   _id: string;
@@ -31,10 +32,25 @@ export default function Dashboard() {
     bidders: 6020,
     liveAuctions: 20,
   });
+  const session = useSession();
+  const user = session.data?.user;
+  console.log({ user });
+  // console.log(user?.accessToken, "access token");
+
+  useEffect(() => {
+    if (user?.accessToken) {
+      apiService.setToken(user.accessToken);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // if (user?.accessToken) {
+        //   const response = await apiService.setToken(user.accessToken);
+        // } else {
+        //   console.error("Access token is undefined");
+        // }
         const auctionsResponse = (await apiService.getAllAuctions()) as {
           status: string;
           data: Auction[];
@@ -59,7 +75,7 @@ export default function Dashboard() {
     <Layout>
       <div className="space-y-6 ">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
             Welcome back to your auction admin panel
           </p>

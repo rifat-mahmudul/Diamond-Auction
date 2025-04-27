@@ -70,7 +70,7 @@ export default function NotificationsComponent() {
             }
 
             const data = await response.json()
-            console.log(data);
+            // console.log(data);
             
             // Map server response to match Notification interface
 
@@ -164,7 +164,7 @@ export default function NotificationsComponent() {
             console.log("Connected to Socket.IO server")
         })
 
-        newSocket.on("connect_error", (err) => {
+        newSocket.on("connect_error", (err: Error) => {
             console.error("Socket.IO connection error:", err.message)
             setError("Failed to connect to notification server.")
         })
@@ -222,7 +222,7 @@ export default function NotificationsComponent() {
         return () => {
             newSocket.disconnect()
         }
-    }, [ ])
+    }, [])
 
     // Loading skeleton
     if (loading) {
