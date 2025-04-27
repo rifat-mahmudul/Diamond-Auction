@@ -1,7 +1,10 @@
 const BASE_URL = "http://localhost:5100/api/v1";
-const TOKEN =
+const token =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDU1NzE0NjQsImV4cCI6MTc0NjE3NjI2NH0.z-1o55JULy7rIMdgNYq5jHuw61SWutMo-sY715WyG-M";
 
+// const token = cookies().get("refreshToken")?.value;
+
+console.log({ token });
 export interface ApiResponse<T> {
   status: boolean | string;
   message: string;
@@ -20,8 +23,9 @@ class ApiService {
     data?: any
   ): Promise<ApiResponse<T>> {
     const url = `${BASE_URL}${endpoint}`;
+    console.log(token, "token");
     const headers: HeadersInit = {
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${token}`,
     };
 
     if (!(data instanceof FormData) && method !== "GET") {
@@ -132,11 +136,11 @@ class ApiService {
   }
 
   async acceptAuction(id: string) {
-    return this.request(`/admin/auctions/${id}/accept`, "PUT");
+    return this.request(`/admin/auctions/${id}/accept`, "POST");
   }
 
   async rejectAuction(id: string) {
-    return this.request(`/admin/auctions/${id}/reject`, "PUT");
+    return this.request(`/admin/auctions/${id}/reject`, "POST");
   }
 
   async deleteAuction(id: string) {

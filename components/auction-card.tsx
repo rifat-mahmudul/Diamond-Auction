@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Heart } from "lucide-react";
+import Link from "next/link";
 
 interface AuctionCardProps {
   image: string;
@@ -10,6 +11,9 @@ interface AuctionCardProps {
   currentBid?: string;
   timeLeft?: string;
   badges?: string | undefined;
+  auctionId?: string;
+  startTime : string;
+  endTime : string
 }
 
 export function AuctionCard({
@@ -17,16 +21,18 @@ export function AuctionCard({
   title,
   currentBid,
   badges,
+  auctionId
 }: AuctionCardProps) {
   return (
+    <Link href={`/auctions/${auctionId}`}>
     <Card className="overflow-hidden border-none bg-[#dfc5a2] p-2">
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-square overflow-hidden rounded-lg">
         <Image
           src={image || "/placeholder.svg"}
           alt={title}
           width={300}
           height={300}
-          className="h-full w-full mx-auto object-cover transition-transform duration-300 hover:scale-105"
+          className="h-full w-full mx-auto object-cover transition-transform duration-300 hover:scale-105 rounded-lg"
         />
         {badges && badges.length > 0 && (
           <div className="absolute left-2 top-2 flex flex-wrap gap-1">
@@ -105,6 +111,6 @@ export function AuctionCard({
           Bid now
         </Button>
       </CardFooter>
-    </Card>
+    </Card></Link>
   );
 }

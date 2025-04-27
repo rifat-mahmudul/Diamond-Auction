@@ -33,6 +33,8 @@ export default function Dashboard() {
   });
   console.log(setStats);
 
+  console.log(setStats);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

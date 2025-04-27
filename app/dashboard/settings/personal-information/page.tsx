@@ -2,6 +2,7 @@
 
 import type React from "react"
 
+
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -13,6 +14,20 @@ import { Pencil } from "lucide-react"
 import Layout from "@/components/dashboard/layout"
 import { toast } from "sonner"
 import Image from "next/image"
+
+import { useState, useEffect } from "react";
+import Layout from "@/components/dashboard/layout";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useUserProfile, useUpdateUserProfile } from "@/hooks/use-queries";
+import Image from "next/image";
+
+// Mock user ID - in a real app, you would get this from auth context
+const USER_ID = "6805c5f4ce1d5ee574941f39";
+
 
 export default function PersonalInformationPage() {
   const session = useSession()
@@ -268,6 +283,7 @@ export default function PersonalInformationPage() {
               />
             </div>
 
+
             <div className="flex items-center gap-4">
         
               <Button
@@ -278,6 +294,44 @@ export default function PersonalInformationPage() {
               >
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
+
+            <div className="space-y-2">
+              <Label>Profile Image</Label>
+              <div className="flex items-start gap-4">
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                  {previewUrl ? (
+                    <Image
+                      src={previewUrl || "/placeholder.svg"}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-500">No Image</span>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() =>
+                      document.getElementById("profile-image")?.click()
+                    }
+                  >
+                    Change Image
+                  </Button>
+                  <input
+                    id="profile-image"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Recommended: Square image, at least 300x300px
+                  </p>
+                </div>
+              </div>
+
             </div>
           </form>
         </div>
