@@ -26,12 +26,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
-// interface AppSidebarProps {
-//   isMobile?: boolean;
-// }
+interface AppSidebarProps {
+  isMobile?: boolean;
+}
 
 
-export function AppSidebar() {
+
 
 export function AppSidebar({  }: AppSidebarProps) {
 
@@ -42,11 +42,7 @@ export function AppSidebar({  }: AppSidebarProps) {
     return pathname === path;
   };
 
-  // const handleLogout = () => {
-  //   // Handle logout logic here
-  //   setIsLogoutDialogOpen(false);
-  //   // Redirect to login page or perform other logout actions
-  // };
+
 
   return (
     <>
