@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useUserProfile, useUpdateUserProfile } from "@/hooks/use-queries";
+import Image from "next/image";
 
 // Mock user ID - in a real app, you would get this from auth context
 const USER_ID = "6805c5f4ce1d5ee574941f39";
@@ -177,7 +178,7 @@ export default function PersonalInformationPage() {
               <div className="flex items-start gap-4">
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                   {previewUrl ? (
-                    <img
+                    <Image
                       src={previewUrl || "/placeholder.svg"}
                       alt="Profile"
                       className="w-full h-full object-cover"

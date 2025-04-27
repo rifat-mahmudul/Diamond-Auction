@@ -30,7 +30,7 @@ interface AppSidebarProps {
   isMobile?: boolean;
 }
 
-export function AppSidebar({ isMobile = false }: AppSidebarProps) {
+export function AppSidebar({  }: AppSidebarProps) {
   const pathname = usePathname();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
@@ -38,11 +38,11 @@ export function AppSidebar({ isMobile = false }: AppSidebarProps) {
     return pathname === path;
   };
 
-  const handleLogout = () => {
-    // Handle logout logic here
-    setIsLogoutDialogOpen(false);
-    // Redirect to login page or perform other logout actions
-  };
+  // const handleLogout = () => {
+  //   // Handle logout logic here
+  //   setIsLogoutDialogOpen(false);
+  //   // Redirect to login page or perform other logout actions
+  // };
 
   return (
     <>

@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Image from "next/image";
 
 interface Category {
   _id: string;
@@ -212,7 +213,7 @@ export default function CategoriesPage() {
                   <tr key={category._id} className="hover:bg-gray-50">
                     <td className="p-4">
                       <div className="h-16 w-16 rounded overflow-hidden bg-gray-100">
-                        <img
+                        <Image
                           src={category.image || "/placeholder.svg"}
                           alt={category.name}
                           className="h-full w-full object-cover"
@@ -381,7 +382,7 @@ export default function CategoriesPage() {
               <div className="border rounded-md p-4">
                 {previewUrl ? (
                   <div className="flex flex-col items-center gap-4">
-                    <img
+                    <Image
                       src={previewUrl || "/placeholder.svg"}
                       alt="Preview"
                       className="max-h-40 object-contain"
@@ -400,7 +401,7 @@ export default function CategoriesPage() {
                 ) : (
                   <div className="flex flex-col items-center gap-2">
                     <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                      <img
+                      <Image
                         src="/placeholder.svg?height=40&width=40"
                         alt="Upload"
                       />
@@ -481,7 +482,7 @@ export default function CategoriesPage() {
                 <Label htmlFor="edit-image">Thumbnail</Label>
                 <div className="border rounded-md p-4">
                   <div className="flex flex-col items-center gap-4">
-                    <img
+                    <Image
                       src={editPreviewUrl || "/placeholder.svg"}
                       alt="Preview"
                       className="max-h-40 object-contain"
