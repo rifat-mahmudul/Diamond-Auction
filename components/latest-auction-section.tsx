@@ -1,76 +1,42 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { SectionHeader } from "@/components/section-header"
 import { AuctionCard } from "@/components/auction-card"
 import { MoveRight } from "lucide-react"
+import { useEffect, useState } from "react"
 
-const auctions = [
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-  {
-    id: 5,
-    image: "/assets/CartImg.png?height=300&width=300",
-    title: "Classic and timeless",
-    currentBid: "$6,300",
-    timeLeft: "5h 10m",
-    badges: "live",
-  },
-]
+interface AuctionItem {
+  _id: number;
+  images: string[];
+  title: string;
+  currentBid: string;
+  startTime : string;
+  endTime: string;
+  badges?: string[];
+  auctionId : string
+}
 
 export function LatestAuctionSection() {
+
+  const [latestData, setLatestData] = useState<AuctionItem[]>([]);
+
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auctions/get-latest-auctions`, {
+            method: "GET",
+          });
+  
+          const data = await response.json();
+          setLatestData(data.data);
+        } catch (error) {
+          console.error("Failed to fetch privacy policy:", error);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
   return (
     <section className="container mt-24">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -81,14 +47,15 @@ export function LatestAuctionSection() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {auctions.map((auction) => (
+        {latestData && latestData.slice(0,8).map((auction : AuctionItem) => (
           <AuctionCard
-            key={auction.id}
-            image={auction.image}
+            key={auction._id}
+            image={auction.images[0]}
             title={auction.title}
             currentBid={auction.currentBid}
-            timeLeft={auction.timeLeft}
-            badges={auction.badges}
+            startTime={auction.startTime}
+            endTime={auction.endTime}
+            auctionId={(auction._id).toString()}
           />
         ))}
       </div>

@@ -1,157 +1,197 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// "use client"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { useEffect, useState } from "react"
 
-export default function TermsPage() {
+// export default function PrivacyPolicyPage() {
+
+//   const [privacyData, setPrivacyData] = useState([]);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/policy`, {
+//         method: "GET",
+//         headers: {
+//           Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjNkOGRlMTczNTI3NjI5NzQ2MGIiLCJpYXQiOjE3NDU2NjQ5MjUsImV4cCI6MTc0NjI2OTcyNX0.CqH9So7JTspw-P3l-W91lNMTn1gUTFRMkQm8siZIf2s`
+//         }
+//       });
+//       const data = await response.json();
+
+//       setPrivacyData(data.data);
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   console.log(privacyData)
+
+//   return (
+//     <Card>
+//       <CardHeader>
+//         <CardTitle>Privacy Policy</CardTitle>
+//       </CardHeader>
+//       <CardContent className="prose max-w-none">
+//         <p>
+//           At Dimond, we value and respect your privacy. This Privacy Policy explains how we collect, use, disclose, and
+//           safeguard your personal information when you visit our site and use our services.
+//         </p>
+//         <p>
+//           By using our website, you agree to the practices described in this Privacy Policy. Please read it carefully to
+//           understand our views and practices regarding your personal information.
+//         </p>
+
+//         <h3>Information We Collect</h3>
+//         <p>We collect various types of information to provide and improve our auction services, including:</p>
+//         <ul>
+//           <li>
+//             Personal Information: When you create an account, place a bid, or contact us, we may collect your name,
+//             email address, phone number, billing address, shipping address, and payment details.
+//           </li>
+//           <li>
+//             Bidding Information: We collect details about your bidding activity, including bids placed, items purchased,
+//             and payment history.
+//           </li>
+//           <li>
+//             Device and Technical Information: When you access our site, we may collect your IP address, browser type,
+//             device type, and other technical information.
+//           </li>
+//           <li>
+//             Cookies and Tracking Technologies: We use cookies, web beacons, and other tracking technologies to enhance
+//             your experience and collect information about how you use our site.
+//           </li>
+//         </ul>
+
+//         <h3>How We Use Your Information</h3>
+//         <p>We use the information we collect to:</p>
+//         <ul>
+//           <li>
+//             Provide and manage the auction services, including processing bids, managing payments, and shipping orders.
+//           </li>
+//           <li>Communicate with you about your account, bids, and purchases.</li>
+//           <li>Personalize your experience on our site and recommend relevant products or auctions.</li>
+//           <li>Ensure compliance with our terms of service, legal obligations, and prevent fraud.</li>
+//         </ul>
+
+//         <h3>How We Share Your Information</h3>
+//         <p>We may share your data with:</p>
+//         <ul>
+//           <li>
+//             Service Providers: We may share your data with trusted third-party service providers who assist us in
+//             operating the Site, processing payments, and fulfilling orders.
+//           </li>
+//           <li>
+//             Legal Requirements: We may disclose your personal information in response to a legal or regulatory request,
+//             court order, or government request.
+//           </li>
+//           <li>
+//             Business Transfers: In the event of a merger, acquisition, or sale of assets, your personal information may
+//             be transferred as part of the transaction.
+//           </li>
+//         </ul>
+
+//         <h3>Data Security</h3>
+//         <p>
+//           We take the security of your personal information seriously and use industry-standard security measures to
+//           protect it. However, no data transmission over the internet is completely secure, and we cannot guarantee the
+//           absolute security of your information.
+//         </p>
+
+//         <h3>Your Rights</h3>
+//         <p>Depending on your location, you may have certain rights regarding your personal data, including:</p>
+//         <ul>
+//           <li>The right to access your personal information</li>
+//           <li>The right to delete your personal information, subject to legal and contractual obligations</li>
+//           <li>The right to withdraw consent where we process your information based on consent</li>
+//           <li>The right to object to certain processing of your information</li>
+//         </ul>
+//         <p>If you wish to exercise any of these rights, please contact us at [contact@example.com].</p>
+
+//         <h3>Data Retention</h3>
+//         <p>
+//           We retain your personal information for as long as necessary to provide services, comply with legal
+//           obligations, and resolve disputes. Once your data is no longer needed, we will securely delete or anonymize
+//           it.
+//         </p>
+
+//         <h3>Cookies</h3>
+//         <p>
+//           We use cookies to enhance your browsing experience. A cookie is a small file stored on your device that helps
+//           us remember your preferences, analyze site usage, and protect your data when you return to our site.
+//         </p>
+
+//         <h3>Children&apos;s Privacy</h3>
+//         <p>
+//           Our site is not intended for children under the age of 13, and we do not knowingly collect personal
+//           information from children. If we become aware that we have inadvertently collected personal information from a
+//           child under 13, we will take steps to delete that information.
+//         </p>
+
+//         <h3>Changes to This Privacy Policy</h3>
+//         <p>
+//           We may update this Privacy Policy from time to time. Any changes will be posted on this page, and the
+//           "Effective Date" at the top will be updated. We encourage you to review this policy periodically to stay
+//           informed about how we protect your data.
+//         </p>
+//       </CardContent>
+//     </Card>
+//   )
+// }
+
+"use client"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react"
+
+interface PolicySection {
+  _id: string;
+  text: string;
+}
+
+export default function PrivacyPolicyPage() {
+
+  const [privacyData, setPrivacyData] = useState<PolicySection[]>([]);
+  const session = useSession();
+  const token = session?.data?.accessToken;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/terms`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+        setPrivacyData(data.data);
+      } catch (error) {
+        console.error("Failed to fetch privacy policy:", error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  console.log(privacyData);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Terms & Conditions</CardTitle>
+        <CardTitle>Privacy Policy</CardTitle>
       </CardHeader>
-      <CardContent className="prose max-w-none">
-        <p>
-          Welcome to Dimond! By accessing and using our website (dimond.com) and purchasing our products, you agree to
-          comply with and be bound by the following terms and conditions. Please read them carefully. If you do not
-          agree with these terms, please do not use the site or make a purchase.
-        </p>
-
-        <h3>Eligibility</h3>
-        <p>
-          You must be at least 18 years old and legally able to enter into contracts to use our Site. By using the Site,
-          you represent and warrant that you meet these eligibility requirements.
-        </p>
-
-        <h3>Account Registration</h3>
-        <p>
-          To participate in auctions and place bids, you must create an account on our Site. When registering, you agree
-          to:
-        </p>
-        <ul>
-          <li>Provide accurate and complete information</li>
-          <li>
-            Maintain the confidentiality of your account credentials and notify us immediately of any unauthorized
-            access to your account
-          </li>
-          <li>Be responsible for all activities that occur under your account</li>
-        </ul>
-
-        <h3>Auctions & Bidding</h3>
-        <p>
-          All auctions on our Site are conducted in real-time or at scheduled times, depending on the auction type. You
-          can place bids on items by:
-        </p>
-        <ul>
-          <li>
-            Bidding Rules: By placing a bid, you are making a legally binding offer to purchase the item. If you have
-            the highest bid when the auction ends, you are required to complete the purchase.
-          </li>
-          <li>
-            Bid Cancellation: Once placed, bids cannot be canceled or withdrawn. If you are the winning bidder, you are
-            obligated to pay the bid amount.
-          </li>
-          <li>
-            Reserve Price: Some items may have a reserve price. If the bidding does not meet the reserve price, we may
-            cancel the transaction.
-          </li>
-        </ul>
-
-        <h3>Winning Bid and Payment</h3>
-        <p>
-          Payment: If you win an auction, you agree to pay the bid amount plus any applicable taxes, fees, and shipping
-          costs. Payments must be made through the methods specified on the Site.
-        </p>
-        <p>
-          Failure to Pay: If you fail to make the required payment within the specified time, we may cancel the
-          transaction, and you may be subject to penalties, including suspension from future auctions.
-        </p>
-
-        <h3>Fees</h3>
-        <ul>
-          <li>
-            Listing Fees: Sellers may be required to pay a fee to list an item for auction on our Site. These fees are
-            outlined in our fee schedule available on the Site.
-          </li>
-          <li>
-            Transaction Fees: We may charge a transaction fee based on the final auction value, which will be specified
-            at the time of the auction.
-          </li>
-        </ul>
-
-        <h3>Seller Responsibilities</h3>
-        <ul>
-          <li>
-            Item Description: Sellers must provide accurate and honest descriptions of the items they list for auction,
-            including clear details about condition, defects, and authenticity.
-          </li>
-          <li>
-            Shipping: Sellers are responsible for shipping the items to the winning bidder within the timeframe
-            specified on the Site.
-          </li>
-          <li>
-            Customer Service: Sellers must provide satisfactory customer service and resolve any disputes related to
-            their items in a fair and timely manner.
-          </li>
-        </ul>
-
-        <h3>Prohibited Activities</h3>
-        <p>You agree not to:</p>
-        <ul>
-          <li>Violate any applicable laws or regulations</li>
-          <li>
-            Engage in fraudulent activities, including placing fake bids, creating multiple accounts to manipulate
-            auction outcomes, or misrepresenting items for sale.
-          </li>
-          <li>Interfere with or disrupt the Site's functionality or security.</li>
-        </ul>
-
-        <h3>Intellectual Property</h3>
-        <p>
-          Ownership: All content on the Site, including text, graphics, logos, images, and software, is the property of
-          [Your Website Name] or our licensors and is protected by copyright, trademark, and other intellectual property
-          laws.
-        </p>
-        <p>
-          Limited License: We grant you a limited, non-exclusive, non-transferable license to access and use the Site
-          for its intended purpose.
-        </p>
-
-        <h3>Privacy</h3>
-        <p>
-          Your use of the Site is also governed by our Privacy Policy, which outlines how we collect, use, and protect
-          your personal information.
-        </p>
-
-        <h3>Limitation of Liability</h3>
-        <p>
-          To the fullest extent permitted by law, [Your Website Name] shall not be liable for any direct, indirect,
-          incidental, special, or consequential damages arising from your use of the Site or any items purchased through
-          the Site.
-        </p>
-
-        <h3>Dispute Resolution</h3>
-        <p>
-          Any disputes arising out of or related to these Terms and your use of the Site will be resolved through
-          binding arbitration in accordance with the laws of [Your Country/State]. You agree to waive the right to
-          participate in class actions, class arbitrations, or any other proceedings involving multiple parties.
-        </p>
-
-        <h3>Termination</h3>
-        <p>
-          We reserve the right to suspend or terminate your access to the Site at our discretion, without notice, for
-          violations of these Terms or any other reason. If your account is terminated, any pending transactions or
-          obligations will remain enforceable.
-        </p>
-
-        <h3>Changes to These Terms</h3>
-        <p>
-          We may update these Terms from time to time. The most current version will always be available on this page.
-          By continuing to use the Site after changes are posted, you agree to be bound by the updated Terms.
-        </p>
-
-        <h3>Governing Law</h3>
-        <p>
-          These Terms are governed by and construed in accordance with the laws of [Your Country/State]. Any legal
-          action or proceeding related to these Terms must be brought in the competent courts located in [Location].
-        </p>
+      <CardContent className="prose max-w-non mt-5">
+        {privacyData.length === 0 ? (
+          <p>Loading privacy policy...</p>
+        ) : (
+          privacyData.map((section) => (
+            <div key={section._id} className="mb-6">
+              <p>{section.text}</p>
+            </div>
+          ))
+        )}
       </CardContent>
     </Card>
-  )
+  );
 }
+

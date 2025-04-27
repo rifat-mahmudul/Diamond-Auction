@@ -11,7 +11,8 @@ interface AuctionItem {
   images: string[];
   title: string;
   currentBid: string;
-  timeLeft: string;
+  startTime : string;
+  endTime: string;
   badges?: string[];
 }
 
@@ -25,7 +26,7 @@ export function LiveAuctionSection() {
   const {data : liveAuctionData = []} = useQuery({
     queryKey : ["live-auction"],
     queryFn : async () => {
-      const {data} = await axiosInstance.get(`/auctions/get-all-auctions`);
+      const {data} = await axiosInstance.get(`/auctions/get-live-auctions`);
       return data.data;
     }, 
   })
@@ -40,6 +41,8 @@ export function LiveAuctionSection() {
 
   const visibleAuctions = liveAuctionData.slice(currentIndex, currentIndex + itemsToShow)
 
+  console.log(visibleAuctions)
+
   return (
     <section className="container">
       <SectionHeader title="Live Auction" showControls={true} onPrev={handlePrev} onNext={handleNext} />
@@ -51,7 +54,8 @@ export function LiveAuctionSection() {
             image={auction.images[0]}
             title={auction.title}
             currentBid={auction.currentBid}
-            timeLeft={auction.timeLeft}
+            startTime={auction.startTime}
+            endTime={auction.endTime}
           />
         ))}
       </div>
