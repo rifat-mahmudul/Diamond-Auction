@@ -105,7 +105,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
   }
 
   return (
-    <div className="flex items-center justify-end space-x-2 py-4">
+    <div className="flex items-center justify-between py-4 px-5">
       <div className="text-sm text-muted-foreground">Showing 1 to 5 of 12 results</div>
       <div className="flex items-center space-x-2">
         <Button
