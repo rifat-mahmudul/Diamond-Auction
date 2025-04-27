@@ -4,7 +4,6 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
-import { apiService } from "@/lib/api-service";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import {
@@ -29,7 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import { useAllBlogs, useCreateBlog, useDeleteBlog } from "@/hooks/use-queries";
 import Image from "next/image";
 
 interface Blog {
@@ -42,8 +41,11 @@ interface Blog {
 }
 
 export default function BlogsPage() {
+  const { data: blogsData, isLoading } = useAllBlogs();
+  const createBlogMutation = useCreateBlog();
+  const deleteBlogMutation = useDeleteBlog();
+
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -54,25 +56,12 @@ export default function BlogsPage() {
   });
   const [previewUrl, setPreviewUrl] = useState("");
 
-  const fetchBlogs = async () => {
-    setIsLoading(true);
-    try {
-      const response = await apiService.getAllBlogs();
-      if (response.status === true && response.data) {
-        setBlogs(response.data as Blog[]);
-        setTotalPages(response.totalPages || 1);
-      }
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-      toast.error("Failed to fetch blogs");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchBlogs();
-  }, [currentPage]);
+    if (blogsData?.data) {
+      setBlogs(blogsData.data as Blog[]);
+      setTotalPages(blogsData.totalPages || 1);
+    }
+  }, [blogsData]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -92,7 +81,6 @@ export default function BlogsPage() {
     e.preventDefault();
 
     if (!newBlog.title || !newBlog.content || !newBlog.image) {
-      toast.error("Please fill all fields and upload an image");
       return;
     }
 
@@ -101,32 +89,17 @@ export default function BlogsPage() {
     formData.append("content", newBlog.content);
     formData.append("image", newBlog.image);
 
-    try {
-      const response = await apiService.createBlog(formData);
-      if (response.status === true) {
-        toast.success("Blog added successfully");
+    createBlogMutation.mutate(formData, {
+      onSuccess: () => {
         setIsAddDialogOpen(false);
         setNewBlog({ title: "", content: "", image: null });
         setPreviewUrl("");
-        fetchBlogs();
-      }
-    } catch (error) {
-      console.error("Error adding blog:", error);
-      toast.error("Failed to add blog");
-    }
+      },
+    });
   };
 
   const handleDeleteBlog = async (id: string) => {
-    try {
-      const response = await apiService.deleteBlog(id);
-      if (response.status === true) {
-        toast.success("Blog deleted successfully");
-        fetchBlogs();
-      }
-    } catch (error) {
-      console.error("Error deleting blog:", error);
-      toast.error("Failed to delete blog");
-    }
+    deleteBlogMutation.mutate(id);
   };
 
   const formatDate = (dateString: string) => {
@@ -192,7 +165,6 @@ export default function BlogsPage() {
                           src={previewUrl || "/placeholder.svg"}
                           alt="Preview"
                           className="max-h-40 object-contain"
-                          fill
                         />
                         <Button
                           type="button"
@@ -211,8 +183,6 @@ export default function BlogsPage() {
                           <Image
                             src="/placeholder.svg?height=40&width=40"
                             alt="Upload"
-                            fill
-                            className="object-cover "
                           />
                         </div>
                         <p className="text-sm text-center text-muted-foreground">
@@ -244,8 +214,9 @@ export default function BlogsPage() {
                   <Button
                     type="submit"
                     className="bg-[#6b614f] hover:bg-[#5c5343]"
+                    disabled={createBlogMutation.isPending}
                   >
-                    Save
+                    {createBlogMutation.isPending ? "Saving..." : "Save"}
                   </Button>
                 </div>
               </form>
@@ -254,87 +225,95 @@ export default function BlogsPage() {
         </div>
 
         <div className="rounded-md border">
-          <table className="w-full">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="text-left p-4">Blog Name</th>
-                <th className="text-left p-4">Added</th>
-                <th className="text-left p-4">Comments</th>
-                <th className="text-left p-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {blogs.length === 0 ? (
+          {isLoading ? (
+            <div className="p-8 flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-muted/50">
                 <tr>
-                  <td colSpan={4} className="text-center py-4">
-                    No blogs found
-                  </td>
+                  <th className="text-left p-4">Blog Name</th>
+                  <th className="text-left p-4">Added</th>
+                  <th className="text-left p-4">Comments</th>
+                  <th className="text-left p-4">Actions</th>
                 </tr>
-              ) : (
-                blogs.map((blog) => (
-                  <tr key={blog._id} className="border-t">
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src={blog.image || "/placeholder.svg"}
-                          alt={blog.title}
-                          className="w-16 h-12 object-cover rounded"
-                        />
-                        <div>
-                          <h4 className="font-medium">{blog.title}</h4>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {blog.content}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4">{formatDate(blog.createdAt)}</td>
-                    <td className="p-4">{blog.commentCount || 150}</td>
-                    <td className="p-4">
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete the blog post.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDeleteBlog(blog._id)}
-                                className="bg-red-500 hover:bg-red-700"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+              </thead>
+              <tbody>
+                {blogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-4">
+                      No blogs found
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  blogs.map((blog) => (
+                    <tr key={blog._id} className="border-t">
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={blog.image || "/placeholder.svg"}
+                            alt={blog.title}
+                            className="w-16 h-12 object-cover rounded"
+                          />
+                          <div>
+                            <h4 className="font-medium">{blog.title}</h4>
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {blog.content}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4">{formatDate(blog.createdAt)}</td>
+                      <td className="p-4">{blog.commentCount || 150}</td>
+                      <td className="p-4">
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-blue-500 hover:text-blue-700"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete the blog post.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteBlog(blog._id)}
+                                  className="bg-red-500 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <Pagination

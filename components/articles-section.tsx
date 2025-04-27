@@ -1,67 +1,79 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ArticleCard } from "@/components/article-card";
 import { MoveRight } from "lucide-react";
-
-const articles = [
-  {
-    id: 1,
-    image: "/assets/manCard.png",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros.",
-    href: "/blog/article-1",
-  },
-  {
-    id: 2,
-    image: "/assets/manCard.png",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros.",
-    href: "/blog/article-2",
-  },
-  {
-    id: 3,
-    image: "/assets/manCard.png",
-    title: "Lorem ipsum dolor sit amet",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros.",
-    href: "/blog/article-3",
-  },
-];
+import { useEffect, useState } from "react";
+import { Blog } from "@/app/blog/_components/type";
+import Link from "next/link";
 
 export function ArticlesSection() {
+  const [articles, setArticles] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await fetch("http://localhost:5100/api/v1/admin/blogs/all");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const res = await response.json();
+        // Assuming the API returns an array of articles
+        // Slice to get first 3 articles
+        setArticles(res.data); // Get first 3 articles
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
+  console.log(articles);
+
+  if (loading) {
+    return <div className="container mt-24">Loading articles...</div>;
+  }
+
+  if (error) {
+    return <div className="container mt-24">Error: {error}</div>;
+  }
+
   return (
     <section className="container mt-24">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-7 items-center mb-8">
           <h1 className="text-2xl font-bold tracking-tight md:text-5xl mt-2 col-span-3">
-            Exploring Our Article
+            Exploring Our Articles
           </h1>
-          <p className=" col-span-3">
+          <p className="col-span-3">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
             hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio.
           </p>
 
           <div className="col-span-1 text-end">
-            <Button
-              className="bg-[#645949]"
-            >
-              Explore All <MoveRight />
-            </Button>
+            <Link href="/blog">
+              <Button className="bg-[#645949]">
+                Explore All <MoveRight />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-        {articles.map((article) => (
-          <ArticleCard
-            key={article.id}
-            image={article.image}
-            title={article.title}
-            description={article.description}
-            href={article.href}
-          />
-        ))}
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {articles.slice(0, 3).map((article, index) => (
+            <ArticleCard
+              key={article._id}
+              article={article}
+              index={index}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

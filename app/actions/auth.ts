@@ -60,27 +60,27 @@ export async function loginUser(credentials: {
 
     const data = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok || !data.status) {
       return {
         success: false,
         message: data.message || "Login failed",
       };
     }
 
-    // Store tokens in cookies
+    // Optional: Store refreshToken in cookie if needed
     const cookieStore = cookies();
-    console.log(data.refreshToken,"response ref")
     cookieStore.set("refreshToken", data.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
+      maxAge: 60 * 60 * 24 * 7, // 7 days
       path: "/",
     });
 
     return {
       success: true,
-      data: data.data,
-      token: data.token,
+      data: data.data, // user info
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
     };
   } catch (error) {
     console.error("Login error:", error);

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
-import { apiService } from "@/lib/api-service";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -26,7 +25,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
-import { toast } from "sonner";
+import {
+  useActiveAuctions,
+  usePendingAuctions,
+  useScheduledAuctions,
+  useEndedAuctions,
+  useAcceptAuction,
+  useRejectAuction,
+  useDeleteAuction,
+} from "@/hooks/use-queries";
 
 interface Auction {
   _id: string;
@@ -55,47 +62,31 @@ export default function AuctionsPage() {
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchAuctions = async () => {
-    setIsLoading(true);
-    try {
-      let response;
-      switch (activeTab) {
-        case "active":
-          response = await apiService.getActiveAuctions();
-          break;
-        case "pending":
-          response = await apiService.getPendingAuctions();
-          break;
-        case "scheduled":
-          response = await apiService.getScheduledAuctions();
-          break;
-        case "end":
-          response = await apiService.getEndedAuctions();
-          break;
-        default:
-          response = await apiService.getAllAuctions();
-      }
+  // TanStack Query hooks
+  const activeAuctionsQuery = useActiveAuctions();
+  const pendingAuctionsQuery = usePendingAuctions();
+  const scheduledAuctionsQuery = useScheduledAuctions();
+  const endedAuctionsQuery = useEndedAuctions();
 
-      if (
-        (response.status === true || response.status === "success") &&
-        response.data
-      ) {
-        setAuctions(response.data as Auction[]);
-        setTotalPages(response.totalPages || 1);
-      }
-    } catch (error) {
-      console.error("Error fetching auctions:", error);
-      toast.error("Failed to fetch auctions");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const acceptAuctionMutation = useAcceptAuction();
+  const rejectAuctionMutation = useRejectAuction();
+  const deleteAuctionMutation = useDeleteAuction();
+
+  // Determine which query to use based on active tab
+  const currentQuery = {
+    active: activeAuctionsQuery,
+    pending: pendingAuctionsQuery,
+    scheduled: scheduledAuctionsQuery,
+    end: endedAuctionsQuery,
+  }[activeTab] as typeof activeAuctionsQuery;
 
   useEffect(() => {
-    fetchAuctions();
-  }, [activeTab, currentPage]);
+    if (currentQuery?.data?.data) {
+      setAuctions(currentQuery.data.data as Auction[]);
+      setTotalPages(currentQuery.data.totalPages || 1);
+    }
+  }, [currentQuery?.data, activeTab]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -107,42 +98,15 @@ export default function AuctionsPage() {
   };
 
   const handleAcceptAuction = async (id: string) => {
-    try {
-      const response = await apiService.acceptAuction(id);
-      if (response.status === true) {
-        toast.success("Auction accepted successfully");
-        fetchAuctions();
-      }
-    } catch (error) {
-      console.error("Error accepting auction:", error);
-      toast.error("Failed to accept auction");
-    }
+    acceptAuctionMutation.mutate(id);
   };
 
   const handleRejectAuction = async (id: string) => {
-    try {
-      const response = await apiService.rejectAuction(id);
-      if (response.status === true) {
-        toast.success("Auction rejected successfully");
-        fetchAuctions();
-      }
-    } catch (error) {
-      console.error("Error rejecting auction:", error);
-      toast.error("Failed to reject auction");
-    }
+    rejectAuctionMutation.mutate(id);
   };
 
   const handleDeleteAuction = async (id: string) => {
-    try {
-      const response = await apiService.deleteAuction(id);
-      if (response.status === true) {
-        toast.success("Auction deleted successfully");
-        fetchAuctions();
-      }
-    } catch (error) {
-      console.error("Error deleting auction:", error);
-      toast.success("Failed to delete auction");
-    }
+    deleteAuctionMutation.mutate(id);
   };
 
   const formatDate = (dateString: string) => {
@@ -154,6 +118,8 @@ export default function AuctionsPage() {
       date.getHours()
     ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}PM`;
   };
+
+  const isLoading = currentQuery?.isLoading;
 
   return (
     <Layout>
@@ -169,28 +135,28 @@ export default function AuctionsPage() {
           onValueChange={handleTabChange}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9]">
+          <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16">
             <TabsTrigger
               value="active"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               Active
             </TabsTrigger>
             <TabsTrigger
               value="pending"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               Pending
             </TabsTrigger>
             <TabsTrigger
               value="scheduled"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               Scheduled
             </TabsTrigger>
             <TabsTrigger
               value="end"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
             >
               End
             </TabsTrigger>
@@ -201,6 +167,7 @@ export default function AuctionsPage() {
               auctions={auctions}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
 
@@ -211,6 +178,7 @@ export default function AuctionsPage() {
               onReject={handleRejectAuction}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
 
@@ -219,6 +187,7 @@ export default function AuctionsPage() {
               auctions={auctions}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
 
@@ -227,6 +196,7 @@ export default function AuctionsPage() {
               auctions={auctions}
               onDelete={handleDeleteAuction}
               formatDate={formatDate}
+              isLoading={isLoading}
             />
           </TabsContent>
         </Tabs>
@@ -245,23 +215,37 @@ interface AuctionsTableProps {
   auctions: Auction[];
   onDelete: (id: string) => void;
   formatDate: (date: string) => string;
+  isLoading?: boolean;
 }
 
-function AuctionsTable({ auctions, onDelete, formatDate }: AuctionsTableProps) {
+function AuctionsTable({
+  auctions,
+  onDelete,
+  formatDate,
+  isLoading,
+}: AuctionsTableProps) {
+  if (isLoading) {
+    return (
+      <div className="rounded-md border p-8 flex justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Auction</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Seller</TableHead>
-            <TableHead>Start Date</TableHead>
-            <TableHead>End Date</TableHead>
-            <TableHead>Current Bid</TableHead>
-            <TableHead>Bids</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="bg-[#F9FAFB] h-14 border-none">
+            <TableHead className="text-center">Auction</TableHead>
+            <TableHead className="text-center">Category</TableHead>
+            <TableHead className="text-center">SKU</TableHead>
+            <TableHead className="text-center">Seller</TableHead>
+            <TableHead className="text-center">Start Date</TableHead>
+            <TableHead className="text-center">End Date</TableHead>
+            <TableHead className="text-center">Current Bid</TableHead>
+            <TableHead className="text-center">Bids</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -273,14 +257,15 @@ function AuctionsTable({ auctions, onDelete, formatDate }: AuctionsTableProps) {
             </TableRow>
           ) : (
             auctions.map((auction) => (
-              <TableRow key={auction._id}>
+              <TableRow key={auction._id} className="text-center h-16 !border-b">
                 <TableCell className="font-medium">
-                  Classic and timeless
+                  {auction.title}
                 </TableCell>
-                <TableCell>Round Brilliant</TableCell>
+                <TableCell>{auction.category?.name}</TableCell>
                 <TableCell>{auction.sku || "#212-121"}</TableCell>
                 <TableCell>
-                  {auction.seller?.displayName || `Mr. John #2561`}
+                  <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
+                  #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
                 </TableCell>
                 <TableCell>
                   {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
@@ -335,27 +320,39 @@ interface PendingAuctionsTableProps extends AuctionsTableProps {
   onReject: (id: string) => void;
 }
 
+
 function PendingAuctionsTable({
   auctions,
   onAccept,
   onReject,
   onDelete,
   formatDate,
+  isLoading,
 }: PendingAuctionsTableProps) {
+  if (isLoading) {
+    return (
+      <div className="rounded-md border p-8 flex justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+      </div>
+    );
+  }
+
+  console.log(auctions)
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Auction</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Seller</TableHead>
-            <TableHead>Start Date</TableHead>
-            <TableHead>End Date</TableHead>
-            <TableHead>Current Bid</TableHead>
-            <TableHead>Bids</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="bg-[#F9FAFB] h-14 border-none">
+            <TableHead className="text-center">Auction</TableHead>
+            <TableHead className="text-center">Category</TableHead>
+            <TableHead className="text-center">SKU</TableHead>
+            <TableHead className="text-center">Seller</TableHead>
+            <TableHead className="text-center">Start Date</TableHead>
+            <TableHead className="text-center">End Date</TableHead>
+            <TableHead className="text-center">Current Bid</TableHead>
+            <TableHead className="text-center">Bids</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -367,14 +364,15 @@ function PendingAuctionsTable({
             </TableRow>
           ) : (
             auctions.map((auction) => (
-              <TableRow key={auction._id}>
+              <TableRow key={auction._id} className="text-center h-16 !border-b">
                 <TableCell className="font-medium">
-                  Classic and timeless
+                  {auction.title}
                 </TableCell>
-                <TableCell>Round Brilliant</TableCell>
+                <TableCell className="capitalize">{auction.category.name}</TableCell>
                 <TableCell>{auction.sku || "#212-121"}</TableCell>
                 <TableCell>
-                  {auction.seller?.displayName || `Mr. John #2561`}
+                  <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
+                  #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
                 </TableCell>
                 <TableCell>
                   {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
@@ -384,7 +382,7 @@ function PendingAuctionsTable({
                 </TableCell>
                 <TableCell>${auction.currentBid || 12450}</TableCell>
                 <TableCell>{auction.bidCount || 12}</TableCell>
-                <TableCell className="flex space-x-2">
+                <TableCell className="flex space-x-2 justify-center">
                   <Button
                     variant="outline"
                     size="sm"

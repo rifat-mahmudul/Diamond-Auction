@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import { SectionHeader } from "@/components/section-header"
-import { AuctionCard } from "@/components/auction-card"
 import { useQuery } from "@tanstack/react-query"
 import useAxios from "@/hooks/useAxios"
+import { AuctionCard } from "@/components/auction-card"
 
 interface AuctionItem {
   _id: number;
