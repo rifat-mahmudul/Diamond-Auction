@@ -1,6 +1,11 @@
 const BASE_URL = "http://localhost:5100/api/v1";
+<<<<<<< HEAD
 const token =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjU0ZDQxNTZiMWE2ZDIwMWVmZTkiLCJpYXQiOjE3NDU3Mjk3OTMsImV4cCI6MTc0NjMzNDU5M30._OnQBwQEQg5M49_TqsA0yNqp4WnSUTrg7r9w4EHTfYQ";
+=======
+const TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNzUzNDE1NmFiNjJiN2QzNzkyZGIiLCJpYXQiOjE3NDU3Mjg2NzAsImV4cCI6MTc0NjMzMzQ3MH0.uSH0P_UexURMTG6YdhHDHGU6B0XNew-N7zgsrqClX7M";
+>>>>>>> c86df82a624a16d8eee002fc24cb5b27babdf0e7
 
 // const token = cookies().get("refreshToken")?.value;
 
