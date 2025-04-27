@@ -165,6 +165,8 @@ export default function BlogsPage() {
                           src={previewUrl || "/placeholder.svg"}
                           alt="Preview"
                           className="max-h-40 object-contain"
+                          width={200}
+                          height={200}
                         />
                         <Button
                           type="button"
@@ -183,6 +185,8 @@ export default function BlogsPage() {
                           <Image
                             src="/placeholder.svg?height=40&width=40"
                             alt="Upload"
+                            width={200}
+                            height={200}
                           />
                         </div>
                         <p className="text-sm text-center text-muted-foreground">
@@ -255,6 +259,8 @@ export default function BlogsPage() {
                             src={blog.image || "/placeholder.svg"}
                             alt={blog.title}
                             className="w-16 h-12 object-cover rounded"
+                            height={200}
+                            width={200}
                           />
                           <div>
                             <h4 className="font-medium">{blog.title}</h4>
