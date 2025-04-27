@@ -232,7 +232,7 @@ export function useDeleteBidder() {
   return createMutation((id: string) => apiService.deleteBidder(id), {
     onSuccessMessage: "Bidder deleted successfully",
     onErrorMessage: "Failed to delete bidder",
-    invalidateQueries: [["bidders"]],
+    invalidateQueries: [["bidders", "all"]],
   });
 }
 
@@ -313,4 +313,12 @@ export function useDeleteBlog() {
 // Sellers
 export function useAllSellers() {
   return createQuery(["sellers", "all"], () => apiService.getAllSellers());
+}
+
+export function useDeleteSeller() {
+  return createMutation((id: string) => apiService.deleteSeller(id), {
+    onSuccessMessage: "Seller deleted successfully",
+    onErrorMessage: "Failed to delete seller",
+    invalidateQueries: [["sellers"]],
+  });
 }

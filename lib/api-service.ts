@@ -1,6 +1,7 @@
+
 const BASE_URL = "http://localhost:5100/api/v1";
 const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNzUzNDE1NmFiNjJiN2QzNzkyZGIiLCJpYXQiOjE3NDU3Mjg2NzAsImV4cCI6MTc0NjMzMzQ3MH0.uSH0P_UexURMTG6YdhHDHGU6B0XNew-N7zgsrqClX7M";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBkZjRlMjRlYWI5YmExYWQzY2ZhNmIiLCJpYXQiOjE3NDU3NDU0MzMsImV4cCI6MTc0NjM1MDIzM30.tRqftn12CshR5Q7iabt0H_lJGoOTR3SV4cNM2Pq6bpw";
 
 export interface ApiResponse<T> {
   status: boolean | string;
@@ -204,7 +205,12 @@ class ApiService {
 
   // Sellers
   async getAllSellers() {
-    return this.request("/admin/sellers/all");
+    return this.request("/admin/get-sellers");
+  }
+
+
+  async deleteSeller(id: string) {
+    return this.request(`/admin/delete-seller/${id}`, "DELETE");
   }
 }
 

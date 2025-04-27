@@ -22,7 +22,8 @@ interface AuctionItem {
   images: string[];
   title: string;
   currentBid: string;
-  timeLeft: string;
+  startTime: string;
+  endTime: string;
   badges?: string[];
 }
 
@@ -79,11 +80,7 @@ export default function AllAuction() {
     queryKey: ['categories'],
     queryFn: async () => {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-      const res = await fetch(`${baseUrl}/admin/categories/with-auctions`, {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU1NTIxNzcsImV4cCI6MTc0NjE1Njk3N30.BTfUHFU6SD9xKkGJATNyvNQS92Ij-TnVHyGHkr7mma0`,
-        },
-      });
+      const res = await fetch(`${baseUrl}/admin/categories/with-auctions`);
       if (!res.ok) throw new Error(`Failed to fetch categories: ${res.statusText}`);
       return res.json();
     },
@@ -205,7 +202,7 @@ export default function AllAuction() {
 
       <div className="grid grid-cols-10 gap-10">
         <div className="col-span-7">
-          {filteredAuctions.length === 0 ? (
+          {filteredAuctions?.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-lg text-[#645949]">No auctions found matching your criteria.</p>
               <button
@@ -217,16 +214,15 @@ export default function AllAuction() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {filteredAuctions.map((auction: AuctionItem) => (
+              {filteredAuctions?.map((auction: AuctionItem) => (
                 <AuctionCard
                   key={auction._id}
                   image={auction.images[0]}
                   title={auction.title}
                   currentBid={auction.currentBid}
-                  timeLeft={auction.timeLeft}
                   auctionId={(auction._id).toString()}
-                  startTime=''
-                  endTime=''
+                  startTime={auction.startTime}
+                  endTime={auction.endTime}
                 />
               ))}
             </div>
