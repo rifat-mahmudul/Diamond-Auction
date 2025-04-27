@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { AuctionCard } from '../auction-card';
-import { Input } from '../ui/input';
-import { Search } from 'lucide-react';
-import { Checkbox } from '../ui/checkbox';
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AuctionCard } from "../auction-card";
+import { Input } from "../ui/input";
+import { Search } from "lucide-react";
+import { Checkbox } from "../ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
-import { Label } from '../ui/label';
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
 
 interface AuctionItem {
   _id: number;
@@ -33,31 +33,35 @@ interface Category {
 }
 
 const carratWeight = [
-  { id: 1, value: { low: 0, high: 0.50 }, label: 'Under 0.50' },
-  { id: 2, value: { low: 0.50, high: 1.00 }, label: '0.50 - 1.00' },
-  { id: 3, value: { low: 1.00, high: 2.00 }, label: '1.00 - 2.00' },
-  { id: 4, value: { low: 2.00, high: 3.00 }, label: '2.00 - 3.00' },
-  { id: 5, value: { low: 3.00, high: 10000 }, label: '3.00+ Carats' },
-].map(item => ({
+  { id: 1, value: { low: 0, high: 0.5 }, label: "Under 0.50" },
+  { id: 2, value: { low: 0.5, high: 1.0 }, label: "0.50 - 1.00" },
+  { id: 3, value: { low: 1.0, high: 2.0 }, label: "1.00 - 2.00" },
+  { id: 4, value: { low: 2.0, high: 3.0 }, label: "2.00 - 3.00" },
+  { id: 5, value: { low: 3.0, high: 10000 }, label: "3.00+ Carats" },
+].map((item) => ({
   ...item,
   value: `${item.value.low.toFixed(2)}-${item.value.high.toFixed(2)}`,
 }));
 
 const salesTypes = [
-  { value: 'upcoming', label: 'upcoming' },
-  { value: 'latest', label: 'latest' },
-  { value: 'live-auction', label: 'live-auction' },
-  { value: 'popular', label: 'popular' },
-  { value: 'highest-bidding', label: 'highest-bidding' },
+  { value: "upcoming", label: "upcoming" },
+  { value: "latest", label: "latest" },
+  { value: "live-auction", label: "live-auction" },
+  { value: "popular", label: "popular" },
+  { value: "highest-bidding", label: "highest-bidding" },
 ];
 
 export default function AllAuction() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedTimeRange, setSelectedTimeRange] = useState('allday');
-  const [selectedCaratRange, setSelectedCaratRange] = useState<string | undefined>(undefined);
-  const [selectedSalesType, setSelectedSalesType] = useState<string | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedTimeRange, setSelectedTimeRange] = useState("allday");
+  const [selectedCaratRange, setSelectedCaratRange] = useState<
+    string | undefined
+  >(undefined);
+  const [selectedSalesType, setSelectedSalesType] = useState<
+    string | undefined
+  >(undefined);
 
   // Debounce search input
   useEffect(() => {
@@ -77,7 +81,7 @@ export default function AllAuction() {
     isError: isCategoriesError,
     error: categoriesError,
   } = useQuery({
-    queryKey: ['categories'],
+    queryKey: ["categories"],
     queryFn: async () => {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       const res = await fetch(`${baseUrl}/admin/categories/with-auctions`);
@@ -94,20 +98,30 @@ export default function AllAuction() {
     isError: isAuctionsError,
     error: auctionsError,
   } = useQuery({
-    queryKey: ['auctions', debouncedSearchQuery, selectedCategory, selectedTimeRange, selectedCaratRange, selectedSalesType],
+    queryKey: [
+      "auctions",
+      debouncedSearchQuery,
+      selectedCategory,
+      selectedTimeRange,
+      selectedCaratRange,
+      selectedSalesType,
+    ],
     queryFn: async () => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const queryParams = new URLSearchParams();
 
       // Add all filter parameters
-      if (debouncedSearchQuery) queryParams.set('searchQuery', debouncedSearchQuery);
-      if (selectedCategory) queryParams.set('category', selectedCategory);
-      if (selectedCaratRange) queryParams.set('caratWeight', selectedCaratRange);
-      if (selectedSalesType) queryParams.set('typeOfSales', selectedSalesType);
+      if (debouncedSearchQuery)
+        queryParams.set("searchQuery", debouncedSearchQuery);
+      if (selectedCategory) queryParams.set("category", selectedCategory);
+      if (selectedCaratRange)
+        queryParams.set("caratWeight", selectedCaratRange);
+      if (selectedSalesType) queryParams.set("typeOfSales", selectedSalesType);
 
       // Add time range parameter
-      if (selectedTimeRange !== 'allday') {
-        queryParams.set('timeRange', selectedTimeRange);
+      if (selectedTimeRange !== "allday") {
+        queryParams.set("timeRange", selectedTimeRange);
       }
 
       const url = `${baseUrl}/auctions/search?${queryParams.toString()}`;
@@ -116,7 +130,8 @@ export default function AllAuction() {
           Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU1NTIxNzcsImV4cCI6MTc0NjE1Njk3N30.BTfUHFU6SD9xKkGJATNyvNQS92Ij-TnVHyGHkr7mma0`,
         },
       });
-      if (!res.ok) throw new Error(`Failed to fetch auctions: ${res.statusText}`);
+      if (!res.ok)
+        throw new Error(`Failed to fetch auctions: ${res.statusText}`);
       return res.json();
     },
     select: (responseData) => responseData.data ?? responseData.auctions ?? [],
@@ -124,7 +139,7 @@ export default function AllAuction() {
 
   // Handlers
   const handleCategoryChange = (categoryName: string, isChecked: boolean) => {
-    setSelectedCategory(isChecked ? categoryName : '');
+    setSelectedCategory(isChecked ? categoryName : "");
   };
 
   const handleTimeRangeChange = (value: string) => {
@@ -140,9 +155,9 @@ export default function AllAuction() {
   };
 
   const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory('');
-    setSelectedTimeRange('allday');
+    setSearchQuery("");
+    setSelectedCategory("");
+    setSelectedTimeRange("allday");
     setSelectedCaratRange(undefined);
     setSelectedSalesType(undefined);
   };
@@ -158,7 +173,10 @@ export default function AllAuction() {
           <div className="col-span-7">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
               {[...Array(3)].map((_, index) => (
-                <div key={index} className="bg-gray-200 animate-pulse h-64 rounded-md"></div>
+                <div
+                  key={index}
+                  className="bg-gray-200 animate-pulse h-64 rounded-md"
+                ></div>
               ))}
             </div>
           </div>
@@ -187,8 +205,8 @@ export default function AllAuction() {
           {isAuctionsError && isCategoriesError
             ? `Error fetching auctions and categories: ${auctionsError?.message} / ${categoriesError?.message}`
             : isAuctionsError
-              ? `Error fetching auctions: ${auctionsError?.message}`
-              : `Error fetching categories: ${categoriesError?.message}`}
+            ? `Error fetching auctions: ${auctionsError?.message}`
+            : `Error fetching categories: ${categoriesError?.message}`}
         </p>
       </section>
     );
@@ -204,7 +222,9 @@ export default function AllAuction() {
         <div className="col-span-7">
           {filteredAuctions?.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-lg text-[#645949]">No auctions found matching your criteria.</p>
+              <p className="text-lg text-[#645949]">
+                No auctions found matching your criteria.
+              </p>
               <button
                 onClick={clearFilters}
                 className="mt-4 px-4 py-2 bg-[#645949] text-white rounded-md hover:bg-[#534738] transition-colors"
@@ -244,14 +264,18 @@ export default function AllAuction() {
 
             {/* Category List */}
             <div>
-              <h4 className="text-xl font-medium text-[#000000] pb-4">Category</h4>
-              <ul className='space-y-3'>
+              <h4 className="text-xl font-medium text-[#000000] pb-4">
+                Category
+              </h4>
+              <ul className="space-y-3">
                 {categories?.map((category: Category) => (
-                  <li key={category._id} className='flex items-center gap-1'>
+                  <li key={category._id} className="flex items-center gap-1">
                     <Checkbox
                       id={`category-${category._id}`}
                       checked={selectedCategory === category.name}
-                      onCheckedChange={(checked) => handleCategoryChange(category.name, !!checked)}
+                      onCheckedChange={(checked) =>
+                        handleCategoryChange(category.name, !!checked)
+                      }
                     />
                     <label
                       htmlFor={`category-${category._id}`}
@@ -266,7 +290,10 @@ export default function AllAuction() {
 
             {/* Time Range Filter */}
             <div className="">
-              <Select value={selectedTimeRange} onValueChange={handleTimeRangeChange}>
+              <Select
+                value={selectedTimeRange}
+                onValueChange={handleTimeRangeChange}
+              >
                 <SelectTrigger className="w-full border-[#645949]">
                   <SelectValue placeholder="All Day" />
                 </SelectTrigger>
@@ -284,8 +311,13 @@ export default function AllAuction() {
 
             {/* Carat Weight Filter */}
             <div className="space-y-3">
-              <h4 className="text-xl font-medium text-[#000000] pb-1">Carat Weight</h4>
-              <RadioGroup value={selectedCaratRange} onValueChange={handleCaratRangeChange}>
+              <h4 className="text-xl font-medium text-[#000000] pb-1">
+                Carat Weight
+              </h4>
+              <RadioGroup
+                value={selectedCaratRange}
+                onValueChange={handleCaratRangeChange}
+              >
                 {carratWeight.map((carrat) => (
                   <div key={carrat.id} className="flex items-center space-x-2">
                     <RadioGroupItem
@@ -305,11 +337,19 @@ export default function AllAuction() {
 
             {/* Sales Type Filter */}
             <div className="space-y-3">
-              <h4 className="text-xl font-medium text-[#000000] pb-1">Type Of Sales</h4>
-              <RadioGroup value={selectedSalesType} onValueChange={handleSalesTypeChange}>
+              <h4 className="text-xl font-medium text-[#000000] pb-1">
+                Type Of Sales
+              </h4>
+              <RadioGroup
+                value={selectedSalesType}
+                onValueChange={handleSalesTypeChange}
+              >
                 {salesTypes.map((type) => (
                   <div key={type.value} className="flex items-center space-x-2">
-                    <RadioGroupItem value={type.value} id={`sales-type-${type.value}`} />
+                    <RadioGroupItem
+                      value={type.value}
+                      id={`sales-type-${type.value}`}
+                    />
                     <Label
                       htmlFor={`sales-type-${type.value}`}
                       className="text-base text-[#645949] font-medium capitalize cursor-pointer"

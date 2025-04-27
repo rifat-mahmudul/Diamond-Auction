@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
+import { SessionProvider } from "next-auth/react";
 
 export default function LayoutShell({
   children,
@@ -15,10 +16,12 @@ export default function LayoutShell({
 
   return (
     <>
-      {!isDashboard && <Navbar />}
-      {children}
-      {!isDashboard && <ContactSection />}
-      {!isDashboard && <Footer />}
+      <SessionProvider>
+        {!isDashboard && <Navbar />}
+        {children}
+        {!isDashboard && <ContactSection />}
+        {!isDashboard && <Footer />}
+      </SessionProvider>
     </>
   );
 }

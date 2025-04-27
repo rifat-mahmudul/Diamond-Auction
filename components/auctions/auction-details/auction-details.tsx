@@ -67,7 +67,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${session?.data?.accessToken}`,
+                    Authorization: `Bearer ${session?.data?.user?.accessToken}`,
                 },
                 body: JSON.stringify({ amount }),
             }
@@ -93,7 +93,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         mutationFn: placeBid,
         onSuccess: (data) => {
             setBidAmount("");
-            console.log(data);
+            // console.log(data);
             queryClient.invalidateQueries({ queryKey: ["bidHistory"] });
         },
         onError: (err) => {

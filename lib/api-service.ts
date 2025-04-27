@@ -1,7 +1,7 @@
 
 const BASE_URL = "http://localhost:5100/api/v1";
-const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBkZjRlMjRlYWI5YmExYWQzY2ZhNmIiLCJpYXQiOjE3NDU3NDU0MzMsImV4cCI6MTc0NjM1MDIzM30.tRqftn12CshR5Q7iabt0H_lJGoOTR3SV4cNM2Pq6bpw";
+// const token =
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjU0ZDQxNTZiMWE2ZDIwMWVmZTkiLCJpYXQiOjE3NDU3Mjk3OTMsImV4cCI6MTc0NjMzNDU5M30._OnQBwQEQg5M49_TqsA0yNqp4WnSUTrg7r9w4EHTfYQ";
 
 export interface ApiResponse<T> {
   status: boolean | string;
@@ -15,14 +15,22 @@ export interface ApiResponse<T> {
 }
 
 class ApiService {
+  private token: string | null = null;
+
+  setToken(token: string) {
+    this.token = token;
+  }
   private async request<T>(
     endpoint: string,
     method = "GET",
     data?: any
   ): Promise<ApiResponse<T>> {
     const url = `${BASE_URL}${endpoint}`;
+
+    console.log(this.token, "token");
+    
     const headers: HeadersInit = {
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${this.token}`,
     };
 
     if (!(data instanceof FormData) && method !== "GET") {
@@ -171,7 +179,7 @@ class ApiService {
   }
 
   async deleteCategory(id: string) {
-    return this.request(`/admin/categories/delete/${id}`, "DELETE");
+    return this.request(`/admin/categories/delate/${id}`, "DELETE");
   }
 
   // Blogs

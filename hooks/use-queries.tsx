@@ -203,7 +203,10 @@ export function useAcceptAuction() {
   return createMutation((id: string) => apiService.acceptAuction(id), {
     onSuccessMessage: "Auction accepted successfully",
     onErrorMessage: "Failed to accept auction",
-    invalidateQueries: [["auctions", "pending"], ["auctions", "active"]],
+    invalidateQueries: [
+      ["auctions", "pending"],
+      ["auctions", "active"],
+    ],
   });
 }
 
@@ -211,7 +214,10 @@ export function useRejectAuction() {
   return createMutation((id: string) => apiService.rejectAuction(id), {
     onSuccessMessage: "Auction rejected successfully",
     onErrorMessage: "Failed to reject auction",
-    invalidateQueries: [["auctions", "active"], ["auctions", "pending"]],
+    invalidateQueries: [
+      ["auctions", "active"],
+      ["auctions", "pending"],
+    ],
   });
 }
 
@@ -219,7 +225,10 @@ export function useDeleteAuction() {
   return createMutation((id: string) => apiService.deleteAuction(id), {
     onSuccessMessage: "Auction deleted successfully",
     onErrorMessage: "Failed to delete auction",
-    invalidateQueries: [["auctions", "active"], ["auctions", "pending"]],
+    invalidateQueries: [
+      ["auctions", "active"],
+      ["auctions", "pending"],
+    ],
   });
 }
 
@@ -267,7 +276,7 @@ export function useDeleteCategory() {
   return createMutation((id: string) => apiService.deleteCategory(id), {
     onSuccessMessage: "Category deleted successfully",
     onErrorMessage: "Failed to delete category",
-    invalidateQueries: [["categories"]],
+    invalidateQueries: [["categories", "all"]],
   });
 }
 

@@ -22,7 +22,7 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
 
     const session = useSession();
 
-    const token = session?.data?.accessToken;
+    const token = session?.data?.user?.accessToken;
 
     // Fetch bid history
     const { data: bidHistoryData, isLoading } = useQuery({
