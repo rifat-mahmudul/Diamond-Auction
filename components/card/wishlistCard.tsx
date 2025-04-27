@@ -68,20 +68,20 @@ export function WishlistCard({ wishlistItems = [] }: { wishlistItems?: Auction[]
             }}>
                 <CardHeader>
                     <div className="flex justify-between p-4">
-                        <div className="flex items-center gap-1 ">
-                            <Image
-                                src={"/assets/live.png"}
-                                alt="live"
-                                height={50}
-                                width={50}
-                                className="h-4 w-4"
-                            />
-                            <span className={`inline-block rounded-md px-3 py-1 text-sm font-medium text-white ${auctionStatus === 'live' ? 'bg-[#0000004D] backdrop-blur-sm' :
+
+                            <span className={` flex gap-2 items-center  rounded-md px-3 py-1 text-sm font-medium text-white ${auctionStatus === 'live' ? 'bg-[#0000004D] backdrop-blur-sm' :
                                 auctionStatus === 'completed' ? 'bg-gray-600' : 'bg-blue-600'
                                 }`}>
+                                <Image
+                                    src={"/assets/live.png"}
+                                    alt="live"
+                                    height={50}
+                                    width={50}
+                                    className="h-4 w-4"
+                                />
+
                                 {auctionStatus.toUpperCase()}
                             </span>
-                        </div>
                         <div>
                             <button className="p-2 rounded-full bg-[#0000004D] backdrop-blur-sm text-white hover:bg-[#00000066] transition-colors">
                                 <Heart className="w-4 h-4" />
