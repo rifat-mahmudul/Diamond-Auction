@@ -27,7 +27,6 @@ import {
 import { Pagination } from "@/components/dashboard/pagination";
 import { User } from "lucide-react";
 import { useAllSellers, useDeleteSeller } from "@/hooks/use-queries";
-import { toast } from "sonner";
 
 interface Seller {
   _id: string;

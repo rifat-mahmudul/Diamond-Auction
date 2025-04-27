@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarClock, Heart, Minus, Plus } from "lucide-react";
+import { CalendarClock, Heart, Minus, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +17,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import RelatedAuction from "../related-auction";
 import { useSession } from "next-auth/react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface AuctionDetailsProps {
     auctionId: string;
@@ -30,9 +32,11 @@ interface PlaceBidParams {
 export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const [bidAmount, setBidAmount] = useState<string>("");
     const [activeTab, setActiveTab] = useState<string>("description");
+    const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const queryClient = useQueryClient();
 
+    const session = useSession();
     // Fetch auction details
     const {
         data: auctionData,
@@ -85,7 +89,6 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         isSuccess: isBidSuccess,
         isError: isBidError,
         error: bidError,
-        reset: resetBidMutation,
     } = useMutation({
         mutationFn: placeBid,
         onSuccess: (data) => {
@@ -130,9 +133,6 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
 
 
     // Calculate time remaining
-    const now = new Date();
-    const endTime = auction ? new Date(auction.endTime) : null;
-    const isAuctionEnded = auction?.status === "completed";
 
 
 
@@ -166,9 +166,12 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         return <div>Auction not found.</div>;
     }
 
-    const session = useSession();
 
-    console.log(session)
+
+    const winner = auction.winner
+
+    const user = session?.data?.user?.id
+
 
 
     return (
@@ -345,11 +348,117 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                             </div>
                                         </CardContent>
                                     </Card>
-                                    {/* {
-                                        auction.winner.username == user?.username ? (
-                                            <h4>You have won the bid for this item</h4>
+                                    {
+                                        winner == user && (
+                                            <div className="pt-6">
+                                                <h4 className="font-semibold text-[#645949] pb-4">You won the bid: ${auction.currentBid}</h4>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => setIsOpen(true)}
+                                                    disabled={!auction || isPlacingBid}
+                                                    className="text-white h-12 w-32 bg-[#645949] hover:bg-[#645949]/90"
+                                                >
+                                                    Pay Now
+                                                </Button>
+                                                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                                                    <DialogContent className="sm:max-w-[900px] p-0 bg-white">
+                                                        <div className="flex">
+                                                            {/* Close button */}
+                                                            <button
+                                                                onClick={() => setIsOpen(false)}
+                                                                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                                <span className="sr-only">Close</span>
+                                                            </button>
+
+                                                            {/* Billing Information */}
+                                                            <div className="w-1/2 p-6 border-r">
+                                                                <h2 className="text-xl font-semibold mb-4">Billing Information</h2>
+
+                                                                <div className="space-y-4">
+                                                                    <div>
+                                                                        <label htmlFor="fullName" className="block text-sm mb-1">
+                                                                            Full Name
+                                                                        </label>
+                                                                        <Input id="fullName" className="w-full" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="address" className="block text-sm mb-1">
+                                                                            Address
+                                                                        </label>
+                                                                        <Input id="address" className="w-full" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="email" className="block text-sm mb-1">
+                                                                            Email address
+                                                                        </label>
+                                                                        <Input id="email" type="email" className="w-full" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="phone" className="block text-sm mb-1">
+                                                                            Phone Number
+                                                                        </label>
+                                                                        <Input id="phone" className="w-full" />
+                                                                    </div>
+
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <Checkbox id="saveInfo" />
+                                                                        <label htmlFor="saveInfo" className="text-sm">
+                                                                            Save this information for faster check out next time
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Order Summary */}
+                                                            <div className="w-1/2 p-6">
+                                                                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+
+                                                                <div className="flex items-center mb-4">
+                                                                    <div className="w-12 h-12 bg-gray-100 rounded mr-3 overflow-hidden">
+                                                                        <Image src={auction?.images[0]} alt={auction?.title} width={48} height={48} />
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <div className="font-medium">{auction?.title}</div>
+                                                                    </div>
+                                                                    <div className="font-medium">${auction?.currentBid}</div>
+                                                                </div>
+
+                                                                <div className="space-y-2 border-t pt-4">
+                                                                    <div className="flex justify-between">
+                                                                        <span>Subtotal</span>
+                                                                        <span>${auction?.currentBid}</span>
+                                                                    </div>
+
+                                                                    <div className="flex justify-between">
+                                                                        <span>Shipping</span>
+                                                                        <span>$55</span>
+                                                                    </div>
+
+                                                                    <div className="flex justify-between font-bold border-t pt-2 mt-2">
+                                                                        <span>Total</span>
+                                                                        <span>${auction?.currentBid + 55}</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <Button
+                                                                    className="w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white"
+                                                                    onClick={() => console.log("Processing payment...")}
+                                                                >
+                                                                    Pay With <span className="font-semibold ml-1 text-xl">stripe</span>
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </div>
                                         )
-                                    } */}
+                                    }
                                 </div>
                             )
                                 :
