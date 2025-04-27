@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
-import { apiService } from "@/lib/api-service";
 import {
   Table,
   TableBody,
@@ -26,7 +25,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
+import { useAllBidders, useDeleteBidder } from "@/hooks/use-queries";
 import { toast } from "sonner";
+import { apiService } from "@/lib/api-service";
 
 interface Bidder {
   userId: string;
@@ -41,15 +42,20 @@ interface Bidder {
 }
 
 export default function BiddersPage() {
+  const { data: biddersData, isLoading } = useAllBidders();
+  const deleteBidderMutation = useDeleteBidder();
+
   const [bidders, setBidders] = useState<Bidder[]>([]);
   const [filteredBidders, setFilteredBidders] = useState<Bidder[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [isBidderLoading, setIsBidderLoading] = useState(false);
+
 
   const fetchBidders = async () => {
-    setIsLoading(true);
+    setIsBidderLoading(true);
     try {
       const response = await apiService.getAllBidders();
       if (response.status === true && response.data) {
@@ -61,13 +67,19 @@ export default function BiddersPage() {
       console.error("Error fetching bidders:", error);
       toast.error("Failed to fetch bidders");
     } finally {
-      setIsLoading(false);
+      setIsBidderLoading(false);
     }
   };
 
+
   useEffect(() => {
-    fetchBidders();
-  }, [currentPage]);
+    if (biddersData?.data) {
+      const data = biddersData.data as Bidder[];
+      setBidders(data);
+      setFilteredBidders(data);
+      setTotalPages(biddersData.totalPages || 1);
+    }
+  }, [biddersData]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -87,16 +99,7 @@ export default function BiddersPage() {
   };
 
   const handleDeleteBidder = async (id: string) => {
-    try {
-      const response = await apiService.deleteBidder(id);
-      if (response.status === true) {
-        toast.success("Bidder deleted successfully");
-        fetchBidders();
-      }
-    } catch (error) {
-      console.error("Error deleting bidder:", error);
-      toast.error("Failed to delete bidder");
-    }
+    deleteBidderMutation.mutate(id);
   };
 
   return (
@@ -124,88 +127,98 @@ export default function BiddersPage() {
           </Button>
         </div>
 
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Bidder</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Join Date</TableHead>
-                <TableHead>Total Bids</TableHead>
-                <TableHead>Win Auctions</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredBidders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4">
-                    No bidders found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredBidders.map((bidder) => (
-                  <TableRow key={bidder.userId}>
-                    <TableCell className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                        <User className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <span className="font-medium">{bidder.bidder}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span>{bidder.contact.email}</span>
-                        <span className="text-muted-foreground">
-                          {bidder.contact.phone}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{bidder.joinDate}</TableCell>
-                    <TableCell>{bidder.totalBids}</TableCell>
-                    <TableCell>{bidder.winAuctions}</TableCell>
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete the bidder account.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteBidder(bidder.userId)}
-                              className="bg-red-500 hover:bg-red-700"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
+        <div className="bg-white rounded-md">
+          <div className="rounded-md">
+            {isLoading ? (
+              <div className="p-8 flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#F9FAFB] h-14 border-none">
+                    <TableHead className="pl-20">Bidder</TableHead>
+                    <TableHead className="text-center">Contact</TableHead>
+                    <TableHead className="text-center">Join Date</TableHead>
+                    <TableHead className="text-center">Total Bids</TableHead>
+                    <TableHead className="text-center">Win Auctions</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredBidders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-4">
+                        No bidders found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredBidders.map((bidder) => (
+                      <TableRow key={bidder.userId} className="text-center h-20 !border-b border-[#E5E7EB]">
+                        <TableCell className="flex items-center gap-3 pl-6 pt-5">
+                          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                            <User className="h-5 w-5 text-gray-500" />
+                          </div>
+                          <span className="font-medium">{bidder.bidder}</span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span>{bidder.contact.email}</span>
+                            <span className="text-muted-foreground">
+                              {bidder.contact.phone}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{bidder.joinDate}</TableCell>
+                        <TableCell>{bidder.totalBids}</TableCell>
+                        <TableCell>{bidder.winAuctions}</TableCell>
+                        <TableCell>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete the bidder account.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() =>
+                                    handleDeleteBidder(bidder.userId)
+                                  }
+                                  className="bg-red-500 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+          </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </Layout>
   );

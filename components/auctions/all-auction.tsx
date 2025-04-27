@@ -224,6 +224,9 @@ export default function AllAuction() {
                   title={auction.title}
                   currentBid={auction.currentBid}
                   timeLeft={auction.timeLeft}
+                  auctionId={(auction._id).toString()}
+                  startTime=''
+                  endTime=''
                 />
               ))}
             </div>
