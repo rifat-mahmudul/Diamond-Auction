@@ -39,21 +39,18 @@ interface Category {
   name: string;
   description: string;
   image: string;
-  itemCount?: number;
-  addedDate?: string;
 }
-
 export default function CategoriesPage() {
   const { data: categoriesData, isLoading } = useAllCategories();
   const createCategoryMutation = useCreateCategory();
   const deleteCategoryMutation = useDeleteCategory();
   const updateCategoryMutation = useUpdateCategory();
 
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<any>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(5);
+  const [totalPages, setTotalPages] = useState(1); // Initialize to 1
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
@@ -67,14 +64,9 @@ export default function CategoriesPage() {
 
   useEffect(() => {
     if (categoriesData?.data) {
-      // Add mock data for itemCount and addedDate since they're not in the API
-      const enhancedCategories = categoriesData.data.map((cat) => ({
-        ...cat,
-        itemCount: 120,
-        addedDate: "2023-06-08",
-      }));
-      setCategories(enhancedCategories);
-      setTotalPages(Math.ceil(enhancedCategories.length / 5));
+      setCategories(categoriesData.data);
+      // Calculate total pages based on your desired items per page (e.g., 5)
+      setTotalPages(Math.ceil((categoriesData.data as any[]).length / 5));
     }
   }, [categoriesData]);
 
@@ -202,13 +194,13 @@ export default function CategoriesPage() {
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="text-left p-4 font-medium text-gray-500">
-                    Category Name
+                    Image
                   </th>
-                  <th className="text-center p-4 font-medium text-gray-500">
-                    Items
+                  <th className="text-left p-4 font-medium text-gray-500">
+                    Name
                   </th>
-                  <th className="text-center p-4 font-medium text-gray-500">
-                    Added
+                  <th className="text-left p-4 font-medium text-gray-500">
+                    Description
                   </th>
                   <th className="text-center p-4 font-medium text-gray-500">
                     Actions
@@ -216,27 +208,25 @@ export default function CategoriesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {displayedCategories.map((category) => (
+                {displayedCategories.map((category: Category) => (
                   <tr key={category._id} className="hover:bg-gray-50">
                     <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-16 w-16 rounded overflow-hidden bg-gray-100 flex-shrink-0">
-                          <img
-                            src={category.image || "/placeholder.svg"}
-                            alt={category.name}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{category.name}</h3>
-                          <p className="text-sm text-gray-500 line-clamp-2">
-                            {category.description}
-                          </p>
-                        </div>
+                      <div className="h-16 w-16 rounded overflow-hidden bg-gray-100">
+                        <img
+                          src={category.image || "/placeholder.svg"}
+                          alt={category.name}
+                          className="h-full w-full object-cover"
+                        />
                       </div>
                     </td>
-                    <td className="p-4 text-center">{category.itemCount}</td>
-                    <td className="p-4 text-center">{category.addedDate}</td>
+                    <td className="p-4">
+                      <h3 className="font-medium">{category.name}</h3>
+                    </td>
+                    <td className="p-4">
+                      <p className="text-sm text-gray-500 line-clamp-2">
+                        {category.description}
+                      </p>
+                    </td>
                     <td className="p-4">
                       <div className="flex justify-center gap-2">
                         <Button
