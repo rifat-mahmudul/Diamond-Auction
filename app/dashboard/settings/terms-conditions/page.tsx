@@ -49,7 +49,7 @@ export default function TermsConditionsPage() {
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/terms/update/6805fe18c944c3e1c55a326b`, {
-        method: "PUT",
+        method: isEditing ? "PUT" : "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
