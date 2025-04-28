@@ -19,6 +19,7 @@ import RelatedAuction from "../related-auction";
 import { useSession } from "next-auth/react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 interface AuctionDetailsProps {
     auctionId: string;
@@ -27,6 +28,11 @@ interface AuctionDetailsProps {
 interface PlaceBidParams {
     auctionId: string;
     amount: number;
+}
+
+interface WishListParams {
+    auctionId: string;
+    token: string
 }
 
 export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
@@ -58,6 +64,8 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
 
     const auction = auctionData?.data?.auction;
 
+    const token = session?.data?.user?.accessToken
+
 
     // Handle bidding
     async function placeBid({ auctionId, amount }: PlaceBidParams) {
@@ -67,11 +75,16 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${session?.data?.user?.accessToken}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ amount }),
             }
         );
+
+
+        if(!token) {
+            toast.error("You must be logged in to place a bid");
+        }
 
 
         if (!response.ok) {
@@ -131,8 +144,51 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
 
 
 
+    const handleAddToWishlist = async ({ auctionId, token }: WishListParams) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/wishlist/add/${auctionId}`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        if (!response.ok) {
+            const errorData = await response.json()
+            return errorData;
+        }
+        return response.json();
+    }
 
-    // Calculate time remaining
+
+    // Handle add to wishlist
+    const {
+        mutate: addToWishlist,
+        isSuccess: isWishlistSuccess,
+        isError: isWishlistError,
+        error: wishlistError
+    } = useMutation({
+        mutationFn: handleAddToWishlist,
+        onSuccess: (data) => {
+            console.log(data);
+            queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+        }
+    });
+
+    if (isWishlistError) {
+        console.log(wishlistError)
+    }
+
+    if (isWishlistSuccess) {
+        toast.success("Added to wishlist");
+    }
+
+    if (isWishlistError) {
+        toast.error("Failed to add to wishlist");
+    }
+
+
 
 
 
@@ -173,7 +229,6 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const user = session?.data?.user?.id
 
 
-
     return (
         <div className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -198,20 +253,32 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 {/* Auction Details */}
                 <div className="space-y-4">
                     <div>
-                        <p className="text-lg font-medium text-[#645949] pb-6">
+                        <p className="text-lg font-medium text-[#645949] lg:pb-6 pb-2">
                             SKU #{auction.sku}
                         </p>
-                        <div className="flex justify-between items-center pb-6">
+                        <div className="flex justify-between items-center lg:pb-6 pb-2">
                             <h1 className="text-[40px] font-bold inline-block">
                                 {auction.title}
                             </h1>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <Heart className="h-5 w-5" />
-                            </Button>
+
+                            {
+                                (auction.status === "live" || auction.status === "pending" || auction.status === "scheduled") &&
+                                <div className="">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8"
+                                        onClick={() => handleAddToWishlist({ auctionId: auction._id, token: session?.data?.user?.accessToken || "" })}
+                                    >
+                                        <Heart className="h-5 w-5" />
+                                    </Button>
+                                </div>
+                            }
+
                         </div>
                     </div>
 
-                    <p className="text-base text-[#645949] pb-10">
+                    <p className="text-base text-[#645949] lg:pb-10 pb-5">
                         {auction.description}
                     </p>
 
@@ -295,11 +362,6 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                         {isBidSuccess && (
                                             <div className="mt-4 text-green-500">Bid placed successfully!</div>
                                         )}
-                                        {isBidError && (
-                                            <div className="mt-4 text-red-500">
-                                                Error placing bid: {bidError?.message} Register to place bid
-                                            </div>
-                                        )}
                                     </div>
                                 )}
                             </div>
@@ -348,6 +410,9 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                             </div>
                                         </CardContent>
                                     </Card>
+
+                                    {/* Winner Payment*/}
+
                                     {
                                         winner == user && (
                                             <div className="pt-6">

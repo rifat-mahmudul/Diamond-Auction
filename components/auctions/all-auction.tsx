@@ -125,11 +125,7 @@ export default function AllAuction() {
       }
 
       const url = `${baseUrl}/auctions/search?${queryParams.toString()}`;
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU1NTIxNzcsImV4cCI6MTc0NjE1Njk3N30.BTfUHFU6SD9xKkGJATNyvNQS92Ij-TnVHyGHkr7mma0`,
-        },
-      });
+      const res = await fetch(url);
       if (!res.ok)
         throw new Error(`Failed to fetch auctions: ${res.statusText}`);
       return res.json();
@@ -205,8 +201,8 @@ export default function AllAuction() {
           {isAuctionsError && isCategoriesError
             ? `Error fetching auctions and categories: ${auctionsError?.message} / ${categoriesError?.message}`
             : isAuctionsError
-            ? `Error fetching auctions: ${auctionsError?.message}`
-            : `Error fetching categories: ${categoriesError?.message}`}
+              ? `Error fetching auctions: ${auctionsError?.message}`
+              : `Error fetching categories: ${categoriesError?.message}`}
         </p>
       </section>
     );
