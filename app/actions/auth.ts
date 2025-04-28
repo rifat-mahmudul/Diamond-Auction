@@ -23,7 +23,7 @@ export async function registerUser(userData: {
     });
 
     const data = await response.json();
-    console.log("signup data", data);
+    // console.log("signup data", data);
 
     if (!response.ok) {
       return {
