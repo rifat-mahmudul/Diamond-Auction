@@ -61,8 +61,9 @@ export function LoginForm() {
       } else {
         alert("Login Successfully");
         toast.success("Login successful");
-        router.push("/dashboard");
-        router.refresh();
+        // router.push("/dashboard");
+        window.location.href = "/dashboard"
+        // router.refresh();
       }
     } catch (error) {
       toast.error("Something went wrong. Please try again. || " + error);
