@@ -54,8 +54,8 @@ const handler = NextAuth({
       if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
-        session.accessToken = token.accessToken as string;
-        session.refreshToken = token.refreshToken as string;
+        session.user.accessToken = token.accessToken as string; // Add to user object
+        session.user.refreshToken = token.refreshToken as string; // Add to user object
       }
       return session;
     },

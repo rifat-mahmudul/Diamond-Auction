@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSession, signOut } from "next-auth/react";
+import "../../app/globals.css";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +30,8 @@ export default function Layout({ children }: LayoutProps) {
   const user = session?.user;
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/login" });
+    localStorage.clear();
+    signOut({ callbackUrl: "/login" });
   };
 
   return (

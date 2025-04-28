@@ -170,7 +170,10 @@ export function AppSidebar({}: AppSidebarProps) {
             </DialogTitle>
             <div className="flex gap-4 mt-6 w-full">
               <Button
-                onClick={() => signOut({ callbackUrl: "/login" })}
+                onClick={() => {
+                  localStorage.clear();
+                  signOut({ callbackUrl: "/login" });
+                }}
                 className="flex-1 bg-[#6b614f] border border-white hover:bg-[#7d7260]"
                 variant="outline"
               >

@@ -47,30 +47,7 @@ export default function BiddersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [isLoading, setIsLoading] = useState(false);
-  console.log(isLoading);
-  
-
-  const fetchBidders = async () => {
-    setIsLoading(true);
-    try {
-      const response = await apiService.getAllBidders();
-      if (response.status === true && response.data) {
-        setBidders(response.data as Bidder[]);
-        setFilteredBidders(response.data as Bidder[]);
-        setTotalPages(response.totalPages || 1);
-      }
-    } catch (error) {
-      console.error("Error fetching bidders:", error);
-      toast.error("Failed to fetch bidders");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-  const [isBidderLoading] = useState(false);
-  console.log(isBidderLoading);
+  // const [isBidderLoading, setIsBidderLoading] = useState(false);
 
 
   // const fetchBidders = async () => {
@@ -160,84 +137,6 @@ export default function BiddersPage() {
           </Button>
         </div>
 
-<<<<<<< HEAD
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Bidder</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Join Date</TableHead>
-                <TableHead>Total Bids</TableHead>
-                <TableHead>Win Auctions</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredBidders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4">
-                    No bidders found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredBidders.map((bidder) => (
-                  <TableRow key={bidder.userId}>
-                    <TableCell className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                        <User className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <span className="font-medium">{bidder.bidder}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span>{bidder.contact.email}</span>
-                        <span className="text-muted-foreground">
-                          {bidder.contact.phone}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{bidder.joinDate}</TableCell>
-                    <TableCell>{bidder.totalBids}</TableCell>
-                    <TableCell>{bidder.winAuctions}</TableCell>
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete the bidder account.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteBidder(bidder.userId)}
-                              className="bg-red-500 hover:bg-red-700"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-=======
         <div className="bg-white rounded-md">
           <div className="rounded-md">
             {isLoading ? (
@@ -323,7 +222,6 @@ export default function BiddersPage() {
               </Table>
             )}
           </div>
->>>>>>> c86df82a624a16d8eee002fc24cb5b27babdf0e7
 
           <Pagination
             currentPage={currentPage}

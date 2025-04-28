@@ -52,6 +52,8 @@ export default function AboutUsPage() {
     }
   }, [aboutUsData]);
 
+
+  
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));

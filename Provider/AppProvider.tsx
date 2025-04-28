@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   QueryClient,
@@ -7,12 +7,11 @@ import {
 import { SessionProvider } from "next-auth/react";
 
 const AppProvider = ({
-    children,
-  }: Readonly<{
-    children: React.ReactNode;
-  }>) => {
-
-    const queryClient = new QueryClient();
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) => {
+  const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -24,4 +23,5 @@ const AppProvider = ({
   )
 }
 
-export default AppProvider
+export default AppProvider;
+

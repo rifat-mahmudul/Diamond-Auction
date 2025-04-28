@@ -11,9 +11,6 @@ export default function page() {
       <div className="">
         <AllAuction />
       </div>
-      <div className="">
-        
-      </div>
     </div>
   );
 }

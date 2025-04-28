@@ -1,10 +1,8 @@
+
 const BASE_URL = "http://localhost:5100/api/v1";
 const token =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjU0ZDQxNTZiMWE2ZDIwMWVmZTkiLCJpYXQiOjE3NDU3Mjk3OTMsImV4cCI6MTc0NjMzNDU5M30._OnQBwQEQg5M49_TqsA0yNqp4WnSUTrg7r9w4EHTfYQ";
 
-// const token = cookies().get("refreshToken")?.value;
-
-console.log({ token });
 export interface ApiResponse<T> {
   status: boolean | string;
   message: string;
@@ -17,15 +15,22 @@ export interface ApiResponse<T> {
 }
 
 class ApiService {
+  private token: string | null = null;
+
+  setToken(token: string) {
+    this.token = token;
+  }
   private async request<T>(
     endpoint: string,
     method = "GET",
     data?: any
   ): Promise<ApiResponse<T>> {
     const url = `${BASE_URL}${endpoint}`;
-    console.log(token, "token");
+
+    console.log(this.token, "token");
+    
     const headers: HeadersInit = {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${this.token}`,
     };
 
     if (!(data instanceof FormData) && method !== "GET") {
@@ -208,7 +213,12 @@ class ApiService {
 
   // Sellers
   async getAllSellers() {
-    return this.request("/admin/sellers/all");
+    return this.request("/admin/get-sellers");
+  }
+
+
+  async deleteSeller(id: string) {
+    return this.request(`/admin/delete-seller/${id}`, "DELETE");
   }
 }
 
