@@ -24,4 +24,3 @@ const AppProvider = ({
 }
 
 export default AppProvider;
-

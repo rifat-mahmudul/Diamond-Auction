@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
+import { toast } from "sonner";
 
 
 interface Bidder {
@@ -69,17 +70,8 @@ export default function BiddersPage() {
 
 
   useEffect(() => {
-
     fetchBidders();
   }, [currentPage]);
-
-    if (biddersData?.data) {
-      const data = biddersData.data as Bidder[];
-      setBidders(data);
-      setFilteredBidders(data);
-      setTotalPages(biddersData.totalPages || 1);
-    }
-  }, [biddersData]);
 
 
   useEffect(() => {

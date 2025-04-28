@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import AppProvider from "@/Provider/AppProvider";
 import LayoutShell from "./layout-shell";
+import { Toaster } from "sonner";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
           <LayoutShell>{children}</LayoutShell>
           {/* <ContactSection />
           <Footer /> */}
+          <Toaster />
         </AppProvider>
       </body>
     </html>
