@@ -4,29 +4,30 @@ import Link from "next/link";
 interface CategoryCardProps {
   icon: string;
   title: string;
-  href: string;
+  auctions : object[]
 }
 
-export function CategoryCard({ icon, title, href }: CategoryCardProps) {
+export function CategoryCard({ icon, title, auctions }: CategoryCardProps) {
   return (
     <Link
-      href={href}
-      className="flex flex-col items-center justify-center gap-3 bg-[#645949] p-4 text-center transition-all hover:bg-[#645949]/90 h-[106px] w-[170px] relative mt-10"
+      href={'/auctions'}
+      className="flex flex-col items-center justify-center gap-3 bg-[#645949] p-4 text-center transition-all hover:bg-[#645949]/90 h-[100px] w-[150px] relative mt-10"
     >
-      <div className=" absolute w-[80%] -top-10 rounded-md">
-        <Image
-          src={icon || "/placeholder.svg"}
-          alt={title}
-          width={80}
-          height={130}
-          className="w-full rounded-md"
-        />
-      </div>
+      {icon && (
+        <div className="absolute w-[110px] h-[80px] -top-10 rounded-md overflow-hidden">
+          <Image
+            src={icon}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
 
       <div className="mt-10">
-        <h1 className="text-[16px] font-medium  text-white">{title}</h1>
-
-        <h1 className="text-[16px] font-medium text-white">6 Items</h1>
+        <h1 className="text-[16px] font-medium text-white">{title}</h1>
+        {/* Later you can show dynamic auction count */}
+        <h1 className="text-[16px] font-medium text-white">{auctions.length} Items</h1>
       </div>
     </Link>
   );

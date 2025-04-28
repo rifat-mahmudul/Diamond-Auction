@@ -12,7 +12,7 @@ const steps = [
   },
   {
     number: "/assets/02.png",
-    title: "Registration",
+    title: "Select Product",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio, non bibendum lorem consequat in.",
     icon: "/assets/work2.png",
@@ -20,7 +20,7 @@ const steps = [
   },
   {
     number: "/assets/03.png",
-    title: "Registration",
+    title: "Go to Bidding",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio, non bibendum lorem consequat in.",
     icon: "/assets/work3.png",
@@ -28,7 +28,7 @@ const steps = [
   },
   {
     number: "/assets/04.png",
-    title: "Registration",
+    title: "Make Payment",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio, non bibendum lorem consequat in.",
     icon: "/assets/work4.png",
