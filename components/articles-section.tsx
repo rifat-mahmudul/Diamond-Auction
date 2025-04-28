@@ -68,11 +68,9 @@ export function ArticlesSection() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-          {articles.slice(0, 3).map((article, index) => (
-            <ArticleCard key={article._id} article={article} index={index} />
-          ))}
-        </div>
+        {articles.slice(0, 3).map((article, index) => (
+          <ArticleCard key={article._id} article={article} index={index} />
+        ))}
       </div>
     </section>
   );
