@@ -8,6 +8,7 @@ import {
   Phone,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -87,7 +88,7 @@ export function Footer() {
       <div className="flex flex-col md:flex-row justify-between text-xs text-gray-400 max-w-7xl mx-auto px-6 md:px-16">
         <p>© 2025 Agency All rights reserved.</p>
         <div className="space-x-4">
-          <span>Privacy Policy</span>
+          <Link href="privacypolicy">Privacy Policy</Link>
           <span>Conditions</span>
           <span>Support</span>
         </div>

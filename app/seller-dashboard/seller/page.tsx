@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
-import { apiService } from "@/lib/api-service";
 import {
   Table,
   TableBody,
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Trash2, Filter, User } from "lucide-react";
+import { Search, Trash2, Filter } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,90 +25,88 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
-import { toast } from "sonner";
+import { User } from "lucide-react";
+import { useAllSellers, useDeleteSeller } from "@/hooks/use-queries";
 
-
-interface Bidder {
-  userId: string;
-  bidder: string;
-  contact: {
-    email: string;
-    phone: string;
-  };
+interface Seller {
+  _id: string;
+  username: string;
+  email: string;
+  phone: string;
+  sellerId: string;
   joinDate: string;
-  totalBids: number;
-  winAuctions: number;
+  totalAuctions: number;
+  liveAuctions: number;
+  totalSales: number;
+  sellAmount: number;
 }
 
-export default function BiddersPage() {
-  const [bidders, setBidders] = useState<Bidder[]>([]);
-  const [filteredBidders, setFilteredBidders] = useState<Bidder[]>([]);
+export default function SellersPage() {
+  const { data: sellersData, isLoading } = useAllSellers();
+
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [filteredSellers, setFilteredSellers] = useState<Seller[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // const [isBidderLoading, setIsBidderLoading] = useState(false);
+  const deleteSellerMutation = useDeleteSeller()
 
-
-  // const fetchBidders = async () => {
-  //   setIsBidderLoading(true);
-  //   try {
-  //     const response = await apiService.getAllBidders();
-  //     if (response.status === true && response.data) {
-  //       setBidders(response.data as Bidder[]);
-  //       setFilteredBidders(response.data as Bidder[]);
-  //       setTotalPages(response.totalPages || 1);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching bidders:", error);
-  //     toast.error("Failed to fetch bidders");
-  //   } finally {
-  //     setIsBidderLoading(false);
-  //   }
-  // };
-
-
+  // If API doesn't return data, use mock data
   useEffect(() => {
-    fetchBidders();
-  }, [currentPage]);
+    if (sellersData?.data) {
+      setSellers(sellersData.data as Seller[]);
+      setFilteredSellers(sellersData.data as Seller[]);
+      setTotalPages(sellersData.totalPages || 1);
+    } else if (!isLoading) {
+      // Mock data for sellers since we don't have a specific endpoint
+      const mockSellers: Seller[] = Array.from({ length: 8 }, (_, i) => ({
+        _id: `seller-${i}`,
+        username: "John Smith",
+        email: "john.smith@example.com",
+        phone: "+1 (555) 123-4567",
+        sellerId: "#25002",
+        joinDate: "2023-01-15",
+        totalAuctions: 48,
+        liveAuctions: 12,
+        totalSales: 10,
+        sellAmount: 12450,
+      }));
 
+      setSellers(mockSellers);
+      setFilteredSellers(mockSellers);
+      setTotalPages(Math.ceil(mockSellers.length / 10));
+    }
+  }, [sellersData, isLoading]);
 
   useEffect(() => {
     if (searchTerm) {
-      const filtered = bidders.filter(
-        (bidder) =>
-          bidder.bidder.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          bidder.contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = sellers.filter(
+        (seller) =>
+          seller.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          seller.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredBidders(filtered);
+      setFilteredSellers(filtered);
     } else {
-      setFilteredBidders(bidders);
+      setFilteredSellers(sellers);
     }
-  }, [searchTerm, bidders]);
+  }, [searchTerm, sellers]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const handleDeleteBidder = async (id: string) => {
-    try {
-      const response = await apiService.deleteBidder(id);
-      if (response.status === true) {
-        toast.success("Bidder deleted successfully");
-        fetchBidders();
-      }
-    } catch (error) {
-      console.error("Error deleting bidder:", error);
-      toast.error("Failed to delete bidder");
-    }
+  const handleDeleteSeller = (id: string) => {
+    deleteSellerMutation.mutate(id);
   };
+
 
   return (
     <Layout>
       <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Bidders</h1>
-          <p className="text-muted-foreground">Manage your bidder accounts</p>
+          <h1 className="text-2xl font-bold tracking-tight">Sellers</h1>
+          <p className="text-muted-foreground">Manage your Sellers accounts</p>
         </div>
 
         <div className="flex justify-between items-center">
@@ -117,7 +114,7 @@ export default function BiddersPage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search bidders..."
+              placeholder="Search sellers..."
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -137,43 +134,49 @@ export default function BiddersPage() {
               </div>
             ) : (
               <Table>
-                <TableHeader>
-                  <TableRow className="bg-[#F9FAFB] h-14 border-none">
-                    <TableHead className="pl-20">Bidder</TableHead>
+                <TableHeader className="bg-[#F9FAFB] h-14 border-none">
+                  <TableRow>
+                    <TableHead className="text-center">Seller</TableHead>
                     <TableHead className="text-center">Contact</TableHead>
+                    <TableHead className="text-center">Seller ID</TableHead>
                     <TableHead className="text-center">Join Date</TableHead>
-                    <TableHead className="text-center">Total Bids</TableHead>
-                    <TableHead className="text-center">Win Auctions</TableHead>
+                    <TableHead className="text-center">Total Auctions</TableHead>
+                    <TableHead className="text-center">Live Auctions</TableHead>
+                    <TableHead className="text-center">Total Sales</TableHead>
+                    <TableHead className="text-center">Sell Amount</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredBidders.length === 0 ? (
+                  {filteredSellers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-4">
-                        No bidders found
+                      <TableCell colSpan={9} className="text-center py-4">
+                        No sellers found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredBidders.map((bidder) => (
-                      <TableRow key={bidder.userId} className="text-center h-20 !border-b border-[#E5E7EB]">
+                    filteredSellers.map((seller) => (
+                      <TableRow key={seller._id} className="text-center h-20 !border-b border-[#E5E7EB]">
                         <TableCell className="flex items-center gap-3 pl-6 pt-5">
                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                             <User className="h-5 w-5 text-gray-500" />
                           </div>
-                          <span className="font-medium">{bidder.bidder}</span>
+                          <span className="font-medium">{seller.username}</span>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span>{bidder.contact.email}</span>
+                            <span>{seller.email}</span>
                             <span className="text-muted-foreground">
-                              {bidder.contact.phone}
+                              {seller.phone}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>{bidder.joinDate}</TableCell>
-                        <TableCell>{bidder.totalBids}</TableCell>
-                        <TableCell>{bidder.winAuctions}</TableCell>
+                        <TableCell>{seller.sellerId}</TableCell>
+                        <TableCell>{seller.joinDate}</TableCell>
+                        <TableCell>{seller.totalAuctions}</TableCell>
+                        <TableCell>{seller.liveAuctions}</TableCell>
+                        <TableCell>{seller.totalSales}</TableCell>
+                        <TableCell>${seller.sellAmount}</TableCell>
                         <TableCell>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -190,15 +193,13 @@ export default function BiddersPage() {
                                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                 <AlertDialogDescription>
                                   This action cannot be undone. This will
-                                  permanently delete the bidder account.
+                                  permanently delete the seller account.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() =>
-                                    handleDeleteBidder(bidder.userId)
-                                  }
+                                  onClick={() => handleDeleteSeller(seller._id)}
                                   className="bg-red-500 hover:bg-red-700"
                                 >
                                   Delete
