@@ -12,17 +12,27 @@ export default function LayoutShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isDashboard =
-    pathname.startsWith("/dashboard") || pathname.startsWith("/seller-dashboard");
+
+  const hiddenPaths = [
+    "/dashboard",
+    "/seller-dashboard",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-otp",
+    "/login",
+    "/sign-up",
+  ];
+
+  const shouldHideLayout = hiddenPaths.some((path) =>
+    pathname.startsWith(path)
+  );
 
   return (
-    <>
-      <SessionProvider>
-        {!isDashboard && <Navbar />}
-        {children}
-        {!isDashboard && <ContactSection />}
-        {!isDashboard && <Footer />}
-      </SessionProvider>
-    </>
+    <SessionProvider>
+      {!shouldHideLayout && <Navbar />}
+      {children}
+      {!shouldHideLayout && <ContactSection />}
+      {!shouldHideLayout && <Footer />}
+    </SessionProvider>
   );
 }

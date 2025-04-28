@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ const loginFormSchema = z.object({
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export function LoginForm() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -54,15 +52,14 @@ export function LoginForm() {
         callbackUrl: "/dashboard",
       });
 
-      console.log("login data df", response);
+      // console.log("login data df", response);
       if (response?.error) {
         toast.error(response?.error);
         alert(response?.error);
       } else {
-        alert("Login Successfully");
         toast.success("Login successful");
         // router.push("/dashboard");
-        window.location.href = "/dashboard"
+        window.location.href = "/dashboard";
         // router.refresh();
       }
     } catch (error) {
@@ -109,7 +106,7 @@ export function LoginForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm sm:text-base">
-                        User Name
+                        Username
                       </FormLabel>
                       <FormControl>
                         <Input
