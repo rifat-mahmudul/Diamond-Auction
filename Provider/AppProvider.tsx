@@ -17,7 +17,7 @@ const AppProvider = ({
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
 
-        {children}
+      {children}
       </SessionProvider>
     </QueryClientProvider>
   )

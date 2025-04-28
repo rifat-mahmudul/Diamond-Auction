@@ -28,8 +28,11 @@ function BlogsCard({ blog }: { blog: Blog }) {
 
             <div className='p-3 space-y-2'>
                 <CardContent className="">
-                    <h3 className="mb-2 font-medium text-2xl text-white">{blog?.title}</h3>
-                    <p className="text-base text-[#BFBFBF] font-normal line-clamp-2">{blog?.content}</p>
+                    <h3 className="mb-2 font-medium text-2xl text-white line-clamp-1">{blog?.title}</h3>
+                    <p
+                        className="text-base text-[#BFBFBF] line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: blog.content }}
+                    />
                 </CardContent>
 
                 <Link href={`/blog/${blog?._id}`} className="px-5 py-[10px] text-[14px] font-medium items-center flex gap-2">

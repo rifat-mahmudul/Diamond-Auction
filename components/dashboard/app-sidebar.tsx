@@ -38,40 +38,31 @@ export function AppSidebar({}: AppSidebarProps) {
     return pathname === path;
   };
 
-  // const handleLogout = () => {
-  //   // Handle logout logic here
-  //   setIsLogoutDialogOpen(false);
-  //   // Redirect to login page or perform other logout actions
-  // };
-
   return (
     <>
       <Sidebar className="border-r-0" collapsible="none">
-        <SidebarHeader className="h-[72px] flex items-center justify-center border-b border-[#5c5343] bg-[#6b614f]">
+        <SidebarHeader className="h-[72px] flex items-center justify-center border-b border-[#5c5343] bg-[#645949]">
           <div className="flex items-center gap-2">
             <Image
-              src="/diamond-logo.svg"
+              src="/assets/logo.png"
               alt="Diamond Auctions"
-              width={30}
-              height={30}
+              width={100}
+              height={100}
+              className="w-[46px] h-[39px]"
             />
-            <div className="text-amber-100 uppercase text-xs tracking-wider">
-              <div className="font-bold">DIAMOND</div>
-              <div className="text-[10px]">AUCTIONS</div>
-            </div>
           </div>
         </SidebarHeader>
-        <SidebarContent className="p-0 bg-[#6b614f]">
-          <SidebarMenu>
+        <SidebarContent className="p-4 bg-[#6b614f]">
+          <SidebarMenu className="space-y-2">
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
                 isActive={isActive("/dashboard")}
-                className="text-white hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#7d7260]"
+                className="text-white py-6  hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
               >
-                <Link href="/dashboard">
-                  <LayoutDashboard className="h-5 w-5" />
-                  <span>Dashboard</span>
+                <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3">
+                  <LayoutDashboard className="h-5 w-5 text-white" />
+                  <span className="text-base font-medium text-white">Dashboard</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -79,11 +70,11 @@ export function AppSidebar({}: AppSidebarProps) {
               <SidebarMenuButton
                 asChild
                 isActive={isActive("/dashboard/categories")}
-                className="text-white hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#7d7260]"
+                className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
               >
-                <Link href="/dashboard/categories">
-                  <Layers className="h-5 w-5" />
-                  <span>Categories</span>
+                <Link href="/dashboard/categories" className="flex items-center gap-3 px-4 py-3">
+                  <Layers className="h-5 w-5 text-white" />
+                  <span className="text-base font-medium text-white">Categories</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -91,11 +82,11 @@ export function AppSidebar({}: AppSidebarProps) {
               <SidebarMenuButton
                 asChild
                 isActive={isActive("/dashboard/auctions")}
-                className="text-white hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#7d7260] data-[active=true]:font-semibold"
+                className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
               >
-                <Link href="/dashboard/auctions">
-                  <Gavel className="h-5 w-5" />
-                  <span>Auctions</span>
+                <Link href="/dashboard/auctions" className="flex items-center gap-3 px-4 py-3">
+                  <Gavel className="h-5 w-5 text-white" />
+                  <span className="text-base font-medium text-white">Auctions</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -103,11 +94,11 @@ export function AppSidebar({}: AppSidebarProps) {
               <SidebarMenuButton
                 asChild
                 isActive={isActive("/dashboard/bidders")}
-                className="text-white hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#7d7260]"
+                className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
               >
-                <Link href="/dashboard/bidders">
-                  <Users className="h-5 w-5" />
-                  <span>Bidders</span>
+                <Link href="/dashboard/bidders" className="flex items-center gap-3 px-4 py-3">
+                  <Users className="h-5 w-5 text-white" />
+                  <span className="text-base font-medium text-white">Bidders</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -115,11 +106,11 @@ export function AppSidebar({}: AppSidebarProps) {
               <SidebarMenuButton
                 asChild
                 isActive={isActive("/dashboard/seller")}
-                className="text-white hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#7d7260]"
+                className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
               >
-                <Link href="/dashboard/seller">
-                  <User className="h-5 w-5" />
-                  <span>Seller</span>
+                <Link href="/dashboard/seller" className="flex items-center gap-3 px-4 py-3">
+                  <User className="h-5 w-5 text-white" />
+                  <span className="text-base font-medium text-white">Seller</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -127,34 +118,34 @@ export function AppSidebar({}: AppSidebarProps) {
               <SidebarMenuButton
                 asChild
                 isActive={isActive("/dashboard/blogs")}
-                className="text-white hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#7d7260]"
+                className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
               >
-                <Link href="/dashboard/blogs">
-                  <FileText className="h-5 w-5" />
-                  <span>Blogs Management</span>
+                <Link href="/dashboard/blogs" className="flex items-center gap-3 px-4 py-3">
+                  <FileText className="h-5 w-5 text-white" />
+                  <span className="text-base font-medium text-white">Blogs Management</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={pathname.startsWith("/settings")}
-                className="text-white hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#7d7260]"
+                isActive={pathname.startsWith("/dashboard/settings")}
+                className="text-white py-6 hover:bg-[#7d7260] hover:text-white data-[active=true]:bg-[#BDA888] data-[active=true]:font-semibold"
               >
-                <Link href="/dashboard/settings">
-                  <Settings className="h-5 w-5" />
-                  <span>Settings</span>
+                <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3">
+                  <Settings className="h-5 w-5 text-white" />
+                  <span className="text-base font-medium text-white">Settings</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
-        <div className="mt-auto p-4 bg-[#6b614f]">
+        <div className="mt-auto p-4 bg-[#6b614f] border-t border-[#5c5343]">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => setIsLogoutDialogOpen(true)}
-                className="text-white hover:bg-[#7d7260] hover:text-white"
+                className="text-white hover:bg-[#7d7260] hover:text-white flex items-center gap-3 px-4 py-3"
               >
                 <LogOut className="h-5 w-5" />
                 <span>Logout</span>

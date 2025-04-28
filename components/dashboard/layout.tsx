@@ -35,9 +35,9 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex w-full h-screen overflow-hidden">
       {/* Desktop Sidebar */}
-      <div className="hidden md:block">
+      <div className="hidden md:block h-full">
         <AppSidebar />
       </div>
 
@@ -58,8 +58,8 @@ export default function Layout({ children }: LayoutProps) {
         </SheetContent>
       </Sheet>
 
-      <SidebarInset className="bg-gray-100 w-full">
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6">
+      <SidebarInset className="bg-gray-100 w-full flex flex-col h-screen">
+        <header className="flex h-16 items-center justify-between border-b bg-white px-6 py-4">
           <div className="md:hidden w-6"></div> {/* Spacer for mobile */}
           <div className="hidden md:block"></div> {/* Empty div for desktop */}
           <div className="flex items-center gap-4">
@@ -108,7 +108,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
         </header>
-        <main className="p-6 w-full">{children}</main>
+        <main className="flex-1 overflow-auto p-6">{children}</main>
       </SidebarInset>
     </div>
   );

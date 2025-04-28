@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-
 import { useState } from "react";
 import Layout from "@/components/dashboard/layout";
 import Link from "next/link";
@@ -11,9 +9,8 @@ import { Label } from "@/components/ui/label";
 import { useChangePassword } from "@/hooks/use-queries";
 import { toast } from "sonner";
 import { z } from "zod";
-
-// Mock user ID - in a real app, you would get this from auth context
-const USER_ID = "6805c5f4ce1d5ee574941f39";
+import { Eye, EyeOff } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const passwordSchema = z
   .object({
@@ -33,12 +30,19 @@ const passwordSchema = z
   });
 
 export default function ChangePasswordPage() {
+  const { data: session } = useSession();
   const changePasswordMutation = useChangePassword();
 
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+  });
+
+  const [showPassword, setShowPassword] = useState({
+    current: false,
+    new: false,
+    confirm: false,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -57,6 +61,13 @@ export default function ChangePasswordPage() {
     }
   };
 
+  const togglePasswordVisibility = (field: keyof typeof showPassword) => {
+    setShowPassword((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -65,22 +76,22 @@ export default function ChangePasswordPage() {
       passwordSchema.parse(formData);
 
       // Submit form
-      changePasswordMutation.mutate(
-        {
-          id: USER_ID,
-          data: formData,
+      await changePasswordMutation.mutateAsync({
+        id: session?.user?.id || "",
+        data: {
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+          confirmPassword: formData.confirmPassword,
         },
-        {
-          onSuccess: () => {
-            // Clear form on success
-            setFormData({
-              currentPassword: "",
-              newPassword: "",
-              confirmPassword: "",
-            });
-          },
-        }
-      );
+      });
+
+      // Clear form on success
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      toast.success("Password changed successfully");
     } catch (error) {
       if (error instanceof z.ZodError) {
         // Convert Zod errors to a more usable format
@@ -92,23 +103,25 @@ export default function ChangePasswordPage() {
         });
         setErrors(newErrors);
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("Failed to change password. Please try again.");
       }
     }
   };
 
+  console.log("Session data:", session);
+
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-6 p-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Change Password</h1>
+          <h1 className="text-2xl font-bold tracking-tight pb-4">Change Password</h1>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Link href="/dashboard" className="hover:underline">
               Dashboard
             </Link>
             <span>→</span>
-            <Link href="/settings" className="hover:underline">
-              Setting
+            <Link href="/dashboard/settings" className="hover:underline">
+              Settings
             </Link>
             <span>→</span>
             <span>Change Password</span>
@@ -119,14 +132,27 @@ export default function ChangePasswordPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="currentPassword">Current Password</Label>
-              <Input
-                id="currentPassword"
-                name="currentPassword"
-                type="password"
-                value={formData.currentPassword}
-                onChange={handleInputChange}
-                placeholder="Enter your current password"
-              />
+              <div className="relative">
+                <Input
+                  id="currentPassword"
+                  name="currentPassword"
+                  type={showPassword.current ? "text" : "password"}
+                  value={formData.currentPassword}
+                  onChange={handleInputChange}
+                  placeholder="Enter your current password"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  onClick={() => togglePasswordVisibility("current")}
+                >
+                  {showPassword.current ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
               {errors.currentPassword && (
                 <p className="text-sm text-red-500">{errors.currentPassword}</p>
               )}
@@ -134,14 +160,27 @@ export default function ChangePasswordPage() {
 
             <div className="space-y-2">
               <Label htmlFor="newPassword">New Password</Label>
-              <Input
-                id="newPassword"
-                name="newPassword"
-                type="password"
-                value={formData.newPassword}
-                onChange={handleInputChange}
-                placeholder="Enter your new password"
-              />
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  name="newPassword"
+                  type={showPassword.new ? "text" : "password"}
+                  value={formData.newPassword}
+                  onChange={handleInputChange}
+                  placeholder="Enter your new password"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  onClick={() => togglePasswordVisibility("new")}
+                >
+                  {showPassword.new ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
               {errors.newPassword && (
                 <p className="text-sm text-red-500">{errors.newPassword}</p>
               )}
@@ -149,14 +188,27 @@ export default function ChangePasswordPage() {
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                placeholder="Confirm your new password"
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword.confirm ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="Confirm your new password"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  onClick={() => togglePasswordVisibility("confirm")}
+                >
+                  {showPassword.confirm ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-sm text-red-500">{errors.confirmPassword}</p>
               )}
@@ -165,7 +217,7 @@ export default function ChangePasswordPage() {
 
           <Button
             type="submit"
-            className="bg-[#6b614f] hover:bg-[#5c5343]"
+            className="bg-[#6b614f] hover:bg-[#5c5343] text-white"
             disabled={changePasswordMutation.isPending}
           >
             {changePasswordMutation.isPending
