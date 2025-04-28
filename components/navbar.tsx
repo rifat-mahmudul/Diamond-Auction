@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation"; // Added
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -20,21 +21,33 @@ const navLinks = [
 
 export function Navbar() {
   const isMobile = useMobile();
-  const pathname = usePathname(); // Added
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === "authenticated";
 
   const iconLinks = [
     { icon: Heart, href: "/wishlist" },
     { icon: BellRing, href: "/notifications" },
-    { icon: UserRound, href: "/profile" },
+    { icon: UserRound, href: "/accounts" },
   ];
 
   const getIconClasses = (href: string) => `
     border-2 rounded-full p-2 transition-colors
-    ${pathname === href ? "border-[#E6C475]" : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"}
+    ${
+      pathname.startsWith(href)
+        ? "border-[#E6C475]"
+        : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
+    }
   `;
 
   const getIconColor = (href: string) =>
-    pathname === href ? "text-[#E6C475]" : "text-white";
+    pathname.startsWith(href) ? "text-[#E6C475]" : "text-white";
+
+  const isActive = (href: string) => {
+    // Special case for home page
+    if (href === "/") return pathname === href;
+    return pathname.startsWith(href);
+  };
 
   return (
     <header className="fixed top-0 z-50 w-full border-b bg-[#817667] h-[83px] flex justify-center flex-col">
@@ -60,7 +73,9 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-[16px] font-medium text-white transition-colors hover:text-[#E4C072]"
+                  className={`text-[16px] font-medium text-white transition-colors hover:text-[#E4C072] ${
+                    isActive(link.href) ? "text-[#E6C475]" : ""
+                  }`}
                 >
                   {link.name}
                 </Link>
@@ -72,49 +87,94 @@ export function Navbar() {
         {/* Right Side */}
         <div className="flex items-center gap-4">
           {/* Search */}
-          <div className="relative w-full max-w-sm">
+          <div className="relative w-full max-w-[160px] sm:max-w-sm">
             <Input
-              placeholder="Search auctions..."
-              className="pr-8 h-[32px] w-[220px] border border-[#D1D1D1] focus:outline-none placeholder:text-gray-400 text-white"
-              autoFocus
+              placeholder="Search..."
+              className="pr-8 h-[32px] w-full border border-[#D1D1D1] focus:outline-none placeholder:text-gray-400 text-white text-sm"
             />
             <Search className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-white" />
           </div>
 
-          {/* Login Button */}
-          <Button variant="default" className="px-6 hidden lg:block">
-            Login
-          </Button>
+          {/* Login Button - shown when not logged in */}
+          {!isLoggedIn && (
+            <Link href="/login" className="hidden md:block">
+              <Button variant="default" className="px-6 hidden lg:block">
+                Login
+              </Button>
+            </Link>
+          )}
 
-          {/* Icon Links */}
-          <div className="flex items-center gap-4">
-            {iconLinks.map(({ icon: Icon, href }) => (
-              <Link key={href} href={href} className={getIconClasses(href)}>
-                <Icon className={getIconColor(href)} size={20} />
-              </Link>
-            ))}
-          </div>
+          {/* Icon Links - shown when logged in */}
+          {isLoggedIn && (
+            <div className="flex items-center gap-2 sm:gap-4">
+              {iconLinks.map(({ icon: Icon, href }) => (
+                <Link key={href} href={href} className={getIconClasses(href)}>
+                  <Icon className={getIconColor(href)} size={20} />
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* Mobile Menu */}
           {isMobile && (
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
+                  <Menu className="h-5 w-5 text-white" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] bg-[#f5f0e8]">
+              <SheetContent
+                side="right"
+                className="w-[280px] sm:w-[300px] bg-[#f5f0e8]"
+              >
                 <nav className="flex flex-col gap-4 pt-10">
                   {navLinks.map((link) => (
                     <Link
                       key={link.name}
                       href={link.href}
-                      className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                      className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
+                        isActive(link.href) ? "text-foreground" : ""
+                      }`}
                     >
                       {link.name}
                     </Link>
                   ))}
+                  {!isLoggedIn ? (
+                    <Link
+                      href="/login"
+                      className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      Login
+                    </Link>
+                  ) : (
+                    <>
+                      <Link
+                        href="/wishlist"
+                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
+                          isActive("/wishlist") ? "text-foreground" : ""
+                        }`}
+                      >
+                        Wishlist
+                      </Link>
+                      <Link
+                        href="/notifications"
+                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
+                          isActive("/notifications") ? "text-foreground" : ""
+                        }`}
+                      >
+                        Notifications
+                      </Link>
+                      <Link
+                        href="/accounts"
+                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
+                          isActive("/accounts") ? "text-foreground" : ""
+                        }`}
+                      >
+                        My Account
+                      </Link>
+                    </>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>
