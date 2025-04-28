@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
+import { apiService } from "@/lib/api-service";
 import {
   Table,
   TableBody,
@@ -25,7 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
-import { useAllBidders, useDeleteBidder } from "@/hooks/use-queries";
+
 
 interface Bidder {
   userId: string;
@@ -40,9 +41,6 @@ interface Bidder {
 }
 
 export default function BiddersPage() {
-  const { data: biddersData, isLoading } = useAllBidders();
-  const deleteBidderMutation = useDeleteBidder();
-
   const [bidders, setBidders] = useState<Bidder[]>([]);
   const [filteredBidders, setFilteredBidders] = useState<Bidder[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -71,6 +69,10 @@ export default function BiddersPage() {
 
 
   useEffect(() => {
+
+    fetchBidders();
+  }, [currentPage]);
+
     if (biddersData?.data) {
       const data = biddersData.data as Bidder[];
       setBidders(data);
@@ -78,6 +80,7 @@ export default function BiddersPage() {
       setTotalPages(biddersData.totalPages || 1);
     }
   }, [biddersData]);
+
 
   useEffect(() => {
     if (searchTerm) {
@@ -97,7 +100,16 @@ export default function BiddersPage() {
   };
 
   const handleDeleteBidder = async (id: string) => {
-    deleteBidderMutation.mutate(id);
+    try {
+      const response = await apiService.deleteBidder(id);
+      if (response.status === true) {
+        toast.success("Bidder deleted successfully");
+        fetchBidders();
+      }
+    } catch (error) {
+      console.error("Error deleting bidder:", error);
+      toast.error("Failed to delete bidder");
+    }
   };
 
   return (
