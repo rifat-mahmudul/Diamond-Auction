@@ -6,6 +6,12 @@ import React from 'react';
 import QuillEditor from './QuillEditor';
 import { ScrollArea } from '@/components/ui/scroll-area'; // Import ScrollArea from shadcn
 
+interface Blog {
+  title: string;
+  content: string;
+  image: File | null;
+}
+
 interface AddEditBlogsProps {
   handleAddBlog: (e: React.FormEvent) => void;
   newBlog: {
@@ -13,14 +19,19 @@ interface AddEditBlogsProps {
     content: string;
     image: File | null;
   };
-  setNewBlog: React.Dispatch<React.SetStateAction<any>>;
+  setNewBlog: React.Dispatch<React.SetStateAction<Blog>>;
   previewUrl: string;
   setPreviewUrl: React.Dispatch<React.SetStateAction<string>>;
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  createBlogMutation: any;
-  updateBlogMutation: any;
+  createBlogMutation: {
+    isPending: boolean;
+  };
+  updateBlogMutation: {
+    isPending: boolean;
+  };
   editingBlog: boolean;
 }
+
 
 function AddEditBlogs({
   handleAddBlog,
@@ -77,7 +88,7 @@ function AddEditBlogs({
                   variant="outline"
                   onClick={() => {
                     setPreviewUrl('');
-                    setNewBlog((prev: any) => ({ ...prev, image: null }));
+                    setNewBlog((prev: Blog) => ({ ...prev, image: null }));
                   }}
                 >
                   Remove
@@ -120,8 +131,8 @@ function AddEditBlogs({
             {createBlogMutation.isPending || updateBlogMutation.isPending
               ? 'Saving...'
               : editingBlog
-              ? 'Update'
-              : 'Save'}
+                ? 'Update'
+                : 'Save'}
           </Button>
         </div>
       </form>
