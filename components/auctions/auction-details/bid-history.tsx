@@ -5,6 +5,7 @@ import { format } from "date-fns"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { formatCurrency } from "@/lib/format"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 
 interface BidHistoryProps {
     auctionId: string
@@ -35,22 +36,42 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
                         Authorization: `Bearer ${token}`,
                     },
                 }
-            )
+            );
             if (!response.ok) {
-                throw new Error("Failed to fetch bid history")
+                throw new Error("Failed to fetch bid history");
             }
-            return response.json()
+            return response.json();
         },
-    })
+        refetchInterval: 5000,
+        refetchIntervalInBackground: false,
 
-    const bidHistory = bidHistoryData?.data
+    });
+
+    const bidHistory = bidHistoryData?.data;
+
+
+    if (!token) {
+        return (
+            <div className="text-center text-lg font-semibold border-2 py-2 rounded-md">
+                <h3>Please login to view bid history</h3>
+                <Link href={"/login"} className="underline pt-2">Login</Link>
+            </div>
+        )
+    }
+
 
     if (isLoading) {
         return <div>Loading bid history...</div>
     }
 
+
+
     if (!bidHistory) {
-        return <div>No bid history available</div>
+        return (
+            <div>
+                <h3>No bid history available</h3>
+            </div>
+        )
     }
 
 
@@ -82,7 +103,7 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {bidHistory.map((bid: Bid, index: number) => (
+                        {token && bidHistory.map((bid: Bid, index: number) => (
                             <TableRow key={index} className="bg-[#f9f4e8] hover:bg-[#f9f4e8]">
                                 <TableCell className="border py-3 px-4">
                                     {format(new Date(bid.createdAt), "MMMM d, yyyy h:mm a")}
