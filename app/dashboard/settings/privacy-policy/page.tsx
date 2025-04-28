@@ -1,146 +1,119 @@
 "use client";
 
-import type React from "react";
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Pencil } from "lucide-react";
-import {
-  usePolicy,
-  useUpdatePolicy,
-  useCreatePolicy,
-} from "@/hooks/use-queries";
+import QuillEditor from "../../blogs/_components/QuillEditor";
+import { Label } from "@/components/ui/label";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+
+interface TermsData {
+  _id?: string;
+  text?: string;
+}
 
 export default function PrivacyPolicyPage() {
-  const { data: policyData, isLoading } = usePolicy();
-  const updatePolicyMutation = useUpdatePolicy();
-  const createPolicyMutation = useCreatePolicy();
+  const { data: session } = useSession();
+  const token = session?.user?.accessToken || "";
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState("");
+  const [terms, setTerms] = useState<TermsData | null>(null);
+  const [content, setContent] = useState<string>("");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
 
   useEffect(() => {
-    if (policyData?.data) {
-      setText(policyData.data.text || "");
-    }
-  }, [policyData]);
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const data = { text };
-
-    if (policyData?.data?._id) {
-      // Update existing policy
-      updatePolicyMutation.mutate(
-        {
-          id: policyData.data._id,
-          data,
-        },
-        {
-          onSuccess: () => {
-            setIsEditing(false);
-          },
+    const fetchTerms = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/policy`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch terms");
         }
-      );
-    } else {
-      // Create new policy
-      createPolicyMutation.mutate(data, {
-        onSuccess: () => {
-          setIsEditing(false);
+        const res = await response.json();
+        const data = res.data[0].text;
+        setTerms(data);
+        setContent(data || "hello");
+      } catch (error) {
+        console.error("Error fetching terms:", error);
+      }
+    };
+
+    fetchTerms();
+  }, []);
+
+  console.log("terms", terms);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/policy/update/6805fb8db656d802be836463`, {
+        method: isEditing ? "PUT" : "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({ text: content }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to save terms");
+      }
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving terms:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#6b614f]"></div>
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              Privacy Policy
-            </h1>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Link href="/dashboard" className="hover:underline">
-                Dashboard
-              </Link>
-              <span>→</span>
-              <Link href="/settings" className="hover:underline">
-                Setting
-              </Link>
-              <span>→</span>
-              <span>Privacy Policy</span>
-            </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold">Privacy Policy</h2>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Link href="/dashboard" className="hover:underline">
+              Dashboard
+            </Link>
+            <span>→</span>
+            <Link href="/dashboard/settings" className="hover:underline">
+              Setting
+            </Link>
+            <span>›</span>
+            <span>PrivacyPolicy</span>
           </div>
-          <Button
-            onClick={() => setIsEditing(!isEditing)}
-            className="bg-[#6b614f] hover:bg-[#5c5343]"
-          >
-            <Pencil className="h-4 w-4 mr-2" /> Policy
-          </Button>
         </div>
 
-        <h2 className="text-2xl font-bold">Privacy Policy</h2>
 
-        {isEditing ? (
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <Textarea
-              value={text}
-              onChange={handleTextChange}
-              placeholder="Enter privacy policy"
-              rows={20}
-              className="font-mono text-sm"
-            />
-
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                className="bg-[#6b614f] hover:bg-[#5c5343]"
-                disabled={
-                  updatePolicyMutation.isPending ||
-                  createPolicyMutation.isPending
-                }
-              >
-                {updatePolicyMutation.isPending ||
-                createPolicyMutation.isPending
-                  ? "Updating..."
-                  : "Update"}
-              </Button>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="space-y-2">
+            <Label htmlFor="content">Description</Label>
+            <div className="rounded-md border">
+              <QuillEditor id="content" value={content} onChange={setContent} />
             </div>
-          </form>
-        ) : (
-          <div className="prose max-w-none">
-            {text ? (
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: text.replace(/\n/g, "<br />"),
-                }}
-              />
-            ) : (
-              <p className="text-muted-foreground">
-                No privacy policy has been added yet.
-              </p>
-            )}
           </div>
-        )}
+
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="bg-[#6b614f] hover:bg-[#5c5343]"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </form>
       </div>
     </Layout>
   );

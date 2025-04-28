@@ -28,6 +28,7 @@ export default function SettingsPage() {
             title="Change Password"
             href="/dashboard/settings/change-password"
           />
+          <SettingCard title="About Us" href="/dashboard/settings/about-us" />
           <SettingCard
             title="Terms & conditions"
             href="/dashboard/settings/terms-conditions"
