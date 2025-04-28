@@ -6,6 +6,7 @@ import { apiService } from "@/lib/api-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingCart, Users, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useSession } from "next-auth/react";
 
 interface Auction {
   _id: string;
@@ -31,9 +32,15 @@ export default function Dashboard() {
     bidders: 6020,
     liveAuctions: 20,
   });
-  console.log(setStats);
+  const session = useSession();
+  const user = session.data?.user;
 
-  console.log(setStats);
+  // Set token whenever user changes
+  useEffect(() => {
+    if (user?.accessToken) {
+      apiService.setToken(user.accessToken);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,7 +78,9 @@ export default function Dashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Revenue</p>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Total Revenue
+              </p>
               <div className="text-2xl font-bold">${stats.revenue}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
@@ -82,7 +91,9 @@ export default function Dashboard() {
 
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Seller</p>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Total Seller
+              </p>
               <div className="text-2xl font-bold">{stats.sellers}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
@@ -93,7 +104,9 @@ export default function Dashboard() {
 
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Bidders</p>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Total Bidders
+              </p>
               <div className="text-2xl font-bold">{stats.bidders}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
@@ -104,7 +117,9 @@ export default function Dashboard() {
 
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Live Auctions</p>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Live Auctions
+              </p>
               <div className="text-2xl font-bold">{stats.liveAuctions}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
@@ -161,7 +176,9 @@ export default function Dashboard() {
               <CardTitle>Top Bidders</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2"> {/* Changed from space-y-8 to space-y-0 */}
+              <div className="space-y-2">
+                {" "}
+                {/* Changed from space-y-8 to space-y-0 */}
                 {topBidders.map((bidder) => (
                   <div
                     key={bidder._id}

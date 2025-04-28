@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@radix-ui/react-label';
-import Image from 'next/image';
-import React from 'react';
-import QuillEditor from './QuillEditor';
-import { ScrollArea } from '@/components/ui/scroll-area'; // Import ScrollArea from shadcn
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import Image from "next/image";
+import React from "react";
+import QuillEditor from "./QuillEditor";
+import { ScrollArea } from "@/components/ui/scroll-area"; // Import ScrollArea from shadcn
 
 interface AddEditBlogsProps {
   handleAddBlog: (e: React.FormEvent) => void;
@@ -13,11 +13,14 @@ interface AddEditBlogsProps {
     content: string;
     image: File | null;
   };
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   setNewBlog: React.Dispatch<React.SetStateAction<any>>;
   previewUrl: string;
   setPreviewUrl: React.Dispatch<React.SetStateAction<string>>;
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   createBlogMutation: any;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   updateBlogMutation: any;
   editingBlog: boolean;
 }
@@ -34,8 +37,12 @@ function AddEditBlogs({
   editingBlog,
 }: AddEditBlogsProps) {
   return (
-    <ScrollArea className="h-[calc(100vh-200px)]"> {/* Add scrollable area */}
-      <form onSubmit={handleAddBlog} className="space-y-4 pt-4 pr-4"> {/* Add right padding */}
+    <ScrollArea className="h-[calc(100vh-200px)]">
+      {" "}
+      {/* Add scrollable area */}
+      <form onSubmit={handleAddBlog} className="space-y-4 pt-4 pr-4">
+        {" "}
+        {/* Add right padding */}
         {/* Title */}
         <div className="space-y-2">
           <Label htmlFor="title">Blog Title</Label>
@@ -46,11 +53,12 @@ function AddEditBlogs({
             placeholder="Type Blog Title here..."
           />
         </div>
-
         {/* Content */}
         <div className="space-y-2">
           <Label htmlFor="content">Description</Label>
-          <div className="rounded-md border"> {/* Container for editor with border */}
+          <div className="rounded-md border">
+            {" "}
+            {/* Container for editor with border */}
             <QuillEditor
               id="content"
               value={newBlog.content}
@@ -58,7 +66,6 @@ function AddEditBlogs({
             />
           </div>
         </div>
-
         {/* Thumbnail */}
         <div className="space-y-2">
           <Label htmlFor="image">Thumbnail</Label>
@@ -76,7 +83,8 @@ function AddEditBlogs({
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    setPreviewUrl('');
+                    setPreviewUrl("");
+                    /* eslint-disable @typescript-eslint/no-explicit-any */
                     setNewBlog((prev: any) => ({ ...prev, image: null }));
                   }}
                 >
@@ -86,7 +94,12 @@ function AddEditBlogs({
             ) : (
               <div className="flex flex-col items-center gap-2">
                 <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                  <Image src="/placeholder.svg" alt="Upload" width={40} height={40} />
+                  <Image
+                    src="/placeholder.svg"
+                    alt="Upload"
+                    width={40}
+                    height={40}
+                  />
                 </div>
                 <p className="text-sm text-center text-muted-foreground">
                   Drag and drop image here, or click add image
@@ -94,7 +107,9 @@ function AddEditBlogs({
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => document.getElementById('blog-image-upload')?.click()}
+                  onClick={() =>
+                    document.getElementById("blog-image-upload")?.click()
+                  }
                 >
                   Add Image
                 </Button>
@@ -109,19 +124,22 @@ function AddEditBlogs({
             )}
           </div>
         </div>
-
         {/* Submit Button */}
-        <div className="flex justify-end pb-4"> {/* Add bottom padding */}
+        <div className="flex justify-end pb-4">
+          {" "}
+          {/* Add bottom padding */}
           <Button
             type="submit"
             className="bg-[#6b614f] hover:bg-[#5c5343]"
-            disabled={createBlogMutation.isPending || updateBlogMutation.isPending}
+            disabled={
+              createBlogMutation.isPending || updateBlogMutation.isPending
+            }
           >
             {createBlogMutation.isPending || updateBlogMutation.isPending
-              ? 'Saving...'
+              ? "Saving..."
               : editingBlog
-              ? 'Update'
-              : 'Save'}
+              ? "Update"
+              : "Save"}
           </Button>
         </div>
       </form>

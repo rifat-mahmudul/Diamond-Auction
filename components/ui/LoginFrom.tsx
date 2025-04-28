@@ -31,7 +31,6 @@ const loginFormSchema = z.object({
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export function LoginForm() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -54,15 +53,14 @@ export function LoginForm() {
         callbackUrl: "/dashboard",
       });
 
-      console.log("login data df", response);
+      // console.log("login data df", response);
       if (response?.error) {
         toast.error(response?.error);
         alert(response?.error);
       } else {
-        alert("Login Successfully");
         toast.success("Login successful");
         // router.push("/dashboard");
-        window.location.href = "/dashboard"
+        window.location.href = "/dashboard";
         // router.refresh();
       }
     } catch (error) {
@@ -109,7 +107,7 @@ export function LoginForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm sm:text-base">
-                        User Name
+                        Username
                       </FormLabel>
                       <FormControl>
                         <Input
