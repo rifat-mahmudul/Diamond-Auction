@@ -36,15 +36,19 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
                         Authorization: `Bearer ${token}`,
                     },
                 }
-            )
+            );
             if (!response.ok) {
-                throw new Error("Failed to fetch bid history")
+                throw new Error("Failed to fetch bid history");
             }
-            return response.json()
+            return response.json();
         },
-    })
+        refetchInterval: 5000,
+        refetchIntervalInBackground: false,
 
-    const bidHistory = bidHistoryData?.data
+    });
+
+    const bidHistory = bidHistoryData?.data;
+
 
     if (!token) {
         return (

@@ -25,7 +25,7 @@ interface TopBidder {
 export default function Dashboard() {
   const [recentAuctions, setRecentAuctions] = useState<Auction[]>([]);
   const [topBidders, setTopBidders] = useState<TopBidder[]>([]);
-  const [stats, setStats] = useState({
+  const stats = useState({
     revenue: 11020,
     sellers: 8020,
     bidders: 6020,

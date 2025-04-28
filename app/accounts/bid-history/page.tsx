@@ -64,7 +64,7 @@ export default function BidHistoryPage() {
   // Fetch data when component mounts
   useEffect(() => {
     fetchBidHistory();
-  }, []);
+  }, [fetchBidHistory]);
 
   const getStatusColor = (status: string) => {
     if (status.startsWith("Win")) return "text-green-600";
