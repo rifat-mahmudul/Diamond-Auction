@@ -110,7 +110,7 @@ export function RegisterForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm sm:text-base">
-                      Full name
+                      Username
                     </FormLabel>
                     <FormControl>
                       <Input
