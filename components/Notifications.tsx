@@ -5,6 +5,7 @@ import { io, type Socket } from "socket.io-client"
 import { MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useSession } from "next-auth/react"
 
 // Define the notification interface to match server response
 interface Notification {
@@ -29,11 +30,19 @@ export default function NotificationsComponent() {
     
     const SERVER_URL = "http://localhost:5100"
     const API_ENDPOINT = `${SERVER_URL}/api/v1/bids/notifications`
+   
+    // const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDUyMjI4MTYsImV4cCI6MTc0NTgyNzYxNn0.ZLziWZQsxyJmM17TJ01eZPzlcCRxLpGQWnup9Hlrvro"
+
+   const session = useSession()
+   console.log(session);
+
+   const token = session?.data?.user
+
 
     // Use static token
-    const getToken = () => {
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDUyMjI4MTYsImV4cCI6MTc0NTgyNzYxNn0.ZLziWZQsxyJmM17TJ01eZPzlcCRxLpGQWnup9Hlrvro"
-    }
+    // const getToken = () => {
+    //     return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDUyMjI4MTYsImV4cCI6MTc0NTgyNzYxNn0.ZLziWZQsxyJmM17TJ01eZPzlcCRxLpGQWnup9Hlrvro"
+    // }
 
     // Format time difference
     const formatTimeAgo = (dateString: string) => {
@@ -51,6 +60,8 @@ export default function NotificationsComponent() {
             return `${diffInDays}d ago`
         }
     }
+
+
 
     // Fetch notifications from API
     const fetchNotifications = async () => {
@@ -70,7 +81,7 @@ export default function NotificationsComponent() {
             }
 
             const data = await response.json()
-            console.log(data);
+            // console.log(data);
             
             // Map server response to match Notification interface
 
@@ -128,7 +139,6 @@ export default function NotificationsComponent() {
     // Delete notification
     const deleteNotification = async (id: string) => {
         try {
-            const token = getToken()
 
             await fetch(`${SERVER_URL}/api/v1/bids/notifications/${id}`, {
                 method: "DELETE",

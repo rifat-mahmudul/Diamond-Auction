@@ -46,9 +46,10 @@ interface FormValues {
 }
 
 export default function SettingsPage() {
-  const { data: session } = useSession();
-  const userID = session?.user?.id;
-  const token = session?.accessToken;
+  const session = useSession();
+
+  const userID = session?.data?.user.id;
+  const token = session?.data?.user?.accessToken;
 
   const {
     register,

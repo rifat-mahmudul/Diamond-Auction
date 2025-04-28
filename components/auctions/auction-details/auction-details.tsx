@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarClock, Heart, Minus, Plus } from "lucide-react";
+import { CalendarClock, Heart, Minus, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +16,9 @@ import BidHistory from "./bid-history";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import RelatedAuction from "../related-auction";
+import { useSession } from "next-auth/react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface AuctionDetailsProps {
     auctionId: string;
@@ -29,9 +32,11 @@ interface PlaceBidParams {
 export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const [bidAmount, setBidAmount] = useState<string>("");
     const [activeTab, setActiveTab] = useState<string>("description");
+    const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const queryClient = useQueryClient();
 
+    const session = useSession();
     // Fetch auction details
     const {
         data: auctionData,
@@ -41,12 +46,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         queryKey: ["auction", auctionId],
         queryFn: async () => {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/auctions/get-auction/${auctionId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU2Mzc4NzksImV4cCI6MTc0NjI0MjY3OX0.zLPAwxo0f0NFPuS-PkjIVL73cII6FFAmEY-aDmmE7po`,
-                    },
-                }
+                `${process.env.NEXT_PUBLIC_API_URL}/auctions/get-auction/${auctionId}`
             );
             if (!response.ok) {
                 const errorData = await response.json();
@@ -67,7 +67,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBiMDMxOGJhZTMxMjljYzlmNWUyYzYiLCJpYXQiOjE3NDU2Mzc4NzksImV4cCI6MTc0NjI0MjY3OX0.zLPAwxo0f0NFPuS-PkjIVL73cII6FFAmEY-aDmmE7po`,
+                    Authorization: `Bearer ${session?.data?.user?.accessToken}`,
                 },
                 body: JSON.stringify({ amount }),
             }
@@ -93,7 +93,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         mutationFn: placeBid,
         onSuccess: (data) => {
             setBidAmount("");
-            console.log(data);
+            // console.log(data);
             queryClient.invalidateQueries({ queryKey: ["bidHistory"] });
         },
         onError: (err) => {
@@ -133,9 +133,6 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
 
 
     // Calculate time remaining
-    const now = new Date();
-    const endTime = auction ? new Date(auction.endTime) : null;
-    const isAuctionEnded = endTime ? now > endTime : false;
 
 
 
@@ -168,6 +165,13 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     if (!auction) {
         return <div>Auction not found.</div>;
     }
+
+
+
+    const winner = auction.winner
+
+    const user = session?.data?.user?.id
+
 
 
     return (
@@ -222,7 +226,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                     </p>
                                 </div>
 
-                                {!isAuctionEnded && (
+                                {auction.status === "live" && (
                                     <div className="text-[#645949]">
                                         <div>
                                             <p className="text-sm font-medium mb-3">Time left:</p>
@@ -293,19 +297,8 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                         )}
                                         {isBidError && (
                                             <div className="mt-4 text-red-500">
-                                                Error placing bid: {bidError?.message}
+                                                Error placing bid: {bidError?.message} Register to place bid
                                             </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {isAuctionEnded && (
-                                    <div className="p-4 bg-muted rounded-md">
-                                        <p className="font-medium">This auction has ended</p>
-                                        {auction.winner === auction.seller._id ? (
-                                            <p>YOU WON the bid: {formatCurrency(auction.currentBid)}</p>
-                                        ) : (
-                                            <p>Final bid: {formatCurrency(auction.currentBid)}</p>
                                         )}
                                     </div>
                                 )}
@@ -335,25 +328,138 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                         )
                             :
                             auction.status === "completed" ? (
-                                <Card className="border border-[#a39a85] overflow-hidden bg-[#f5f1e8]">
-                                    <div className="bg-[#8a8170] py-3 px-4">
-                                        <div className="flex justify-between items-center">
-                                            <h3 className="text-[#f5f1e8] font-semibold text-lg">Auction Has Completed</h3>
-                                            <Badge variant="outline" className="bg-[#f5f1e8]/10 text-[#f5f1e8] border-[#f5f1e8]/30">
-                                                Exclusive
-                                            </Badge>
-                                        </div>
-                                    </div>
-
-                                    <CardContent className="p-5">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-[#e6e0d4] rounded-full p-2.5">
-                                                <CalendarClock className="h-5 w-5 text-[#8a8170]" />
+                                <div className="">
+                                    <Card className="border border-[#a39a85] overflow-hidden bg-[#f5f1e8]">
+                                        <div className="bg-[#8a8170] py-3 px-4">
+                                            <div className="flex justify-between items-center">
+                                                <h3 className="text-[#f5f1e8] font-semibold text-lg">Auction Has Completed</h3>
+                                                <Badge variant="outline" className="bg-[#f5f1e8]/10 text-[#f5f1e8] border-[#f5f1e8]/30">
+                                                    Exclusive
+                                                </Badge>
                                             </div>
-                                            <p className="text-[#5d5545] font-medium">This item will not be available for auction</p>
                                         </div>
-                                    </CardContent>
-                                </Card>
+
+                                        <CardContent className="p-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="bg-[#e6e0d4] rounded-full p-2.5">
+                                                    <CalendarClock className="h-5 w-5 text-[#8a8170]" />
+                                                </div>
+                                                <p className="text-[#5d5545] font-medium">This item will not be available for auction</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                    {
+                                        winner == user && (
+                                            <div className="pt-6">
+                                                <h4 className="font-semibold text-[#645949] pb-4">You won the bid: ${auction.currentBid}</h4>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => setIsOpen(true)}
+                                                    disabled={!auction || isPlacingBid}
+                                                    className="text-white h-12 w-32 bg-[#645949] hover:bg-[#645949]/90"
+                                                >
+                                                    Pay Now
+                                                </Button>
+                                                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                                                    <DialogContent className="sm:max-w-[900px] p-0 bg-white">
+                                                        <div className="flex">
+                                                            {/* Close button */}
+                                                            <button
+                                                                onClick={() => setIsOpen(false)}
+                                                                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                                <span className="sr-only">Close</span>
+                                                            </button>
+
+                                                            {/* Billing Information */}
+                                                            <div className="w-1/2 p-6 border-r">
+                                                                <h2 className="text-xl font-semibold mb-4">Billing Information</h2>
+
+                                                                <div className="space-y-4">
+                                                                    <div>
+                                                                        <label htmlFor="fullName" className="block text-sm mb-1">
+                                                                            Full Name
+                                                                        </label>
+                                                                        <Input id="fullName" className="w-full" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="address" className="block text-sm mb-1">
+                                                                            Address
+                                                                        </label>
+                                                                        <Input id="address" className="w-full" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="email" className="block text-sm mb-1">
+                                                                            Email address
+                                                                        </label>
+                                                                        <Input id="email" type="email" className="w-full" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="phone" className="block text-sm mb-1">
+                                                                            Phone Number
+                                                                        </label>
+                                                                        <Input id="phone" className="w-full" />
+                                                                    </div>
+
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <Checkbox id="saveInfo" />
+                                                                        <label htmlFor="saveInfo" className="text-sm">
+                                                                            Save this information for faster check out next time
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Order Summary */}
+                                                            <div className="w-1/2 p-6">
+                                                                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+
+                                                                <div className="flex items-center mb-4">
+                                                                    <div className="w-12 h-12 bg-gray-100 rounded mr-3 overflow-hidden">
+                                                                        <Image src={auction?.images[0]} alt={auction?.title} width={48} height={48} />
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <div className="font-medium">{auction?.title}</div>
+                                                                    </div>
+                                                                    <div className="font-medium">${auction?.currentBid}</div>
+                                                                </div>
+
+                                                                <div className="space-y-2 border-t pt-4">
+                                                                    <div className="flex justify-between">
+                                                                        <span>Subtotal</span>
+                                                                        <span>${auction?.currentBid}</span>
+                                                                    </div>
+
+                                                                    <div className="flex justify-between">
+                                                                        <span>Shipping</span>
+                                                                        <span>$55</span>
+                                                                    </div>
+
+                                                                    <div className="flex justify-between font-bold border-t pt-2 mt-2">
+                                                                        <span>Total</span>
+                                                                        <span>${auction?.currentBid + 55}</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <Button
+                                                                    className="w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white"
+                                                                    onClick={() => console.log("Processing payment...")}
+                                                                >
+                                                                    Pay With <span className="font-semibold ml-1 text-xl">stripe</span>
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </div>
+                                        )
+                                    }
+                                </div>
                             )
                                 :
                                 auction.status === "cancelled" ? (
@@ -464,7 +570,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
             </Tabs>
 
 
-            <RelatedAuction name={auction.category.name} />
+            <RelatedAuction name={auction?.category?.name} />
         </div>
     );
 }

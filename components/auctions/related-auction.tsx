@@ -11,7 +11,6 @@ interface AuctionCategory {
 export default function RelatedAuction({ name }: AuctionCategory) {
     const {
         data: relatedAuctions,
-        status,
         error: errorRelatedAuctions,
     } = useQuery({
         queryKey: ["relatedAuctions"],
@@ -32,12 +31,16 @@ export default function RelatedAuction({ name }: AuctionCategory) {
         select: (responseData) => responseData?.data,
     })
 
+    if(!relatedAuctions) {
+        return <div className="text-xl font-semibold">No related auctions</div>
+    }
+
     if (errorRelatedAuctions) {
         return <div>Error: {errorRelatedAuctions.message}</div>
     }
 
     return (
-        <div className="pt-10 bg-[#f8f5f0] px-8 py-12">
+        <div className="pt-10 px-8 py-12">
             <div className="pb-10">
                 <h2 className="text-3xl md:text-5xl font-bold">Related Products</h2>
             </div>

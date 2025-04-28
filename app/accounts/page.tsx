@@ -43,10 +43,7 @@ export default function ProfilePage() {
   const session = useSession();
   
   const userID = session?.data?.user.id;
-  const token = session?.data?.accessToken;
-
-  console.log(token)
-  console.log(userID)
+  const token = session?.data?.user?.accessToken;
 
   useEffect(() => {
     const fetchProfile = async () => {

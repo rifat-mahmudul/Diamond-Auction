@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import Image from "next/image";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 interface Category {
   _id: string;

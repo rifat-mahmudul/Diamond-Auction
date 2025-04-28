@@ -31,9 +31,6 @@ export default function Dashboard() {
     bidders: 6020,
     liveAuctions: 20,
   });
-  console.log(setStats);
-
-  console.log(setStats);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,61 +59,66 @@ export default function Dashboard() {
     <Layout>
       <div className="space-y-6 ">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-[#4B5563] text-sm font-normal">
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
             Welcome back to your auction admin panel
           </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="flex items-center justify-between p-4 bg-white">
-            <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Revenue</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Revenue
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-blue-500" />
+            </CardHeader>
+            <CardContent>
               <div className="text-2xl font-bold">${stats.revenue}</div>
-              <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
-            </div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2695FF] text-white">
-              <DollarSign className="h-8 w-8 text-white" />
-            </div>
+              <p className="text-xs text-muted-foreground">All Time</p>
+            </CardContent>
           </Card>
-
-          <Card className="flex items-center justify-between p-4 bg-white">
-            <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Seller</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Seller
+              </CardTitle>
+              <Store className="h-4 w-4 text-green-500" />
+            </CardHeader>
+            <CardContent>
               <div className="text-2xl font-bold">{stats.sellers}</div>
-              <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
-            </div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
-              <Store className="h-8 w-8 text-white" />
-            </div>
+              <p className="text-xs text-muted-foreground">All Time</p>
+            </CardContent>
           </Card>
-
-          <Card className="flex items-center justify-between p-4 bg-white">
-            <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Bidders</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Bidders
+              </CardTitle>
+              <Users className="h-4 w-4 text-yellow-500" />
+            </CardHeader>
+            <CardContent>
               <div className="text-2xl font-bold">{stats.bidders}</div>
-              <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
-            </div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F59E0B] text-white">
-              <Users className="h-8 w-8 text-white" />
-            </div>
+              <p className="text-xs text-muted-foreground">All Time</p>
+            </CardContent>
           </Card>
-
-          <Card className="flex items-center justify-between p-4 bg-white">
-            <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Live Auctions</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Live Auctions
+              </CardTitle>
+              <ShoppingCart className="h-4 w-4 text-red-500" />
+            </CardHeader>
+            <CardContent>
               <div className="text-2xl font-bold">{stats.liveAuctions}</div>
-              <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
-            </div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EF4444] text-white">
-              <ShoppingCart className="h-8 w-8 text-white" />
-            </div>
+              <p className="text-xs text-muted-foreground">All Time</p>
+            </CardContent>
           </Card>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className="col-span-1 p-4 bg-white">
-            <CardHeader className="mb-4">
+          <Card className="col-span-1">
+            <CardHeader>
               <CardTitle>Recent Auctions</CardTitle>
             </CardHeader>
             <CardContent>
@@ -132,7 +134,7 @@ export default function Dashboard() {
                   {recentAuctions.map((auction) => (
                     <div
                       key={auction._id}
-                      className="grid grid-cols-5 items-center border-b border-gray-200 last:border-b-0 py-2"
+                      className="grid grid-cols-5 items-center"
                     >
                       <div className="font-medium">Classic and timeless</div>
                       <div>22</div>
@@ -156,16 +158,16 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="col-span-1 p-4 bg-white">
-            <CardHeader className="mb-4">
+          <Card className="col-span-1">
+            <CardHeader>
               <CardTitle>Top Bidders</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2"> {/* Changed from space-y-8 to space-y-0 */}
+              <div className="space-y-8">
                 {topBidders.map((bidder) => (
                   <div
                     key={bidder._id}
-                    className="flex items-center justify-between pb-4 border-b border-gray-200 last:border-b-0"
+                    className="flex items-center justify-between"
                   >
                     <div className="space-y-1">
                       <p className="font-medium">{bidder.username}</p>
@@ -179,10 +181,7 @@ export default function Dashboard() {
                   </div>
                 ))}
                 {Array.from({ length: 8 - topBidders.length }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between pb-4 border-b border-gray-200 last:border-b-0"
-                  >
+                  <div key={i} className="flex items-center justify-between">
                     <div className="space-y-1">
                       <p className="font-medium">John Smith</p>
                       <p className="text-sm text-muted-foreground">
@@ -192,7 +191,7 @@ export default function Dashboard() {
                     <div className="font-medium text-green-600">$14,250</div>
                   </div>
                 ))}
-                <div className="pt-4 text-sm text-blue-500 hover:underline cursor-pointer">
+                <div className="text-sm text-blue-500 hover:underline cursor-pointer">
                   View All Bidders →
                 </div>
               </div>

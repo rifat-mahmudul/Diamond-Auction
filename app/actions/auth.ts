@@ -126,5 +126,9 @@ export async function loginUser(credentials: {
 
 export async function logout() {
   const cookieStore = cookies();
-  cookieStore.delete("refreshToken");
+  const allCookies = cookieStore.getAll();
+  // Delete each cookie
+  allCookies.forEach((cookie) => {
+    cookieStore.delete(cookie.name);
+  });
 }

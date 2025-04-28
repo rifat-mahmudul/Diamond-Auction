@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
 
   const [privacyData, setPrivacyData] = useState<PolicySection[]>([]);
   const session = useSession();
-  const token = session?.data?.accessToken;
+  const token = session?.data?.user?.accessToken;
 
   useEffect(() => {
     const fetchData = async () => {
