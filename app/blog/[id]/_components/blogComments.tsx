@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 interface BlogCommentsProps {
@@ -22,12 +23,13 @@ function BlogComments({ blogId }: BlogCommentsProps) {
         }));
     };
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDU1NTYwMzEsImV4cCI6MTc0NjE2MDgzMX0.sJ8FV4UqWCM4CYtndWMXoNO8P310ikrWCYHTdt1f8G0";
+    const sesstion = useSession();
+    const token = sesstion?.data?.user?.accessToken || '';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:5100/api/v1/admin/blogs/add-comment/${blogId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/blogs/add-comment/${blogId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
