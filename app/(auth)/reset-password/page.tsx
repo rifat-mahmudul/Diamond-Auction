@@ -73,6 +73,7 @@ export default function ResetPasswordPage() {
       }, 2000);
     } catch (error) {
       toast("Failed to reset password. Please try again.");
+      console.log(error)
     } finally {
       setIsLoading(false);
     }

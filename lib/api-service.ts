@@ -1,4 +1,3 @@
-
 const BASE_URL = "http://localhost:5100/api/v1";
 // const token =
 //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODBjNjU0ZDQxNTZiMWE2ZDIwMWVmZTkiLCJpYXQiOjE3NDU3Mjk3OTMsImV4cCI6MTc0NjMzNDU5M30._OnQBwQEQg5M49_TqsA0yNqp4WnSUTrg7r9w4EHTfYQ";
@@ -23,12 +22,13 @@ class ApiService {
   private async request<T>(
     endpoint: string,
     method = "GET",
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     data?: any
   ): Promise<ApiResponse<T>> {
     const url = `${BASE_URL}${endpoint}`;
 
     console.log(this.token, "token");
-    
+
     const headers: HeadersInit = {
       Authorization: `Bearer ${this.token}`,
     };
@@ -215,7 +215,6 @@ class ApiService {
   async getAllSellers() {
     return this.request("/admin/get-sellers");
   }
-
 
   async deleteSeller(id: string) {
     return this.request(`/admin/delete-seller/${id}`, "DELETE");

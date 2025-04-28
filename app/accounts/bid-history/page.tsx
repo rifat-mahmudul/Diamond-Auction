@@ -127,7 +127,6 @@
 //   );
 // }
 
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -170,32 +169,32 @@ export default function BidHistoryPage() {
   const token = session?.user?.accessToken;
 
   // Function to fetch data from the API
-  const fetchBidHistory = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/bids/user`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.data.status) {
-        setBidHistory(response.data.data);
-      } else {
-        setError("Failed to fetch bids.");
-      }
-    } catch (err) {
-      setError("An error occurred while fetching bids.");
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchBidHistory = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/bids/user`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.data.status) {
+          setBidHistory(response.data.data);
+        } else {
+          setError("Failed to fetch bids.");
+        }
+      } catch (err) {
+        setError("An error occurred while fetching bids.");
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchBidHistory();
-  }, [fetchBidHistory]);
+  }, [token]);
 
   const getStatus = (endTime: string) => {
     const now = new Date();

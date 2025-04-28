@@ -26,7 +26,7 @@ interface TopBidder {
 export default function Dashboard() {
   const [recentAuctions, setRecentAuctions] = useState<Auction[]>([]);
   const [topBidders, setTopBidders] = useState<TopBidder[]>([]);
-  const [stats, setStats] = useState({
+  const stats = useState({
     revenue: 11020,
     sellers: 8020,
     bidders: 6020,
@@ -81,7 +81,7 @@ export default function Dashboard() {
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Revenue
               </p>
-              <div className="text-2xl font-bold">${stats.revenue}</div>
+              <div className="text-2xl font-bold">${stats[0].revenue}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2695FF] text-white">
@@ -94,7 +94,7 @@ export default function Dashboard() {
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Seller
               </p>
-              <div className="text-2xl font-bold">{stats.sellers}</div>
+              <div className="text-2xl font-bold">{stats[0].sellers}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
@@ -107,7 +107,7 @@ export default function Dashboard() {
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Bidders
               </p>
-              <div className="text-2xl font-bold">{stats.bidders}</div>
+              <div className="text-2xl font-bold">{stats[0].bidders}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F59E0B] text-white">
@@ -120,7 +120,7 @@ export default function Dashboard() {
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Live Auctions
               </p>
-              <div className="text-2xl font-bold">{stats.liveAuctions}</div>
+              <div className="text-2xl font-bold">{stats[0].liveAuctions}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EF4444] text-white">

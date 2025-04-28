@@ -22,7 +22,7 @@ const navLinks = [
 export function Navbar() {
   const isMobile = useMobile();
   const pathname = usePathname();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const isLoggedIn = status === "authenticated";
 
   const iconLinks = [

@@ -233,7 +233,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         },
         select: (apiData) => apiData?.data?.auctions
     });
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
     const isInWishlist = !!wishlist?.some((item: any) => item._id === auctionId);
 
 

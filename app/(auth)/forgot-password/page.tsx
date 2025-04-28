@@ -47,6 +47,7 @@ export default function ForgotPasswordPage() {
       router.push("/verify-otp");
     } catch (error) {
       toast("Failed to send OTP. Please try again.");
+      console.log(error);
     } finally {
       setIsLoading(false);
     }

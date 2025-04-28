@@ -119,6 +119,7 @@ export default function VerifyOTPPage() {
       router.push("/reset-password");
     } catch (error) {
       toast.error("Invalid OTP. Please try again.");
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -153,6 +154,7 @@ export default function VerifyOTPPage() {
       toast("OTP has been resent to your email");
     } catch (error) {
       toast("Failed to resend OTP. Please try again.");
+      console.log(error)
       setResendDisabled(false);
     }
   };
