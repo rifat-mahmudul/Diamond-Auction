@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { Blog } from "../../_components/type";
 import { useParams } from "next/navigation";
 import BlogComments from "./blogComments";
-import DOMPurify from "dompurify"; // For HTML sanitization
 import { Calendar } from "lucide-react";
 
 interface BlogDetailsProps {

@@ -4,6 +4,7 @@ import "./globals.css";
 import AppProvider from "@/Provider/AppProvider";
 import LayoutShell from "./layout-shell";
 import { Toaster } from "sonner";
+import { SocketProvider } from "@/Provider/SocketProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -24,10 +25,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${roboto.className} antialiased`}>
         <AppProvider>
-          <LayoutShell>{children}</LayoutShell>
-          {/* <ContactSection />
-          <Footer /> */}
-          <Toaster />
+          <SocketProvider>
+            <LayoutShell>{children}</LayoutShell>
+            <Toaster />
+          </SocketProvider>
         </AppProvider>
       </body>
     </html>

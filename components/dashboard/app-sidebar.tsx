@@ -50,15 +50,17 @@ export function AppSidebar({ }: AppSidebarProps) {
     <>
       <Sidebar className="border-r-0" collapsible="none">
         <SidebarHeader className="h-[72px] flex items-center justify-center border-b border-[#5c5343] bg-[#645949]">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/assets/logo.png"
-              alt="Diamond Auctions"
-              width={100}
-              height={100}
-              className="w-[46px] h-[39px]"
-            />
-          </div>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/assets/logo.png"
+                alt="Diamond Auctions"
+                width={100}
+                height={100}
+                className="w-[46px] h-[39px]"
+              />
+            </div>
+          </Link>
         </SidebarHeader>
         <SidebarContent className="p-4 bg-[#6b614f]">
           <SidebarMenu className="space-y-2">

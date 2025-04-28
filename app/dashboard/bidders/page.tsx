@@ -48,25 +48,25 @@ export default function BiddersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // const [isBidderLoading, setIsBidderLoading] = useState(false);
+  const [isBidderLoading, setIsBidderLoading] = useState(false);
 
 
-  // const fetchBidders = async () => {
-  //   setIsBidderLoading(true);
-  //   try {
-  //     const response = await apiService.getAllBidders();
-  //     if (response.status === true && response.data) {
-  //       setBidders(response.data as Bidder[]);
-  //       setFilteredBidders(response.data as Bidder[]);
-  //       setTotalPages(response.totalPages || 1);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching bidders:", error);
-  //     toast.error("Failed to fetch bidders");
-  //   } finally {
-  //     setIsBidderLoading(false);
-  //   }
-  // };
+  const fetchBidders = async () => {
+    setIsBidderLoading(true);
+    try {
+      const response = await apiService.getAllBidders();
+      if (response.status === true && response.data) {
+        setBidders(response.data as Bidder[]);
+        setFilteredBidders(response.data as Bidder[]);
+        setTotalPages(response.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching bidders:", error);
+      toast.error("Failed to fetch bidders");
+    } finally {
+      setIsBidderLoading(false);
+    }
+  };
 
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function BiddersPage() {
 
         <div className="bg-white rounded-md">
           <div className="rounded-md">
-            {isLoading ? (
+            {isBidderLoading ? (
               <div className="p-8 flex justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
               </div>
