@@ -12,7 +12,7 @@ export default function AccountsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="container mt-28">
+    <div className="container mt-28 min-h-screen">
       <div className="border-b border-black pb-5">
         <PathTracker />
       </div>
