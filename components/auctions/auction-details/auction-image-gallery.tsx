@@ -11,12 +11,12 @@ interface AuctionImageGalleryProps {
 
 export default function AuctionImageGallery({ images, selectedIndex, onSelect }: AuctionImageGalleryProps) {
     return (
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="grid grid-cols-4 gap-3">
             {images.map((image, index) => (
                 <button
                     key={index}
                     className={cn(
-                        "relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border",
+                        "relative w-full h-24 flex-shrink-0 overflow-hidden rounded-md border",
                         selectedIndex === index ? "border-primary" : "border-muted",
                     )}
                     onClick={() => onSelect(index)}
