@@ -22,11 +22,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import LogOutModal from "@/Shared/LogOutModal";
 
 interface AppSidebarProps {
   isMobile?: boolean;
@@ -208,40 +206,7 @@ export function AppSidebar({ }: AppSidebarProps) {
         </div>
       </Sidebar>
 
-      <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
-        <DialogContent className="sm:max-w-md bg-[#6b614f] text-white border-none">
-          <div className="flex flex-col items-center justify-center py-4">
-            <Image
-              src="/diamond-logo.svg"
-              alt="Diamond Auctions"
-              width={50}
-              height={50}
-              className="mb-4"
-            />
-            <DialogTitle className="text-xl font-bold text-center">
-              Are You Sure To Log Out?
-            </DialogTitle>
-            <div className="flex gap-4 mt-6 w-full">
-              <Button
-                onClick={() => {
-                  localStorage.clear();
-                  signOut({ callbackUrl: "/login" });
-                }}
-                className="flex-1 bg-[#6b614f] border border-white hover:bg-[#7d7260]"
-                variant="outline"
-              >
-                Yes
-              </Button>
-              <Button
-                onClick={() => setIsLogoutDialogOpen(false)}
-                className="flex-1 bg-amber-100 text-[#6b614f] hover:bg-amber-200 hover:text-[#6b614f]"
-              >
-                No
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <LogOutModal isLogoutDialogOpen={isLogoutDialogOpen} setIsLogoutDialogOpen={setIsLogoutDialogOpen}/>
     </>
   );
 }

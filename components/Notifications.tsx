@@ -1,7 +1,6 @@
 "use client"
 import { useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import Image from 'next/image';
 import { useSocketContext } from '@/Provider/SocketProvider';
 import { useSession } from 'next-auth/react';
 
