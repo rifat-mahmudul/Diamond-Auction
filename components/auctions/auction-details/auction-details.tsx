@@ -417,9 +417,18 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                         </div>
                     </div>
 
-                    <p className="text-base text-[#645949] lg:pb-10 pb-5">
-                        {auction.description}
-                    </p>
+                    <p
+                        className="list-item list-none overflow-hidden text-ellipsis"
+                        style={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: 4,
+                            WebkitBoxOrient: "vertical",
+                        }}
+                        dangerouslySetInnerHTML={{
+                            __html: auction.description ?? "Blog Description",
+                        }}
+                    />
+
 
                     {auction.status === "live"
                         ?
@@ -802,49 +811,16 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 <TabsContent value="description" className="pt-4">
                     <div className="space-y-4">
                         <h2 className="text-lg font-semibold">
-                            {auction.title}: The Most Precious
+                            {auction.title}
                         </h2>
-                        <p className="text-sm">{auction.description}</p>
 
                         <div className="space-y-2">
-                            <h3 className="font-medium">Key Features:</h3>
-                            <ul className="list-disc pl-5 space-y-1 text-sm">
-                                <li>
-                                    <span className="font-medium">Rare & Unique:</span> Unlike
-                                    classic white diamonds, this diamond features a deep, opaque
-                                    luster, giving it a bold and captivating presence.
-                                </li>
-                                <li>
-                                    <span className="font-medium">Natural Beauty:</span> Formed over
-                                    millions of years, each diamond showcases distinct inclusions
-                                    and characteristics, adding to its authenticity.
-                                </li>
-                                <li>
-                                    <span className="font-medium">Durable & Timeless:</span> Ranking
-                                    high on the Mohs hardness scale, diamonds are exceptionally
-                                    strong, ensuring long-lasting brilliance.
-                                </li>
-                                <li>
-                                    <span className="font-medium">Versatile Elegance:</span> Perfect
-                                    for rings, necklaces, bracelets, and statement jewelry pieces,
-                                    diamonds complement both classic and modern styles.
-                                </li>
-                                <li>
-                                    <span className="font-medium">Symbol of Strength:</span>{" "}
-                                    Representing power, mystery, and sophistication, diamonds make
-                                    a meaningful and unforgettable choice.
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="space-y-2">
-                            <h3 className="font-medium">Care & Maintenance:</h3>
-                            <p className="text-sm">
-                                To preserve its beauty, clean your diamond with a soft cloth and
-                                mild soap. Avoid harsh chemicals and store separately to prevent
-                                scratches. PLEASE NOTE: As a natural gemstone, each diamond
-                                varies in tone and inclusions, making every piece one-of-a-kind.
-                            </p>
+                            <div
+                                className="list-item list-none"
+                                dangerouslySetInnerHTML={{
+                                    __html: auction.description ?? "Blog Description",
+                                }}
+                            />
                         </div>
                     </div>
                 </TabsContent>

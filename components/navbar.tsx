@@ -39,14 +39,6 @@ const fetchWishlist = async (token: string | undefined) => {
 // Function to fetch notification data
 const fetchNotification = async (token: string | undefined) => {
   if (!token) return null;
-<<<<<<< HEAD
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-=======
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`,
     {
@@ -56,7 +48,6 @@ const fetchNotification = async (token: string | undefined) => {
       },
     }
   );
->>>>>>> 0fa34a7f4acae2936483c2f0e93811ad2bbc45f5
   if (!response.ok) {
     throw new Error("Failed to fetch wishlist");
   }
