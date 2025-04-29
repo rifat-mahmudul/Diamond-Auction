@@ -106,6 +106,7 @@ export default function Dashboard() {
             <div className="space-y-1">
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Bidders
+                
               </p>
               <div className="text-2xl font-bold">{stats[0].bidders}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
