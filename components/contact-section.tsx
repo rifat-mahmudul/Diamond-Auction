@@ -4,16 +4,15 @@ import Image from "next/image"
 
 export function ContactSection() {
   return (
-    <section className="mt-44">
+    <section className="mt-20 lg:mt-44">
       <div className="container rounded-2xl text-white bg-[#c8b291] flex justify-between relative p-16">
-        <div
-        className=" -mt-52"
-        >
-          <Image 
-          src={'/assets/women.png'}
-          alt="women"
-          width={336}
-          height={462}
+        <div className="-mt-52">
+          <Image
+            src={'/assets/women.png'}
+            alt="women"
+            width={336}
+            height={462}
+            className="w-full h-full hidden lg:block object-cover"
           />
         </div>
 

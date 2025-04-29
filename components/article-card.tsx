@@ -13,7 +13,7 @@ interface ArticleCardProps {
 export function ArticleCard({ article }: ArticleCardProps) {
   const { image, title, _id, content } = article;
   return (
-    <Card className="overflow-hidden border-none text-white p-0 bg-[#645949] w-[370px] h-[371px]">
+    <Card className="overflow-hidden border-none text-white p-0 bg-[#645949] lg:w-[370px] lg:h-[371px]">
       <div className="relative aspect-video overflow-hidden">
         <div className=" absolute left-2 top-2 bg-[#645949] px-4 rounded-md">
           {new Date(article?.updatedAt).toLocaleDateString('en-US', {
@@ -33,13 +33,13 @@ export function ArticleCard({ article }: ArticleCardProps) {
       </div>
 
       <CardContent className="p-4">
-        <h3 className="mb-2 font-medium text-xl">{title}</h3>
-        <p className="text-sm text-gray-200 line-clamp-2">{content}</p>
+        <h3 className="mb-2 font-medium text-xl line-clamp-1">{title}</h3>
+        <p className="line-clamp-1 sm:text-sm" dangerouslySetInnerHTML={{ __html: content ?? "Blog Description" }} />
       </CardContent>
 
-      <Link href={`/blog/${_id}`} className="flex items-center p-4">
-        Read more <MoveRight  className="mt-[3px]"/>
-      </Link> 
+      <Link href={`/blog/${_id}`} className="flex items-center p-4 gap-2">
+        Read more <MoveRight className="mt-[3px]" />
+      </Link>
     </Card>
   );
 }
