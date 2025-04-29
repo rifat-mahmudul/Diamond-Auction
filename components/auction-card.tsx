@@ -43,7 +43,7 @@ export function AuctionCard({
   currentBid,
   auctionId,
   endTime,
-  status,
+  status
 }: AuctionCardProps) {
   const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft(endTime));
 
@@ -81,7 +81,7 @@ export function AuctionCard({
     toast.success("Added to wishlist!");
     return response.json();
   };
-
+  
   return (
     <Card className="overflow-hidden border-none bg-[#dfc5a2] p-2">
       <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -163,8 +163,8 @@ export function AuctionCard({
 
       <Link href={`/auctions/${auctionId}`}>
         <CardFooter>
-          <Button 
-          className="w-full bg-[#645949] text-white font-semibold">
+          <Button
+            className="w-full bg-[#645949] text-white font-semibold">
             Bid now
           </Button>
         </CardFooter>
