@@ -87,7 +87,7 @@ export function CreateAuctionDialog({
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await axios.get(`${baseURL}/categories`, { headers });
+      const response = await axios.get(`${baseURL}/admin/categories/all`, { headers });
       return response.data;
     },
     enabled: !!token,
