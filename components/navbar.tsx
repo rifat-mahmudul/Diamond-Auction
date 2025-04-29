@@ -23,7 +23,7 @@ const navLinks = [
 // Function to fetch wishlist data
 const fetchWishlist = async (token: string | undefined) => {
   if (!token) return null;
-  const response = await fetch("http://localhost:5100/api/v1/wishlist", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -38,12 +38,15 @@ const fetchWishlist = async (token: string | undefined) => {
 // Function to fetch notification data
 const fetchNotification = async (token: string | undefined) => {
   if (!token) return null;
-  const response = await fetch("http://localhost:5100/api/v1/bids/notifications", {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch wishlist");
   }
@@ -62,15 +65,14 @@ export function Navbar() {
     queryKey: ["wishlist-length"],
     queryFn: () => fetchWishlist(token),
     enabled: isLoggedIn,
-    refetchInterval: 5000
+    refetchInterval: 5000,
   });
-
 
   const { data: notificationData } = useQuery({
     queryKey: ["notification-length"],
     queryFn: () => fetchNotification(token),
     enabled: isLoggedIn,
-    refetchInterval: 5000
+    refetchInterval: 5000,
   });
 
   const wishlists = wishlistData?.data?.auctions || [];

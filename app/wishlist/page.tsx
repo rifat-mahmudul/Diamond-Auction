@@ -1,24 +1,26 @@
 "use client";
 
-import { WishlistCard } from '@/components/card/wishlistCard';
-import PathTracker from '@/Shared/PathTracker';
-import React, { useEffect } from 'react';
-import { Auction } from './_components/type';
-import { useSession } from 'next-auth/react';
-import { useQuery } from '@tanstack/react-query';
+import { WishlistCard } from "@/components/card/wishlistCard";
+import PathTracker from "@/Shared/PathTracker";
+import React, { useEffect } from "react";
+import { Auction } from "./_components/type";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 
-const fetchWishlist = async (token: string | undefined): Promise<{ data: { auctions: Auction[] } }> => {
+const fetchWishlist = async (
+  token: string | undefined
+): Promise<{ data: { auctions: Auction[] } }> => {
   if (!token) {
     return { data: { auctions: [] } };
   }
-  const response = await fetch('http://localhost:5100/api/v1/wishlist', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch wishlist');
+    throw new Error("Failed to fetch wishlist");
   }
   return response.json();
 };
@@ -33,7 +35,7 @@ function Page() {
     error: errorObject,
     refetch,
   } = useQuery({
-    queryKey: ['wishlist'],
+    queryKey: ["wishlist"],
     queryFn: () => fetchWishlist(token),
     enabled: !!token,
   });
@@ -42,7 +44,7 @@ function Page() {
 
   useEffect(() => {
     refetch();
-  })
+  });
 
   if (loading) {
     return (
@@ -61,7 +63,9 @@ function Page() {
         <div className="border-b border-black pb-5">
           <PathTracker />
         </div>
-        <div>Error: {(errorObject as Error)?.message || 'Failed to load wishlist'}</div>
+        <div>
+          Error: {(errorObject as Error)?.message || "Failed to load wishlist"}
+        </div>
       </section>
     );
   }
@@ -77,10 +81,7 @@ function Page() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
         {wishlistItems.length > 0 ? (
           wishlistItems.map((item) => (
-            <WishlistCard
-              key={item._id}
-              wishlistItems={wishlistItems}
-            />
+            <WishlistCard key={item._id} wishlistItems={wishlistItems} />
           ))
         ) : (
           <div className="col-span-full text-center py-10">
