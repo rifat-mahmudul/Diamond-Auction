@@ -20,26 +20,24 @@ const page = async ({ params }: { params: { sessionId: string } }) => {
     }
 
 
-
     return (
         <div className='pb-32 pt-44'>
             <Card className="max-w-[800px] mx-auto bg-[#645949] py-10 rounded-3xl relative">
                 <CardContent>
                     <div className="flex justify-center items-center pb-6">
-                        <div className="flex justify-center items-center w-44 h-44 rounded-full bg-[#55E25E] pb-6">
-                            <Image
-                                src={"/assets/success.png"}
-                                alt="success"
-                                height={1000}
-                                width={500}
-                                className='object-contain w-[80px] h-[80px]'
-                            />
-                        </div>
+                        <Image
+                            src={"/assets/sad.png"}
+                            alt="success"
+                            height={1000}
+                            width={500}
+                            className='object-contain w-32 h-32 rounded-full'
+                        />
+
                     </div>
                     <div className="text-center">
-                        <h2 className='text-2xl font-semibold text-white pb-6'>Your payment was successful!</h2>
-                        <Button variant="outline" className='w-[248px] h-12 bg-[#55E25E] text-base font-medium text-black border-black'>
-                            Thanks!
+                        <h2 className='text-2xl font-semibold text-white pb-6'>Your payment was not successful!</h2>
+                        <Button variant="outline" className='w-[248px] h-12 bg-red-400 text-base font-medium text-white border-black'>
+                            Oops!
                         </Button>
                     </div>
                 </CardContent>
