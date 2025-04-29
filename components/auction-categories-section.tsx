@@ -69,7 +69,7 @@ export function AuctionCategoriesSection() {
   }, [itemsToShow, allCategory.length, currentIndex]);
 
   return (
-    <section className="py-12 md:py-16 bg-[#e4dcd0]">
+    <section className="py-12 md:py-16 bg-[#e4dcd0] mt-24">
       <div className="container">
         <div className="flex justify-between items-center mb-8">
           <div>
