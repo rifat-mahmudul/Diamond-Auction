@@ -6,7 +6,7 @@ const steps = [
     number: "/assets/01.png",
     title: "Registration",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio, non bibendum lorem consequat in.",
+      "Create your free account in minutes by clicking the Register button. Verify your email to activate your profile and get ready to explore exclusive auctions.",
     icon: "/assets/work1.png",
     color: "#d0e8ff",
   },
@@ -14,7 +14,7 @@ const steps = [
     number: "/assets/02.png",
     title: "Select Product",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio, non bibendum lorem consequat in.",
+      "Browse our curated catalog of rare, high-quality items. From fine jewelry to unique collectibles, find the piece that catches your eye and fits your interest.",
     icon: "/assets/work2.png",
     color: "#e2ffe7",
   },
@@ -22,7 +22,7 @@ const steps = [
     number: "/assets/03.png",
     title: "Go to Bidding",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio, non bibendum lorem consequat in.",
+      "Place your bid with confidence. You can bid manually or set a max bid so our system does the work for you. Transparent bidding ensures a fair and exciting experience.",
     icon: "/assets/work3.png",
     color: "#ffe1db",
   },
@@ -30,7 +30,7 @@ const steps = [
     number: "/assets/04.png",
     title: "Make Payment",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio, non bibendum lorem consequat in.",
+      "If you win, complete your purchase using secure payment options. We’ll process and ship your item promptly, keeping you informed every step of the way.",
     icon: "/assets/work4.png",
     color: "#fff9dd",
   },
@@ -41,7 +41,7 @@ export function HowItWorksSection() {
     <section className="mt-24">
       <div className="relative mx-auto">
         {/* Title */}
-        <h1 className="text-5xl font-semibold text-center mb-10">
+        <h1 className="text-2xl md:text-5xl lg:text-5xl font-semibold text-center mb-10">
           How does it work?
         </h1>
 
@@ -57,7 +57,7 @@ export function HowItWorksSection() {
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 relative z-10 container">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 relative z-10 container">
           {steps.map((step, index) => (
             <ProcessStep
               key={index}

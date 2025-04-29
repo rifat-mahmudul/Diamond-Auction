@@ -47,18 +47,25 @@ export function ArticlesSection() {
 
   return (
     <section className="container mt-24">
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-7 items-center mb-8">
-          <h1 className="text-2xl font-bold tracking-tight md:text-5xl mt-2 col-span-3">
-            Exploring Our Articles
-          </h1>
-          <p className="col-span-3">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            hendrerit a ex eget accumsan. Aliquam ullamcorper porttitor odio.
-          </p>
+      <div className="">
+        <div className="grid grid-cols-5 gap-5 mb-8">
+          <div className="col-span-4 lg:col-span-4">
+            <div className="grid grid-cols-2">
+              <div className="col-span-1 lg:col-span-1">
+                <h1 className="text-2xl font-bold tracking-tight md:text-5xl">
+                  Exploring Our Articles
+                </h1>
+              </div>
+              <div className="col-span-2 lg:col-span-1">
+                <p className="">
+                  Dive into expert insights, auction tips, and inspiring stories from the world of rare collectibles. Our articles are designed to keep you informed, engaged, and ready to make confident bidding decisions.
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <div className="col-span-1 text-end">
-            <Link href="/blog">
+          <div className="col-span-1 lg:col-span-1 lg:text-end">
+            <Link href="/blog" className="ml-[-80px] lg:ml-0">
               <Button className="bg-[#645949]">
                 Explore All <MoveRight />
               </Button>
@@ -67,7 +74,7 @@ export function ArticlesSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         {articles.slice(0, 3).map((article, index) => (
           <ArticleCard key={article._id} article={article} index={index} />
         ))}
