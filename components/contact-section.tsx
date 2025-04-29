@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { MoveRight } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 export function ContactSection() {
   return (
@@ -22,7 +23,10 @@ export function ContactSection() {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum
             tristique. Duis cursus, mi quis viverra ornare.
           </p>
+          <Link href={"/contact"} >
+          
           <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white">Get Started <MoveRight /></Button>
+          </Link>
         </div>
       </div>
     </section>
