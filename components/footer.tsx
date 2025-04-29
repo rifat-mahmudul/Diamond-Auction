@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import FooterCategories from "./footerCategories";
 
 export function Footer() {
   return (
@@ -67,14 +68,7 @@ export function Footer() {
 
         <div>
           <h3 className="font-semibold text-lg mb-3">Categories</h3>
-          <ul className="space-y-2 text-gray-300">
-            <li><Link href="">Round</Link></li>
-            <li><Link href="">Princess</Link></li>
-            <li><Link href="">Emerald</Link></li>
-            <li><Link href="">Asscher</Link></li>
-            <li><Link href="">Oval</Link></li>
-            <li><Link href="">Marquise</Link></li>
-          </ul>
+          <FooterCategories/>
         </div>
 
         <div>
