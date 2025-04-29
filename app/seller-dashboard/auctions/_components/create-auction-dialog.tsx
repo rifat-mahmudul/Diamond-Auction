@@ -29,7 +29,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -45,6 +44,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import QuillEditor from "@/app/dashboard/blogs/_components/QuillEditor";
 
 // Base URL from environment variable
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://your-api-url.com";
@@ -87,7 +87,7 @@ export function CreateAuctionDialog({
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await axios.get(`${baseURL}/categories`, { headers });
+      const response = await axios.get(`${baseURL}/admin/categories/all`, { headers });
       return response.data;
     },
     enabled: !!token,
@@ -227,16 +227,22 @@ export function CreateAuctionDialog({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Enter auction description"
-                      className="min-h-[100px]"
-                      {...field}
+                    <QuillEditor
+                      id="description-editor"
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
                     />
                   </FormControl>
-                  <FormMessage />
+                  {form.formState.errors.description && (
+                    <p className="text-sm font-medium text-destructive">
+                      {form.formState.errors.description.message}
+                    </p>
+                  )}
                 </FormItem>
               )}
             />
+
+
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
