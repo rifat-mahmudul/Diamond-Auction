@@ -1,5 +1,4 @@
 import Faq from "@/components/faq";
-import { FaqSection } from "@/components/faq-section";
 import PathTracker from "@/Shared/PathTracker";
 import Image from "next/image";
 
