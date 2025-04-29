@@ -5,7 +5,8 @@ import PathTracker from '@/Shared/PathTracker';
 import React, { useEffect } from 'react';
 import { Auction } from './_components/type';
 import { useSession } from 'next-auth/react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 const fetchWishlist = async (token: string | undefined): Promise<{ data: { auctions: Auction[] } }> => {
   if (!token) {
@@ -23,9 +24,25 @@ const fetchWishlist = async (token: string | undefined): Promise<{ data: { aucti
   return response.json();
 };
 
+const removeFromWishlist = async ({ auctionId, token }: { auctionId: string, token: string }) => {
+  const response = await fetch(`http://localhost:5100/api/v1/wishlist/remove/${auctionId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to remove from wishlist');
+  }
+  return response.json();
+};
+
 function Page() {
   const session = useSession();
   const token = session?.data?.user?.accessToken;
+  const queryClient = useQueryClient();
+
   const {
     data: wishlistData,
     isLoading: loading,
@@ -38,11 +55,28 @@ function Page() {
     enabled: !!token,
   });
 
+  const removeMutation = useMutation({
+    mutationFn: removeFromWishlist,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+      toast.success('Item removed from wishlist');
+    },
+    onError: () => {
+      toast.error('Failed to remove item from wishlist');
+    },
+  });
+
   const wishlistItems = wishlistData?.data?.auctions || [];
+
+  const handleRemove = (auctionId: string) => {
+    if (token) {
+      removeMutation.mutate({ auctionId, token });
+    }
+  };
 
   useEffect(() => {
     refetch();
-  })
+  }, [refetch]);
 
   if (loading) {
     return (
@@ -66,8 +100,6 @@ function Page() {
     );
   }
 
-  console.log(wishlistItems);
-
   return (
     <section className="container mt-24">
       <div className="border-b border-black pb-5">
@@ -79,7 +111,8 @@ function Page() {
           wishlistItems.map((item) => (
             <WishlistCard
               key={item._id}
-              wishlistItems={wishlistItems}
+              wishlistItems={[item]}
+              onRemove={handleRemove}
             />
           ))
         ) : (
