@@ -1,22 +1,41 @@
 "use client"
 import useAxios from "@/hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { SectionHeader } from "./section-header";
+import { useState, useEffect } from "react";
 import { CategoryCard } from "./category-card";
-
+import { Button } from "./ui/button";
+import { MoveLeft, MoveRight } from "lucide-react";
 
 interface CategoryType {
   _id: string;
   name: string;
   image: string;
-  auctions : object[]
+  auctions: object[];
 }
 
 export function AuctionCategoriesSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsToShow = 6;
+  const [itemsToShow, setItemsToShow] = useState(6);
   const axiosPublic = useAxios();
+
+  // Responsive items to show
+  useEffect(() => {
+    const updateItemsToShow = () => {
+      if (window.innerWidth < 640) {
+        setItemsToShow(2);
+      } else if (window.innerWidth < 768) {
+        setItemsToShow(3);
+      } else if (window.innerWidth < 1024) {
+        setItemsToShow(4);
+      } else {
+        setItemsToShow(6);
+      }
+    };
+
+    updateItemsToShow();
+    window.addEventListener('resize', updateItemsToShow);
+    return () => window.removeEventListener('resize', updateItemsToShow);
+  }, []);
 
   const { data: allCategory = [] } = useQuery({
     queryKey: ["category-with-auctions"],
@@ -26,16 +45,16 @@ export function AuctionCategoriesSection() {
     }
   });
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) =>
-      prev > 0 ? prev - 1 : Math.max(allCategory.length - itemsToShow, 0)
-    );
+  const nextSlide = () => {
+    if (currentIndex + itemsToShow < allCategory.length) {
+      setCurrentIndex(currentIndex + 1);
+    }
   };
 
-  const handleNext = () => {
-    setCurrentIndex((prev) =>
-      prev < allCategory.length - itemsToShow ? prev + 1 : 0
-    );
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
   };
 
   const visibleCategories = allCategory.slice(
@@ -43,18 +62,47 @@ export function AuctionCategoriesSection() {
     currentIndex + itemsToShow
   );
 
-  return (
-    <section className="py-12 md:py-16 mt-24 bg-[#e4dcd0]">
-      <div className="container">
-        <SectionHeader
-          title="Auction Categories"
-          description="Browse the highlights Browse the highlights Browse the highlights"
-          showControls={true}
-          onPrev={handlePrev}
-          onNext={handleNext}
-        />
+  useEffect(() => {
+    if (allCategory.length > 0 && currentIndex + itemsToShow > allCategory.length) {
+      setCurrentIndex(Math.max(0, allCategory.length - itemsToShow));
+    }
+  }, [itemsToShow, allCategory.length, currentIndex]);
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+  return (
+    <section className="py-12 md:py-16 bg-[#e4dcd0]">
+      <div className="container">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Auction Categories</h1>
+            <p className="text-gray-600">Browse the highlights Browse the highlights Browse the highlights</p>
+          </div>
+          
+          {allCategory.length > itemsToShow && (
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-[48px] w-[80px] rounded-sm border-[#645949]"
+                onClick={prevSlide}
+                disabled={currentIndex === 0}
+              >
+                <MoveLeft className="h-4 w-4" />
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-[48px] w-[80px] rounded-sm border-[#645949]"
+                onClick={nextSlide}
+                disabled={currentIndex + itemsToShow >= allCategory.length}
+              >
+                <MoveRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {visibleCategories.map((category: CategoryType) => (
             <CategoryCard
               key={category._id}
