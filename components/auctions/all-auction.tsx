@@ -71,7 +71,7 @@ export default function AllAuction() {
   // Close drawer when any filter is applied
   useEffect(() => {
     if (isDrawerOpen) {
-      setIsDrawerOpen(false)
+      setIsDrawerOpen(true)
     }
   }, [debouncedSearchQuery, selectedCategory, selectedTimeRange, selectedCaratRange, selectedSalesType, isDrawerOpen])
 
@@ -133,22 +133,27 @@ export default function AllAuction() {
   // Handlers
   const handleCategoryChange = (categoryName: string, isChecked: boolean) => {
     setSelectedCategory(isChecked ? categoryName : "")
+    setIsDrawerOpen(false)
   }
 
   const handleTimeRangeChange = (value: string) => {
     setSelectedTimeRange(value)
+    setIsDrawerOpen(false)
   }
 
   const handleCaratRangeChange = (value: string) => {
     setSelectedCaratRange(value)
+    setIsDrawerOpen(false)
   }
 
   const handleSalesTypeChange = (value: string) => {
     setSelectedSalesType(value)
+    setIsDrawerOpen(false)
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
+
   }
 
   const clearFilters = () => {
