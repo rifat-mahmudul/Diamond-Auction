@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Trash2, Filter } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +27,8 @@ import {
 import { Pagination } from "@/components/dashboard/pagination";
 import { User } from "lucide-react";
 import { useAllSellers, useDeleteSeller } from "@/hooks/use-queries";
+import { useSession } from "next-auth/react";
+import { apiService } from "@/lib/api-service";
 
 interface Seller {
   _id: string;
@@ -50,34 +52,25 @@ export default function SellersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const deleteSellerMutation = useDeleteSeller()
+  const session = useSession();
+  const user = session.data?.user;
 
-  // If API doesn't return data, use mock data
+  // Set token whenever user changes
+  useEffect(() => {
+    if (user?.accessToken) {
+      apiService.setToken(user.accessToken);
+    }
+  }, [user]);
+
+  const deleteSellerMutation = useDeleteSeller();
+
   useEffect(() => {
     if (sellersData?.data) {
       setSellers(sellersData.data as Seller[]);
       setFilteredSellers(sellersData.data as Seller[]);
       setTotalPages(sellersData.totalPages || 1);
-    } else if (!isLoading) {
-      // Mock data for sellers since we don't have a specific endpoint
-      const mockSellers: Seller[] = Array.from({ length: 8 }, (_, i) => ({
-        _id: `seller-${i}`,
-        username: "John Smith",
-        email: "john.smith@example.com",
-        phone: "+1 (555) 123-4567",
-        sellerId: "#25002",
-        joinDate: "2023-01-15",
-        totalAuctions: 48,
-        liveAuctions: 12,
-        totalSales: 10,
-        sellAmount: 12450,
-      }));
-
-      setSellers(mockSellers);
-      setFilteredSellers(mockSellers);
-      setTotalPages(Math.ceil(mockSellers.length / 10));
     }
-  }, [sellersData, isLoading]);
+  }, [sellersData]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -100,7 +93,6 @@ export default function SellersPage() {
     deleteSellerMutation.mutate(id);
   };
 
-
   return (
     <Layout>
       <div className="space-y-4">
@@ -120,10 +112,10 @@ export default function SellersPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button variant="outline" className="gap-2">
+          {/* <Button variant="outline" className="gap-2">
             <Filter className="h-4 w-4" />
             Filter
-          </Button>
+          </Button> */}
         </div>
 
         <div className="bg-white rounded-md">
@@ -140,7 +132,9 @@ export default function SellersPage() {
                     <TableHead className="text-center">Contact</TableHead>
                     <TableHead className="text-center">Seller ID</TableHead>
                     <TableHead className="text-center">Join Date</TableHead>
-                    <TableHead className="text-center">Total Auctions</TableHead>
+                    <TableHead className="text-center">
+                      Total Auctions
+                    </TableHead>
                     <TableHead className="text-center">Live Auctions</TableHead>
                     <TableHead className="text-center">Total Sales</TableHead>
                     <TableHead className="text-center">Sell Amount</TableHead>
@@ -156,7 +150,10 @@ export default function SellersPage() {
                     </TableRow>
                   ) : (
                     filteredSellers.map((seller) => (
-                      <TableRow key={seller._id} className="text-center h-20 !border-b border-[#E5E7EB]">
+                      <TableRow
+                        key={seller._id}
+                        className="text-center h-20 !border-b border-[#E5E7EB]"
+                      >
                         <TableCell className="flex items-center gap-3 pl-6 pt-5">
                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                             <User className="h-5 w-5 text-gray-500" />
@@ -176,7 +173,7 @@ export default function SellersPage() {
                         <TableCell>{seller.totalAuctions}</TableCell>
                         <TableCell>{seller.liveAuctions}</TableCell>
                         <TableCell>{seller.totalSales}</TableCell>
-                        <TableCell>${seller.sellAmount}</TableCell>
+                        <TableCell>{seller.sellAmount}</TableCell>
                         <TableCell>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -190,7 +187,9 @@ export default function SellersPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
                                   This action cannot be undone. This will
                                   permanently delete the seller account.

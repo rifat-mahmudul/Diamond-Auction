@@ -34,6 +34,8 @@ import {
   useRejectAuction,
   useDeleteAuction,
 } from "@/hooks/use-queries";
+import { useSession } from "next-auth/react";
+import { apiService } from "@/lib/api-service";
 
 interface Auction {
   _id: string;
@@ -62,6 +64,16 @@ export default function AuctionsPage() {
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const session = useSession();
+  const user = session.data?.user;
+
+  // Set token whenever user changes
+  useEffect(() => {
+    if (user?.accessToken) {
+      apiService.setToken(user.accessToken);
+    }
+  }, [user]);
 
   // TanStack Query hooks
   const activeAuctionsQuery = useActiveAuctions();
@@ -130,7 +142,6 @@ export default function AuctionsPage() {
         </div>
 
         <div className="bg-white rounded-md">
-
           <Tabs
             defaultValue="active"
             value={activeTab}
@@ -259,15 +270,20 @@ function AuctionsTable({
           </TableRow>
         ) : (
           auctions.map((auction) => (
-            <TableRow key={auction._id} className="text-center h-16 !border-b border-[#E5E7EB]">
-              <TableCell className="font-medium">
-                {auction.title}
-              </TableCell>
+            <TableRow
+              key={auction._id}
+              className="text-center h-16 !border-b border-[#E5E7EB]"
+            >
+              <TableCell className="font-medium">{auction.title}</TableCell>
               <TableCell>{auction.category?.name}</TableCell>
               <TableCell>{auction.sku || "#212-121"}</TableCell>
               <TableCell>
-                <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
-                #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
+                <h5>
+                  {auction.seller?.displayName?.split("#")[0] ||
+                    `Mr. John #2561`}
+                </h5>
+                #
+                {auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
               </TableCell>
               <TableCell>
                 {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
@@ -321,7 +337,6 @@ interface PendingAuctionsTableProps extends AuctionsTableProps {
   onReject: (id: string) => void;
 }
 
-
 function PendingAuctionsTable({
   auctions,
   onAccept,
@@ -363,14 +378,18 @@ function PendingAuctionsTable({
         ) : (
           auctions.map((auction) => (
             <TableRow key={auction._id} className="text-center h-16 !border-b">
-              <TableCell className="font-medium">
-                {auction.title}
+              <TableCell className="font-medium">{auction.title}</TableCell>
+              <TableCell className="capitalize">
+                {auction.category.name}
               </TableCell>
-              <TableCell className="capitalize">{auction.category.name}</TableCell>
               <TableCell>{auction.sku || "#212-121"}</TableCell>
               <TableCell>
-                <h5>{auction.seller?.displayName?.split("#")[0] || `Mr. John #2561`}</h5>
-                #{auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
+                <h5>
+                  {auction.seller?.displayName?.split("#")[0] ||
+                    `Mr. John #2561`}
+                </h5>
+                #
+                {auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
               </TableCell>
               <TableCell>
                 {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
