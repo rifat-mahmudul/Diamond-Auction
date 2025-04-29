@@ -1,33 +1,40 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { useRouter, useSearchParams } from "next/navigation"
-import { AuctionCard } from "../auction-card"
-import { Input } from "../ui/input"
-import { Search } from "lucide-react"
-import { Checkbox } from "../ui/checkbox"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { Label } from "../ui/label"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AuctionCard } from "../auction-card";
+import { Input } from "../ui/input";
+import { Search } from "lucide-react";
+import { Checkbox } from "../ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 interface AuctionItem {
-  _id: number
-  images: string[]
-  title: string
-  currentBid: string
-  startTime: string
-  endTime: string
-  badges?: string[]
-  status: string
+  _id: number;
+  images: string[];
+  title: string;
+  currentBid: string;
+  startTime: string;
+  endTime: string;
+  badges?: string[];
+  status: string;
 }
 
 interface Category {
-  _id: number
-  name: string
+  _id: number;
+  name: string;
 }
 
 const carratWeight = [
@@ -39,7 +46,7 @@ const carratWeight = [
 ].map((item) => ({
   ...item,
   value: `${item.value.low.toFixed(2)}-${item.value.high.toFixed(2)}`,
-}))
+}));
 
 const salesTypes = [
   { value: "upcoming", label: "upcoming" },
@@ -47,51 +54,78 @@ const salesTypes = [
   { value: "live-auction", label: "live-auction" },
   { value: "popular", label: "popular" },
   { value: "highest-bidding", label: "highest-bidding" },
-]
+];
 
 export default function AllAuction() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Initialize state from URL params
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('searchTerm') || "")
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchParams.get('searchTerm') || "")
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || "")
-  const [selectedTimeRange, setSelectedTimeRange] = useState(searchParams.get('timeRange') || "allday")
-  const [selectedCaratRange, setSelectedCaratRange] = useState(searchParams.get('caratWeight') || undefined)
-  const [selectedSalesType, setSelectedSalesType] = useState(searchParams.get('typeOfSales') || undefined)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("searchTerm") || ""
+  );
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(
+    searchParams.get("searchTerm") || ""
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || ""
+  );
+  const [selectedTimeRange, setSelectedTimeRange] = useState(
+    searchParams.get("timeRange") || "allday"
+  );
+  const [selectedCaratRange, setSelectedCaratRange] = useState(
+    searchParams.get("caratWeight") || undefined
+  );
+  const [selectedSalesType, setSelectedSalesType] = useState(
+    searchParams.get("typeOfSales") || undefined
+  );
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Update URL when filters change
   useEffect(() => {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
 
-    if (debouncedSearchQuery) params.set('searchTerm', debouncedSearchQuery)
-    if (selectedCategory) params.set('category', selectedCategory)
-    if (selectedTimeRange && selectedTimeRange !== 'allday') params.set('timeRange', selectedTimeRange)
-    if (selectedCaratRange) params.set('caratWeight', selectedCaratRange)
-    if (selectedSalesType) params.set('typeOfSales', selectedSalesType)
+    if (debouncedSearchQuery) params.set("searchTerm", debouncedSearchQuery);
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedTimeRange && selectedTimeRange !== "allday")
+      params.set("timeRange", selectedTimeRange);
+    if (selectedCaratRange) params.set("caratWeight", selectedCaratRange);
+    if (selectedSalesType) params.set("typeOfSales", selectedSalesType);
 
-    router.replace(`?${params.toString()}`, { scroll: false })
-  }, [debouncedSearchQuery, selectedCategory, selectedTimeRange, selectedCaratRange, selectedSalesType, router])
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [
+    debouncedSearchQuery,
+    selectedCategory,
+    selectedTimeRange,
+    selectedCaratRange,
+    selectedSalesType,
+    router,
+  ]);
 
   // Debounce search input
   useEffect(() => {
     const timerId = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery)
-    }, 5000)
+      setDebouncedSearchQuery(searchQuery);
+    }, 1500);
 
     return () => {
-      clearTimeout(timerId)
-    }
-  }, [searchQuery])
+      clearTimeout(timerId);
+    };
+  }, [searchQuery]);
 
   // Close drawer when any filter is applied
   useEffect(() => {
     if (isDrawerOpen) {
-      setIsDrawerOpen(true)
+      setIsDrawerOpen(true);
     }
-  }, [debouncedSearchQuery, selectedCategory, selectedTimeRange, selectedCaratRange, selectedSalesType, isDrawerOpen])
+  }, [
+    debouncedSearchQuery,
+    selectedCategory,
+    selectedTimeRange,
+    selectedCaratRange,
+    selectedSalesType,
+    isDrawerOpen,
+  ]);
 
   // Fetch categories
   const {
@@ -102,13 +136,14 @@ export default function AllAuction() {
   } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
-      const res = await fetch(`${baseUrl}/admin/categories/with-auctions`)
-      if (!res.ok) throw new Error(`Failed to fetch categories: ${res.statusText}`)
-      return res.json()
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+      const res = await fetch(`${baseUrl}/admin/categories/with-auctions`);
+      if (!res.ok)
+        throw new Error(`Failed to fetch categories: ${res.statusText}`);
+      return res.json();
     },
     select: (responseData) => responseData.data,
-  })
+  });
 
   // Fetch auctions with all filters including time range
   const {
@@ -126,67 +161,70 @@ export default function AllAuction() {
       selectedSalesType,
     ],
     queryFn: async () => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
-      const queryParams = new URLSearchParams()
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+      const queryParams = new URLSearchParams();
 
-      if (debouncedSearchQuery) queryParams.set("searchQuery", debouncedSearchQuery)
-      if (selectedCategory) queryParams.set("category", selectedCategory)
-      if (selectedCaratRange) queryParams.set("caratWeight", selectedCaratRange)
-      if (selectedSalesType) queryParams.set("typeOfSales", selectedSalesType)
+      if (debouncedSearchQuery)
+        queryParams.set("searchQuery", debouncedSearchQuery);
+      if (selectedCategory) queryParams.set("category", selectedCategory);
+      if (selectedCaratRange)
+        queryParams.set("caratWeight", selectedCaratRange);
+      if (selectedSalesType) queryParams.set("typeOfSales", selectedSalesType);
 
       if (selectedTimeRange !== "allday") {
-        queryParams.set("timeRange", selectedTimeRange)
+        queryParams.set("timeRange", selectedTimeRange);
       }
 
-      const url = `${baseUrl}/auctions/search?${queryParams.toString()}`
-      const res = await fetch(url)
-      if (!res.ok) throw new Error(`Failed to fetch auctions: ${res.statusText}`)
-      return res.json()
+      const url = `${baseUrl}/auctions/search?${queryParams.toString()}`;
+      const res = await fetch(url);
+      if (!res.ok)
+        throw new Error(`Failed to fetch auctions: ${res.statusText}`);
+      return res.json();
     },
     select: (responseData) => responseData.data ?? responseData.auctions ?? [],
-  })
+  });
 
   // Handlers
   const handleCategoryChange = (categoryName: string, isChecked: boolean) => {
-    setSelectedCategory(isChecked ? categoryName : "")
-    setIsDrawerOpen(false)
-  }
+    setSelectedCategory(isChecked ? categoryName : "");
+    setIsDrawerOpen(false);
+  };
 
   const handleTimeRangeChange = (value: string) => {
-    setSelectedTimeRange(value)
-    setIsDrawerOpen(false)
-  }
+    setSelectedTimeRange(value);
+    setIsDrawerOpen(false);
+  };
 
   const handleCaratRangeChange = (value: string) => {
-    setSelectedCaratRange(value)
-    setIsDrawerOpen(false)
-  }
+    setSelectedCaratRange(value);
+    setIsDrawerOpen(false);
+  };
 
   const handleSalesTypeChange = (value: string) => {
-    setSelectedSalesType(value)
-    setIsDrawerOpen(false)
-  }
+    setSelectedSalesType(value);
+    setIsDrawerOpen(false);
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
-  }
+    setSearchQuery(e.target.value);
+  };
 
   const clearFilters = () => {
-    setSearchQuery("")
-    setDebouncedSearchQuery("")
-    setSelectedCategory("")
-    setSelectedTimeRange("allday")
-    setSelectedCaratRange(undefined)
-    setSelectedSalesType(undefined)
-    setIsDrawerOpen(false)
-    router.replace('', { scroll: false })
-  }
+    setSearchQuery("");
+    setDebouncedSearchQuery("");
+    setSelectedCategory("");
+    setSelectedTimeRange("allday");
+    setSelectedCaratRange(undefined);
+    setSelectedSalesType(undefined);
+    setIsDrawerOpen(false);
+    router.replace("", { scroll: false });
+  };
 
   // Filter sidebar component
   const FilterSidebar = () => (
     <div className="flex flex-col gap-5 p-5 rounded-md bg-[#DFC5A2] overflow-y-auto">
       {/* Search Input */}
-      <div className="relative">
+      {/* <div className="relative">
         <Input
           onChange={handleSearchChange}
           value={searchQuery}
@@ -194,7 +232,7 @@ export default function AllAuction() {
           placeholder="Search by title, description..."
         />
         <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 text-[#645949]" />
-      </div>
+      </div> */}
 
       {/* Category List */}
       <div>
@@ -208,7 +246,9 @@ export default function AllAuction() {
                 <Checkbox
                   id={`category-${category._id}`}
                   checked={selectedCategory === category.name}
-                  onCheckedChange={(checked) => handleCategoryChange(category.name, !!checked)}
+                  onCheckedChange={(checked) =>
+                    handleCategoryChange(category.name, !!checked)
+                  }
                 />
                 <label
                   htmlFor={`category-${category._id}`}
@@ -243,8 +283,13 @@ export default function AllAuction() {
 
       {/* Carat Weight Filter */}
       <div className="space-y-3">
-        <h4 className="text-xl font-medium text-[#000000] pb-1">Carat Weight</h4>
-        <RadioGroup value={selectedCaratRange} onValueChange={handleCaratRangeChange}>
+        <h4 className="text-xl font-medium text-[#000000] pb-1">
+          Carat Weight
+        </h4>
+        <RadioGroup
+          value={selectedCaratRange}
+          onValueChange={handleCaratRangeChange}
+        >
           {carratWeight.map((carrat) => (
             <div key={carrat.id} className="flex items-center space-x-2">
               <RadioGroupItem
@@ -264,8 +309,13 @@ export default function AllAuction() {
 
       {/* Sales Type Filter */}
       <div className="space-y-3">
-        <h4 className="text-xl font-medium text-[#000000] pb-1">Type Of Sales</h4>
-        <RadioGroup value={selectedSalesType} onValueChange={handleSalesTypeChange}>
+        <h4 className="text-xl font-medium text-[#000000] pb-1">
+          Type Of Sales
+        </h4>
+        <RadioGroup
+          value={selectedSalesType}
+          onValueChange={handleSalesTypeChange}
+        >
           {salesTypes.map((type) => (
             <div key={type.value} className="flex items-center space-x-2">
               <RadioGroupItem
@@ -291,20 +341,25 @@ export default function AllAuction() {
         Clear All Filters
       </button>
     </div>
-  )
+  );
 
   // Loading state for auctions only (no skeleton for filters)
   if (isAuctionsLoading) {
     return (
       <section className="py-12">
         <div className="text-center lg:pb-10 !pb-2">
-          <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">All Auction</h2>
+          <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">
+            All Auction
+          </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-10 gap-6 md:gap-10">
           <div className="col-span-1 md:col-span-7">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
               {[...Array(6)].map((_, index) => (
-                <div key={index} className="bg-gray-200 animate-pulse h-64 rounded-md"></div>
+                <div
+                  key={index}
+                  className="bg-gray-200 animate-pulse h-64 rounded-md"
+                ></div>
               ))}
             </div>
           </div>
@@ -313,7 +368,7 @@ export default function AllAuction() {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   // Error state
@@ -321,17 +376,19 @@ export default function AllAuction() {
     return (
       <section className="py-12 px-4 md:px-6">
         <div className="text-center pb-10">
-          <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">All Auction</h2>
+          <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">
+            All Auction
+          </h2>
         </div>
         <p className="text-red-500 text-center">
           {isAuctionsError && isCategoriesError
             ? `Error fetching auctions and categories: ${auctionsError?.message} / ${categoriesError?.message}`
             : isAuctionsError
-              ? `Error fetching auctions: ${auctionsError?.message}`
-              : `Error fetching categories: ${categoriesError?.message}`}
+            ? `Error fetching auctions: ${auctionsError?.message}`
+            : `Error fetching categories: ${categoriesError?.message}`}
         </p>
       </section>
-    )
+    );
   }
 
   const hasActiveFilters =
@@ -339,16 +396,22 @@ export default function AllAuction() {
     selectedCategory !== "" ||
     selectedTimeRange !== "allday" ||
     selectedCaratRange !== undefined ||
-    selectedSalesType !== undefined
+    selectedSalesType !== undefined;
 
   return (
     <section className="py-12">
-      <div className="text-center lg:pb-10 pb-8 relative">
+      <div className="text-center lg:pb-0 pb-8 relative ">
         <div className="absolute left-0 top-1/2 -translate-y-1/2 lg:hidden">
           <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-[#645949] relative">
-                <p className="py-1 mt-4 ml-6 px-4 rounded-md bg-[#645949] text-white text-xs">Filter</p>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-[#645949] relative"
+              >
+                <p className="py-1 mt-4 ml-6 px-4 rounded-md bg-[#645949] text-white text-xs">
+                  Filter
+                </p>
                 {hasActiveFilters && (
                   <span className="absolute top-2 -right-7 flex h-4 w-4 items-center justify-center rounded-full bg-[#645949] text-[10px] text-white">
                     •
@@ -369,25 +432,33 @@ export default function AllAuction() {
             </SheetContent>
           </Sheet>
         </div>
-        <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">All Auction</h2>
+        <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">
+          All Auction
+        </h2>
       </div>
 
       {/* Mobile search bar */}
-      <div className="relative mb-6 lg:hidden">
-        <Input
-          onChange={handleSearchChange}
-          value={searchQuery}
-          className="text-[#645949] border-[#645949] pl-3 pr-10"
-          placeholder="Search by title, description..."
-        />
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 text-[#645949]" />
+      <div className="lg:flex justify-end lg:translate-y-[-50px]">
+        <div className="">
+          <div className="relative mb-6 lg:w-[300px]">
+            <Input
+              onChange={handleSearchChange}
+              value={searchQuery}
+              className="text-[#645949] border-[#645949] pl-3 pr-10"
+              placeholder="Search by title, description..."
+            />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 text-[#645949]" />
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-11 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-11 gap-6 lg:translate-y-[-20px]">
         <div className="col-span-1 lg:col-span-8">
           {filteredAuctions?.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-lg text-[#645949]">No auctions found matching your criteria.</p>
+              <p className="text-lg text-[#645949]">
+                No auctions found matching your criteria.
+              </p>
               <button
                 onClick={clearFilters}
                 className="mt-4 px-4 py-2 bg-[#645949] text-white rounded-md hover:bg-[#534738] transition-colors"
@@ -418,5 +489,5 @@ export default function AllAuction() {
         </div>
       </div>
     </section>
-  )
+  );
 }

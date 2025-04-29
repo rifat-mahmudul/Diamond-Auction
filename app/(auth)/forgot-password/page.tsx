@@ -54,37 +54,41 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="w-full max-w-md p-8 bg-[#f8f3ea] rounded-3xl shadow-lg">
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-semibold text-[#6b5d4d]">
-            Forgot Password
-          </h1>
-          <p className="text-[#6b5d4d]">Enter your email to receive the OTP</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <div className="relative">
-              <Input
-                type="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 py-6 bg-transparent border-[#6b5d4d] border-opacity-30 focus:border-[#6b5d4d] focus:ring-0"
-              />
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#6b5d4d] h-5 w-5" />
-            </div>
+    <div className="bg-gradient-to-l from-[#F5EDE2] to-[#645949] w-full h-screen flex flex-col items-center justify-center">
+      <div className="container lg:p-8 bg-[#f8f3ea] rounded-3xl shadow-xl h-[500px]">
+        <div className="space-y-6 lg:max-w-xl mx-auto h-full flex flex-col items-center justify-center">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-semibold text-[#6b5d4d]">
+              Forgot Password
+            </h1>
+            <p className="text-[#6b5d4d]">
+              Enter your email to receive the OTP
+            </p>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full py-6 bg-[#6b5d4d] hover:bg-[#5a4d3d] text-white"
-            disabled={isLoading}
-          >
-            {isLoading ? "Sending..." : "Send OTP"}
-          </Button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <div className="relative">
+                <Input
+                  type="email"
+                  placeholder="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 py-6 bg-transparent border-[#6b5d4d] border-opacity-30 focus:border-[#6b5d4d] focus:ring-0 lg:w-[500px]"
+                />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#6b5d4d] h-5 w-5" />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full py-6 bg-[#6b5d4d] hover:bg-[#5a4d3d] text-white"
+              disabled={isLoading}
+            >
+              {isLoading ? "Sending..." : "Send OTP"}
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );

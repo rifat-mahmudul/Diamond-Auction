@@ -13,7 +13,7 @@ const LogOutModal = ({ isLogoutDialogOpen, setIsLogoutDialogOpen }: LogOutModalP
   return (
     <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
       <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
-      <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-md bg-[#6b614f] text-white border-none z-50 focus:outline-none p-5 rounded-lg w-[500px]">
+      <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-md bg-[#6b614f] text-white border-none z-50 focus:outline-none p-5 rounded-lg w-[500px] backdrop-blur-lg">
         <div className="flex flex-col items-center justify-center py-4">
           <Image
             src="/assets/logo.png"
@@ -38,7 +38,7 @@ const LogOutModal = ({ isLogoutDialogOpen, setIsLogoutDialogOpen }: LogOutModalP
             </Button>
             <Button
               onClick={() => setIsLogoutDialogOpen(false)}
-              className="flex-1 bg-amber-100 text-[#6b614f] hover:bg-amber-200 hover:text-[#6b614f]"
+              className="flex-1 border border-white !bg-black"
             >
               No
             </Button>
