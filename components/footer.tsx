@@ -15,13 +15,15 @@ export function Footer() {
     <footer className="bg-[#635746] text-white pt-52 pb-8 -mt-36">
       <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
         <div>
-          <Image
-            src="/assets/logo.png"
-            alt="Diamond Auctions Logo"
-            className="mb-4"
-            width={46}
-            height={39}
-          />
+          <Link href="/">
+            <Image
+              src="/assets/logo.png"
+              alt="Diamond Auctions Logo"
+              className="mb-4"
+              width={46}
+              height={39}
+            />
+          </Link>
           <p className="text-gray-300 mb-4">
             Join us on social media for exclusive updates, auction previews, and
             special offers!

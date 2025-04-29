@@ -1,14 +1,14 @@
+import Faq from "@/components/faq";
 import { FaqSection } from "@/components/faq-section";
 import PathTracker from "@/Shared/PathTracker";
+import Image from "next/image";
 
 const page = () => {
   return (
-    <div className="mt-28">
+    <div className="container mt-28">
 
-      <div className="container">
-        <div className=" border-b border-black pb-5">
-          <PathTracker />
-        </div>
+      <div className=" border-b border-black pb-5">
+        <PathTracker />
       </div>
 
       <div className=" container text-center mt-8">
@@ -19,8 +19,19 @@ const page = () => {
         </div>
       </div>
 
-      <div className="mt-[-50px]">
-        <FaqSection />
+      <div className="grid grid-cols-3 gap-4 py-10">
+        <div className="hidden lg:block lg:col-span-1">
+          <Image
+            src="/assets/faq.png"
+            alt=""
+            width={500}
+            height={500}
+            className="hidden lg:block w-[350px] h-[450px]"
+          />
+        </div>
+        <div className="col-span-3 lg:col-span-2">
+          <Faq />
+        </div>
       </div>
 
     </div>
