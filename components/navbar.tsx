@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -19,20 +20,70 @@ const navLinks = [
   { name: "Contact", href: "/contact" },
 ];
 
+// Function to fetch wishlist data
+const fetchWishlist = async (token: string | undefined) => {
+  if (!token) return null;
+  const response = await fetch("http://localhost:5100/api/v1/wishlist", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch wishlist");
+  }
+  return response.json();
+};
+
+// Function to fetch notification data
+const fetchNotification = async (token: string | undefined) => {
+  if (!token) return null;
+  const response = await fetch("http://localhost:5100/api/v1/bids/notifications", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch wishlist");
+  }
+  return response.json();
+};
+
 export function Navbar() {
   const isMobile = useMobile();
   const pathname = usePathname();
   const { status } = useSession();
   const isLoggedIn = status === "authenticated";
+  const session = useSession();
+  const token = session?.data?.user?.accessToken;
+
+  const { data: wishlistData } = useQuery({
+    queryKey: ["wishlist-length"],
+    queryFn: () => fetchWishlist(token),
+    enabled: isLoggedIn,
+    refetchInterval: 5000
+  });
+
+
+  const { data: notificationData } = useQuery({
+    queryKey: ["notification-length"],
+    queryFn: () => fetchNotification(token),
+    enabled: isLoggedIn,
+    refetchInterval: 5000
+  });
+
+  const wishlists = wishlistData?.data?.auctions || [];
+  const notifications = notificationData?.data || [];
 
   const iconLinks = [
-    { icon: Heart, href: "/wishlist" },
-    { icon: BellRing, href: "/notifications" },
+    { icon: Heart, href: "/wishlist", count: wishlists?.length },
+    { icon: BellRing, href: "/notifications", count: notifications?.length },
     { icon: UserRound, href: "/accounts" },
   ];
 
   const getIconClasses = (href: string) => `
-    border-2 rounded-full p-2 transition-colors
+    relative border-2 rounded-full p-2 transition-colors
     ${
       pathname.startsWith(href)
         ? "border-[#E6C475]"
@@ -107,9 +158,14 @@ export function Navbar() {
           {/* Icon Links - shown when logged in */}
           {isLoggedIn && (
             <div className="flex items-center gap-2 sm:gap-4">
-              {iconLinks.map(({ icon: Icon, href }) => (
+              {iconLinks.map(({ icon: Icon, href, count }) => (
                 <Link key={href} href={href} className={getIconClasses(href)}>
                   <Icon className={getIconColor(href)} size={20} />
+                  {count > 0 && (
+                    <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                      {count}
+                    </span>
+                  )}
                 </Link>
               ))}
             </div>
@@ -151,19 +207,29 @@ export function Navbar() {
                     <>
                       <Link
                         href="/wishlist"
-                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
+                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
                           isActive("/wishlist") ? "text-foreground" : ""
                         }`}
                       >
                         Wishlist
+                        {wishlists?.length > 0 && (
+                          <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                            {wishlists.length}
+                          </span>
+                        )}
                       </Link>
                       <Link
                         href="/notifications"
-                        className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
+                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
                           isActive("/notifications") ? "text-foreground" : ""
                         }`}
                       >
                         Notifications
+                        {notifications?.length > 0 && (
+                          <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                            {notifications.length}
+                          </span>
+                        )}
                       </Link>
                       <Link
                         href="/accounts"
