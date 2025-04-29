@@ -46,7 +46,7 @@ export default function RelatedAuction({ name }: AuctionCategory) {
     }
 
     return (
-        <div className="pt-10 px-4 lg:px-0 py-12">
+        <div className="pt-10 py-12">
             <div className="pb-10">
                 <h2 className="text-3xl md:text-5xl font-bold">Related Products</h2>
             </div>
@@ -74,8 +74,8 @@ export default function RelatedAuction({ name }: AuctionCategory) {
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    <CarouselPrevious className="absolute lg:left-[92%] -left-6 lg:-top-16 top-1/2 bg-[#5d5749] hover:bg-[#4a4539] text-white border-none h-10 w-10 rounded-full" />
-                    <CarouselNext className="absolute lg:right-2 -right-6 lg:-top-16 top-1/2 transform -translate-y-1/2 bg-[#5d5749] hover:bg-[#4a4539] text-white border-none h-10 w-10 rounded-full" />
+                    <CarouselPrevious className="absolute lg:left-[92%] left-[83%] md:left-[90%] lg:-top-16 -top-14 bg-[#5d5749] hover:bg-[#4a4539] text-white border-none lg:h-10 h-8 lg:w-10 w-8 rounded-full" />
+                    <CarouselNext className="absolute lg:right-2 -right-0 lg:-top-16 -top-14 transform -translate-y-1/2 bg-[#5d5749] hover:bg-[#4a4539] text-white border-none lg:h-10 h-8 lg:w-10 w-8 rounded-full" />
                 </Carousel>
             </div>
         </div >

@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { AuctionCard } from "../auction-card"
 import { Input } from "../ui/input"
-import { Menu, Search } from "lucide-react"
+import { Search } from "lucide-react"
 import { Checkbox } from "../ui/checkbox"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
@@ -153,7 +153,7 @@ export default function AllAuction() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
-
+    // This will trigger the debounced search effect
   }
 
   const clearFilters = () => {
@@ -168,7 +168,7 @@ export default function AllAuction() {
 
   // Filter sidebar component to reuse in both desktop and mobile views
   const FilterSidebar = () => (
-    <div className="flex flex-col gap-5 p-5 rounded-md bg-[#DFC5A2] h-full overflow-y-auto">
+    <div className="flex flex-col gap-5 p-5 rounded-md bg-[#DFC5A2] overflow-y-auto">
       {/* Search Input */}
       <div className="relative hidden lg:block">
         <Input
@@ -275,8 +275,8 @@ export default function AllAuction() {
   // Loading state
   if (isAuctionsLoading || isCategoriesLoading) {
     return (
-      <section className="py-12 md:px-6 lg:px-0">
-        <div className="text-center pb-10">
+      <section className="py-12">
+        <div className="text-center lg:pb-10 !pb-2">
           <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">All Auction</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-10 gap-6 md:gap-10">
@@ -328,16 +328,16 @@ export default function AllAuction() {
     selectedSalesType !== undefined
 
   return (
-    <section className="py-12 px-4 md:px-6 lg:px-0">
-      <div className="text-center pb-10 relative">
+    <section className="py-12">
+      <div className="text-center lg:pb-10 pb-8 relative">
         {/* Mobile hamburger menu */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 md:hidden">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 lg:hidden">
           <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-[#645949] relative">
-                <Menu className="h-6 w-6" />
+                <p className="py-1 mt-4 ml-6 px-4 rounded-md bg-[#645949] text-white text-xs">Filter</p>
                 {hasActiveFilters && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#645949] text-[10px] text-white">
+                  <span className="absolute top-2 -right-7 flex h-4 w-4 items-center justify-center rounded-full bg-[#645949] text-[10px] text-white">
                     •
                   </span>
                 )}
@@ -360,7 +360,7 @@ export default function AllAuction() {
       </div>
 
       {/* Mobile search bar - only visible on mobile */}
-      <div className="relative mb-6 md:hidden">
+      <div className="relative mb-6 lg:hidden">
         <Input
           onChange={handleSearchChange}
           value={searchQuery}
@@ -370,9 +370,9 @@ export default function AllAuction() {
         <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-11 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-11 gap-6">
         {/* Main content */}
-        <div className="col-span-1 md:col-span-8">
+        <div className="col-span-1 lg:col-span-8">
           {filteredAuctions?.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-lg text-[#645949]">No auctions found matching your criteria.</p>
@@ -384,7 +384,7 @@ export default function AllAuction() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {filteredAuctions?.map((auction: AuctionItem) => (
                 <AuctionCard
                   key={auction._id}
@@ -401,7 +401,7 @@ export default function AllAuction() {
         </div>
 
         {/* Desktop sidebar - hidden on mobile */}
-        <div className="hidden md:block md:col-span-3">
+        <div className="hidden lg:block lg:col-span-3">
           <FilterSidebar />
         </div>
       </div>

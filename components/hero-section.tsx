@@ -77,7 +77,7 @@ export function HeroSection() {
               Explore Exclusive Auctions and Bid on Premium Products.Win Big
               and Own the Luxury You Deserve!
             </p>
-            <div className="flex flex-col gap-3 sm:flex-row mt-6">
+            <div className="flex gap-4 mt-4">
               <Link href="/sign-up">
                 <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white h-[51px] lg:w-[191px] text-[16px]">
                   Register

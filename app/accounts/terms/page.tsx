@@ -11,7 +11,7 @@ interface PolicySection {
   text: string;
 }
 
-export default function PrivacyPolicyPage() {
+export default function TermsConditionsPage() {   
 
   const [privacyData, setPrivacyData] = useState<PolicySection[]>([]);
   const session = useSession();
@@ -42,7 +42,7 @@ export default function PrivacyPolicyPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Privacy Policy</CardTitle>
+        <CardTitle>Terms & Conditions</CardTitle>
       </CardHeader>
       <CardContent className="prose max-w-non mt-5">
         {privacyData?.length === 0 ? (

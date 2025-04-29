@@ -32,7 +32,7 @@ type Bid = {
   createdAt: string;
 };
 
-const ITEMS_PER_PAGE = 5; // Adjust items per page for smaller screens if needed
+const ITEMS_PER_PAGE = 10; // Adjust items per page for smaller screens if needed
 
 export default function BidHistoryPage() {
   const [bidHistory, setBidHistory] = useState<Bid[]>([]);
