@@ -4,6 +4,7 @@ import { WishlistCard } from '@/components/card/wishlistCard'
 import PathTracker from '@/Shared/PathTracker'
 import React, { useEffect, useState } from 'react'
 import { Auction } from './_components/type';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -11,8 +12,9 @@ function Page() {
   const [wishlistItems, setWishlistItems] = useState<Auction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZlMTE3N2Q2MzhlNjZjZDc1MWExMWQiLCJpYXQiOjE3NDU2NDg4MTcsImV4cCI6MTc0NjI1MzYxN30.iqtgw8mfQ5zVckOgRaKDXPdUMja4T9hUyEnjmsVX3Z4"
+  const session = useSession();
+  
+  const token = session?.data?.user?.accessToken;
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -40,7 +42,7 @@ function Page() {
     };
 
     fetchWishlist();
-  }, []);
+  }, [token]);
 
   if (loading) {
     return (

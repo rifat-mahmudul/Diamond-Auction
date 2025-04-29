@@ -13,7 +13,7 @@ interface AuctionItem {
   currentBid: string;
   startTime : string;
   endTime: string;
-  badges?: string[];
+  status?: string[];
   auctionId : string
 }
 
@@ -58,6 +58,7 @@ export function LiveAuctionSection() {
             startTime={auction.startTime}
             endTime={auction.endTime}
             auctionId={(auction._id).toString()}
+            status={status}
           />
         ))}
       </div>
