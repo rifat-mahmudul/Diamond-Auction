@@ -275,7 +275,7 @@ export default function AllAuction() {
   // Loading state
   if (isAuctionsLoading || isCategoriesLoading) {
     return (
-      <section className="py-12 px-4 md:px-6">
+      <section className="py-12 md:px-6 lg:px-0">
         <div className="text-center pb-10">
           <h2 className="text-[32px] md:text-[40px] text-[#645949] font-bold">All Auction</h2>
         </div>
@@ -328,7 +328,7 @@ export default function AllAuction() {
     selectedSalesType !== undefined
 
   return (
-    <section className="py-12 px-4 md:px-6">
+    <section className="py-12 px-4 md:px-6 lg:px-0">
       <div className="text-center pb-10 relative">
         {/* Mobile hamburger menu */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 md:hidden">
