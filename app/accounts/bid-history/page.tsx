@@ -32,7 +32,7 @@ type Bid = {
   createdAt: string;
 };
 
-const ITEMS_PER_PAGE = 10; // Adjust items per page for smaller screens if needed
+const ITEMS_PER_PAGE = 10;
 
 export default function BidHistoryPage() {
   const [bidHistory, setBidHistory] = useState<Bid[]>([]);
@@ -73,16 +73,16 @@ export default function BidHistoryPage() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // Adjust breakpoint as needed
+      setIsMobile(window.innerWidth < 768);
     };
 
-    // Initial check
+  
     handleResize();
 
-    // Listen for window resize events
+    
     window.addEventListener("resize", handleResize);
 
-    // Cleanup the event listener on component unmount
+    
     return () => {
       window.removeEventListener("resize", handleResize);
     };
