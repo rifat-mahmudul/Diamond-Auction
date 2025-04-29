@@ -82,7 +82,7 @@ export function AuctionCard({
     toast.success("Added to wishlist!");
     return response.json();
   };
-
+console.log(status)
   return (
     <Card className="overflow-hidden border-none bg-[#dfc5a2] p-2">
       <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -116,7 +116,6 @@ export function AuctionCard({
           className={`absolute right-2 top-2 bg-black/50 px-2 py-1 text-xs text-white h-[24px] w-[24px] rounded-full flex flex-col justify-center items-center cursor-pointer`}
         >
           <Heart
-            // fill={isInWishlist ? "#645949" : "none"}
             className="h-[20px] w-[20px]"
           />
         </div>
@@ -165,7 +164,8 @@ export function AuctionCard({
 
       <Link href={`/auctions/${auctionId}`}>
         <CardFooter>
-          <Button className="w-full bg-[#645949] text-white font-semibold">
+          <Button 
+          className="w-full bg-[#645949] text-white font-semibold">
             Bid now
           </Button>
         </CardFooter>

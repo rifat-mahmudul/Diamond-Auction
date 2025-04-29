@@ -9,8 +9,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useSocketContext } from "@/Provider/SocketProvider";
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 const navLinks = [

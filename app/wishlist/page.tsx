@@ -42,7 +42,7 @@ function Page() {
 
   useEffect(() => {
     refetch();
-  }, [])
+  })
 
   if (loading) {
     return (
