@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import React, { Suspense } from "react";
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -34,11 +34,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
 import { CreateAuctionDialog } from "./_components/create-auction-dialog";
+import { Loading } from "./_components/loading";
 
 // Base URL from environment variable
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://your-api-url.com";
 
-export default function AuctionsPage() {
+function AuctionsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") || "active";
@@ -180,115 +181,111 @@ export default function AuctionsPage() {
   }, [tabParam, pageParam, searchParam]);
 
   return (
-    <Layout>
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Auctions</h1>
-            <p className="text-muted-foreground">
-              Manage your auction listings
-            </p>
-          </div>
-          <Button
-            onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-[#6b614f] hover:bg-[#5a5142]"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add Auction
-          </Button>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Auctions</h1>
+          <p className="text-muted-foreground">Manage your auction listings</p>
+        </div>
+        <Button
+          onClick={() => setIsCreateDialogOpen(true)}
+          className="bg-[#6b614f] hover:bg-[#5a5142]"
+        >
+          <Plus className="mr-2 h-4 w-4" /> Add Auction
+        </Button>
+      </div>
+
+      <div className="bg-white rounded-md">
+        <div className="p-4">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <Input
+              placeholder="Search auctions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="max-w-sm"
+            />
+            {/* <Button type="submit" variant="secondary">
+              Search
+            </Button> */}
+          </form>
         </div>
 
-        <div className="bg-white rounded-md">
-          <div className="p-4">
-            <form onSubmit={handleSearch} className="flex gap-2">
-              <Input
-                placeholder="Search auctions..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="max-w-sm"
-              />
-              {/* <Button type="submit" variant="secondary">
-                Search
-              </Button> */}
-            </form>
-          </div>
+        <Tabs
+          defaultValue="active"
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16 border border-[#645949]">
+            <TabsTrigger
+              value="active"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
+              Active
+            </TabsTrigger>
+            <TabsTrigger
+              value="pending"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
+              Pending
+            </TabsTrigger>
+            <TabsTrigger
+              value="scheduled"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
+              Scheduled
+            </TabsTrigger>
+            <TabsTrigger
+              value="end"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
+              End
+            </TabsTrigger>
+          </TabsList>
 
-          <Tabs
-            defaultValue="active"
-            value={activeTab}
-            onValueChange={handleTabChange}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16 border border-[#645949]">
-              <TabsTrigger
-                value="active"
-                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-              >
-                Active
-              </TabsTrigger>
-              <TabsTrigger
-                value="pending"
-                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-              >
-                Pending
-              </TabsTrigger>
-              <TabsTrigger
-                value="scheduled"
-                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-              >
-                Scheduled
-              </TabsTrigger>
-              <TabsTrigger
-                value="end"
-                className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-              >
-                End
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="active" className="mt-4">
-              <AuctionsTable
-                auctions={filteredAuctions}
-                onDelete={handleDeleteAuction}
-                formatDate={formatDate}
-                isLoading={isLoading}
-              />
-            </TabsContent>
-
-            <TabsContent value="pending" className="mt-4">
-              <AuctionsTable
-                auctions={filteredAuctions}
-                onDelete={handleDeleteAuction}
-                formatDate={formatDate}
-                isLoading={isLoading}
-              />
-            </TabsContent>
-
-            <TabsContent value="scheduled" className="mt-4">
-              <AuctionsTable
-                auctions={filteredAuctions}
-                onDelete={handleDeleteAuction}
-                formatDate={formatDate}
-                isLoading={isLoading}
-              />
-            </TabsContent>
-
-            <TabsContent value="end" className="mt-4">
-              <AuctionsTable
-                auctions={filteredAuctions}
-                onDelete={handleDeleteAuction}
-                formatDate={formatDate}
-                isLoading={isLoading}
-              />
-            </TabsContent>
-          </Tabs>
-
-          <div className="p-4">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
+          <TabsContent value="active" className="mt-4">
+            <AuctionsTable
+              auctions={filteredAuctions}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+              isLoading={isLoading}
             />
-          </div>
+          </TabsContent>
+
+          <TabsContent value="pending" className="mt-4">
+            <AuctionsTable
+              auctions={filteredAuctions}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+              isLoading={isLoading}
+            />
+          </TabsContent>
+
+          <TabsContent value="scheduled" className="mt-4">
+            <AuctionsTable
+              auctions={filteredAuctions}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+              isLoading={isLoading}
+            />
+          </TabsContent>
+
+          <TabsContent value="end" className="mt-4">
+            <AuctionsTable
+              auctions={filteredAuctions}
+              onDelete={handleDeleteAuction}
+              formatDate={formatDate}
+              isLoading={isLoading}
+            />
+          </TabsContent>
+        </Tabs>
+
+        <div className="p-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
 
@@ -297,7 +294,7 @@ export default function AuctionsPage() {
         onOpenChange={setIsCreateDialogOpen}
         token={token}
       />
-    </Layout>
+    </div>
   );
 }
 
@@ -318,7 +315,7 @@ function AuctionsTable({
   if (isLoading) {
     return (
       <div className="rounded-md border p-8 flex justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6b614f]"></div>
+        <Loading />
       </div>
     );
   }
@@ -419,5 +416,15 @@ function AuctionsTable({
         )}
       </TableBody>
     </Table>
+  );
+}
+
+export default function AuctionsPage() {
+  return (
+    <Layout>
+      <Suspense fallback={<Loading />}>
+        <AuctionsPageContent />
+      </Suspense>
+    </Layout>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuctionCard } from "../auction-card";
@@ -56,7 +56,17 @@ const salesTypes = [
   { value: "highest-bidding", label: "highest-bidding" },
 ];
 
+// Main component with Suspense boundary
 export default function AllAuction() {
+  return (
+    <Suspense fallback={<div className="py-12">Loading auctions...</div>}>
+      <AllAuctionContent />
+    </Suspense>
+  );
+}
+
+// Content component that contains the actual logic
+function AllAuctionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -223,17 +233,6 @@ export default function AllAuction() {
   // Filter sidebar component
   const FilterSidebar = () => (
     <div className="flex flex-col gap-5 p-5 rounded-md bg-[#DFC5A2] overflow-y-auto">
-      {/* Search Input */}
-      {/* <div className="relative">
-        <Input
-          onChange={handleSearchChange}
-          value={searchQuery}
-          className="text-[#645949] border-[#645949] pl-3 pr-10"
-          placeholder="Search by title, description..."
-        />
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 text-[#645949]" />
-      </div> */}
-
       {/* Category List */}
       <div>
         <h4 className="text-xl font-medium text-[#000000] pb-4">Category</h4>
