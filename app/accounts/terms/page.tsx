@@ -50,7 +50,8 @@ export default function PrivacyPolicyPage() {
         ) : (
           privacyData?.map((section) => (
             <div key={section._id} className="mb-6">
-              <p>{section.text}</p>
+              <div className="list-item list-none" dangerouslySetInnerHTML={{ __html: section.text ?? "Blog Description" }} />
+
             </div>
           ))
         )}

@@ -94,7 +94,7 @@ export function RegisterForm() {
       <div className="flex flex-col lg:flex-row justify-between bg-[#F5EDE2] rounded-2xl h-auto overflow-hidden shadow-lg">
         <div className="flex flex-col justify-center w-full lg:w-1/2 px-4 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-12">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#645949]">
               Registration
             </h1>
           </div>
@@ -110,7 +110,7 @@ export function RegisterForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm sm:text-base">
-                      Full name
+                      Username
                     </FormLabel>
                     <FormControl>
                       <Input

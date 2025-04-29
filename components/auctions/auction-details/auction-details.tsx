@@ -19,6 +19,12 @@ import RelatedAuction from "../related-auction";
 import { useSession } from "next-auth/react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useRouter } from "next/navigation";
 
 interface AuctionDetailsProps {
     auctionId: string;
@@ -29,14 +35,44 @@ interface PlaceBidParams {
     amount: number;
 }
 
+interface WishListParams {
+    auctionId: string;
+    token: string
+}
+
+
+const formSchema = z.object({
+    fullName: z.string().min(1, { message: "Full name is required" }),
+    address: z.string().min(1, { message: "Address is required" }),
+    email: z.string().min(1, { message: "Email is required" }).email({ message: "Invalid email address" }),
+    phone: z.string().min(1, { message: "Phone number is required" }),
+    saveInfo: z.boolean().optional(),
+})
+
 export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
+    const router = useRouter();
     const [bidAmount, setBidAmount] = useState<string>("");
     const [activeTab, setActiveTab] = useState<string>("description");
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const queryClient = useQueryClient();
+    const [isProcessing, setIsProcessing] = useState(false)
 
     const session = useSession();
+
+
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            fullName: "",
+            address: "",
+            email: "",
+            phone: ""
+        },
+    })
+
+
     // Fetch auction details
     const {
         data: auctionData,
@@ -54,9 +90,14 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
             }
             return response.json();
         },
+        refetchInterval: 5000,
+        refetchIntervalInBackground: false,
+
     });
 
     const auction = auctionData?.data?.auction;
+
+    const token = session?.data?.user?.accessToken
 
 
     // Handle bidding
@@ -67,17 +108,24 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${session?.data?.user?.accessToken}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ amount }),
             }
         );
 
 
+        if (!token) {
+            toast.error("You must be logged in to place a bid");
+        }
+
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || "Failed to place bid");
         }
+
+        toast.success("Bid placed successfully");
 
         return response.json(); // Or handle the response as needed
     }
@@ -86,15 +134,13 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const {
         mutate,
         status,
-        isSuccess: isBidSuccess,
-        isError: isBidError,
-        error: bidError,
     } = useMutation({
         mutationFn: placeBid,
-        onSuccess: (data) => {
+        onSuccess: () => {
             setBidAmount("");
             // console.log(data);
             queryClient.invalidateQueries({ queryKey: ["bidHistory"] });
+            queryClient.invalidateQueries({ queryKey: ["auction"] });
         },
         onError: (err) => {
             console.error("Error placing bid:", err.message);
@@ -131,9 +177,64 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
 
 
 
+    // Handle add to wishlist
 
-    // Calculate time remaining
+    const handleAddToWishlist = async ({ auctionId, token }: WishListParams) => {
+        if (!token) {
+            toast.error("You must be logged in to add to wishlist");
+            return;
+        }
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/wishlist/add/${auctionId}`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            toast.error("Auction already in wishlist");
+            return errorData;
+        }
+        toast.success("Added to wishlist!");
+        return response.json();
+    };
+
+    // Handle add to wishlist
+    useMutation({
+        mutationFn: handleAddToWishlist,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+        },
+        onError: (err) => {
+            console.log("Error: ", err);
+        },
+    });
+
+
+
+    // Check if the user has already added the auction to their wishlist
+
+    const { data: wishlist } = useQuery({
+        queryKey: ['wishlist'],
+        queryFn: async () => {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/wishlist`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+            if (!response.ok) throw new Error('Failed to fetch wishlist');
+            return response.json();
+        },
+        select: (apiData) => apiData?.data?.auctions
+    });
+/* eslint-disable @typescript-eslint/no-explicit-any */
+    const isInWishlist = !!wishlist?.some((item: any) => item._id === auctionId);
 
 
 
@@ -168,10 +269,64 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
 
 
 
-    const winner = auction.winner
+    const winner = auction?.winner?._id
 
     const user = session?.data?.user?.id
 
+
+    // Handle form submission
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsProcessing(true)
+        // Simulate payment processing
+        const paymentData = {
+            userId: session?.data?.user?.id,
+            auctionId: auctionId,
+            price: auction.currentBid
+        }
+
+        setTimeout(() => {
+            setIsProcessing(false)
+        }, 1500)
+
+        const billingResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/billing/create`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    fullName: values.fullName,
+                    address: values.address,
+                    email: values.email,
+                    phoneNumber: values.phone,
+                    userId: session?.data?.user?.id, // Assuming you want to associate billing with the user
+                }),
+            }
+        );
+
+
+        if (!billingResponse.ok) {
+            return <div>Error processing billing</div>
+        }
+
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/payment-intent`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(paymentData),
+            }
+        )
+
+        const paymentResponse = await response.json()
+
+        router.push(paymentResponse.url);
+
+    }
 
 
     return (
@@ -198,20 +353,32 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                 {/* Auction Details */}
                 <div className="space-y-4">
                     <div>
-                        <p className="text-lg font-medium text-[#645949] pb-6">
+                        <p className="text-lg font-medium text-[#645949] lg:pb-6 pb-2">
                             SKU #{auction.sku}
                         </p>
-                        <div className="flex justify-between items-center pb-6">
+                        <div className="flex justify-between items-center lg:pb-6 pb-2">
                             <h1 className="text-[40px] font-bold inline-block">
                                 {auction.title}
                             </h1>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <Heart className="h-5 w-5" />
-                            </Button>
+
+                            {
+                                (auction.status === "live" || auction.status === "pending" || auction.status === "scheduled") &&
+                                <div className="">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8"
+                                        onClick={() => handleAddToWishlist({ auctionId: auction._id, token: session?.data?.user?.accessToken || "" })}
+                                    >
+                                        <Heart fill={isInWishlist ? "#645949" : "none"} className="h-5 w-5 border-none" />
+                                    </Button>
+                                </div>
+                            }
+
                         </div>
                     </div>
 
-                    <p className="text-base text-[#645949] pb-10">
+                    <p className="text-base text-[#645949] lg:pb-10 pb-5">
                         {auction.description}
                     </p>
 
@@ -291,15 +458,6 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                                 {isPlacingBid ? "Bidding..." : "Bid"}
                                             </Button>
                                         </div>
-
-                                        {isBidSuccess && (
-                                            <div className="mt-4 text-green-500">Bid placed successfully!</div>
-                                        )}
-                                        {isBidError && (
-                                            <div className="mt-4 text-red-500">
-                                                Error placing bid: {bidError?.message} Register to place bid
-                                            </div>
-                                        )}
                                     </div>
                                 )}
                             </div>
@@ -348,13 +506,15 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                             </div>
                                         </CardContent>
                                     </Card>
-                                    {
-                                        winner == user && (
+
+                                    {/* Winner Payment*/}
+
+                                    <div className="p-6 max-w-4xl mx-auto">
+                                        {winner === user && (
                                             <div className="pt-6">
                                                 <h4 className="font-semibold text-[#645949] pb-4">You won the bid: ${auction.currentBid}</h4>
                                                 <Button
                                                     variant="outline"
-                                                    size="icon"
                                                     onClick={() => setIsOpen(true)}
                                                     disabled={!auction || isPlacingBid}
                                                     className="text-white h-12 w-32 bg-[#645949] hover:bg-[#645949]/90"
@@ -362,8 +522,8 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                                     Pay Now
                                                 </Button>
                                                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                                                    <DialogContent className="sm:max-w-[900px] p-0 bg-white">
-                                                        <div className="flex">
+                                                    <DialogContent className="sm:max-w-[900px] p-0 bg-[#F5EDE2] text-[#645949] w-[95vw] max-h-[90vh] overflow-y-auto">
+                                                        <div className="flex flex-col md:flex-row">
                                                             {/* Close button */}
                                                             <button
                                                                 onClick={() => setIsOpen(false)}
@@ -373,92 +533,177 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                                                 <span className="sr-only">Close</span>
                                                             </button>
 
-                                                            {/* Billing Information */}
-                                                            <div className="w-1/2 p-6 border-r">
-                                                                <h2 className="text-xl font-semibold mb-4">Billing Information</h2>
+                                                            <Form {...form}>
+                                                                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col md:flex-row w-full">
+                                                                    {/* Billing Information */}
+                                                                    <div className="w-full md:w-1/2 p-4 sm:p-6 border-b md:border-b-0 md:border-r">
+                                                                        <h2 className="text-xl font-semibold mb-4">Billing Information</h2>
 
-                                                                <div className="space-y-4">
-                                                                    <div>
-                                                                        <label htmlFor="fullName" className="block text-sm mb-1">
-                                                                            Full Name
-                                                                        </label>
-                                                                        <Input id="fullName" className="w-full" />
+                                                                        <div className="space-y-4">
+                                                                            <FormField
+                                                                                control={form.control}
+                                                                                name="fullName"
+                                                                                render={({ field }) => (
+                                                                                    <FormItem>
+                                                                                        <FormLabel>
+                                                                                            Full Name <span className="text-red-500">*</span>
+                                                                                        </FormLabel>
+                                                                                        <FormControl>
+                                                                                            <Input placeholder="John Doe" {...field} />
+                                                                                        </FormControl>
+                                                                                        <FormMessage />
+                                                                                    </FormItem>
+                                                                                )}
+                                                                            />
+
+                                                                            <FormField
+                                                                                control={form.control}
+                                                                                name="address"
+                                                                                render={({ field }) => (
+                                                                                    <FormItem>
+                                                                                        <FormLabel>
+                                                                                            Address <span className="text-red-500">*</span>
+                                                                                        </FormLabel>
+                                                                                        <FormControl>
+                                                                                            <Input placeholder="123 Main St, City, Country" {...field} />
+                                                                                        </FormControl>
+                                                                                        <FormMessage />
+                                                                                    </FormItem>
+                                                                                )}
+                                                                            />
+
+                                                                            <FormField
+                                                                                control={form.control}
+                                                                                name="email"
+                                                                                render={({ field }) => (
+                                                                                    <FormItem>
+                                                                                        <FormLabel>
+                                                                                            Email address <span className="text-red-500">*</span>
+                                                                                        </FormLabel>
+                                                                                        <FormControl>
+                                                                                            <Input type="email" placeholder="your@email.com" {...field} />
+                                                                                        </FormControl>
+                                                                                        <FormMessage />
+                                                                                    </FormItem>
+                                                                                )}
+                                                                            />
+
+                                                                            <FormField
+                                                                                control={form.control}
+                                                                                name="phone"
+                                                                                render={({ field }) => (
+                                                                                    <FormItem>
+                                                                                        <FormLabel>
+                                                                                            Phone Number <span className="text-red-500">*</span>
+                                                                                        </FormLabel>
+                                                                                        <FormControl>
+                                                                                            <Input placeholder="+1 (555) 123-4567" {...field} />
+                                                                                        </FormControl>
+                                                                                        <FormMessage />
+                                                                                    </FormItem>
+                                                                                )}
+                                                                            />
+
+                                                                            <FormField
+                                                                                control={form.control}
+                                                                                name="saveInfo"
+                                                                                render={({ field }) => (
+                                                                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+                                                                                        <FormControl>
+                                                                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                                                                        </FormControl>
+                                                                                        <div className="space-y-1 leading-none">
+                                                                                            <FormLabel className="text-sm font-normal">
+                                                                                                Save this information for faster check out next time
+                                                                                            </FormLabel>
+                                                                                        </div>
+                                                                                    </FormItem>
+                                                                                )}
+                                                                            />
+                                                                        </div>
                                                                     </div>
 
-                                                                    <div>
-                                                                        <label htmlFor="address" className="block text-sm mb-1">
-                                                                            Address
-                                                                        </label>
-                                                                        <Input id="address" className="w-full" />
-                                                                    </div>
+                                                                    {/* Order Summary */}
+                                                                    <div className="w-full md:w-1/2 p-4 sm:p-6">
+                                                                        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
-                                                                    <div>
-                                                                        <label htmlFor="email" className="block text-sm mb-1">
-                                                                            Email address
-                                                                        </label>
-                                                                        <Input id="email" type="email" className="w-full" />
-                                                                    </div>
+                                                                        <div className="flex items-center mb-4">
+                                                                            <div className="w-12 h-12 bg-gray-100 rounded mr-3 overflow-hidden">
+                                                                                <Image
+                                                                                    src={auction?.images[0] || "/placeholder.svg"}
+                                                                                    alt={auction?.title}
+                                                                                    width={48}
+                                                                                    height={48}
+                                                                                    className="object-cover w-full h-full"
+                                                                                />
+                                                                            </div>
+                                                                            <div className="flex-1">
+                                                                                <div className="font-medium">{auction?.title}</div>
+                                                                            </div>
+                                                                            <div className="font-medium">${auction?.currentBid}</div>
+                                                                        </div>
 
-                                                                    <div>
-                                                                        <label htmlFor="phone" className="block text-sm mb-1">
-                                                                            Phone Number
-                                                                        </label>
-                                                                        <Input id="phone" className="w-full" />
-                                                                    </div>
+                                                                        <div className="space-y-2 border-t pt-4">
+                                                                            <div className="flex justify-between">
+                                                                                <span>Subtotal</span>
+                                                                                <span>${auction?.currentBid}</span>
+                                                                            </div>
 
-                                                                    <div className="flex items-center space-x-2">
-                                                                        <Checkbox id="saveInfo" />
-                                                                        <label htmlFor="saveInfo" className="text-sm">
-                                                                            Save this information for faster check out next time
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                                            <div className="flex justify-between">
+                                                                                <span>Shipping</span>
+                                                                                <span>$55</span>
+                                                                            </div>
 
-                                                            {/* Order Summary */}
-                                                            <div className="w-1/2 p-6">
-                                                                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                                                                            <div className="flex justify-between font-bold border-t pt-2 mt-2">
+                                                                                <span>Total</span>
+                                                                                <span>${auction?.currentBid + 55}</span>
+                                                                            </div>
+                                                                        </div>
 
-                                                                <div className="flex items-center mb-4">
-                                                                    <div className="w-12 h-12 bg-gray-100 rounded mr-3 overflow-hidden">
-                                                                        <Image src={auction?.images[0]} alt={auction?.title} width={48} height={48} />
+                                                                        <Button
+                                                                            type="submit"
+                                                                            className="w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white"
+                                                                            disabled={isProcessing}
+                                                                        >
+                                                                            {isProcessing ? (
+                                                                                <div className="flex items-center justify-center">
+                                                                                    <svg
+                                                                                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                                        fill="none"
+                                                                                        viewBox="0 0 24 24"
+                                                                                    >
+                                                                                        <circle
+                                                                                            className="opacity-25"
+                                                                                            cx="12"
+                                                                                            cy="12"
+                                                                                            r="10"
+                                                                                            stroke="currentColor"
+                                                                                            strokeWidth="4"
+                                                                                        ></circle>
+                                                                                        <path
+                                                                                            className="opacity-75"
+                                                                                            fill="currentColor"
+                                                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                                                        ></path>
+                                                                                    </svg>
+                                                                                    Processing...
+                                                                                </div>
+                                                                            ) : (
+                                                                                <>
+                                                                                    Pay With <span className="font-semibold ml-1 text-xl">stripe</span>
+                                                                                </>
+                                                                            )}
+                                                                        </Button>
                                                                     </div>
-                                                                    <div className="flex-1">
-                                                                        <div className="font-medium">{auction?.title}</div>
-                                                                    </div>
-                                                                    <div className="font-medium">${auction?.currentBid}</div>
-                                                                </div>
-
-                                                                <div className="space-y-2 border-t pt-4">
-                                                                    <div className="flex justify-between">
-                                                                        <span>Subtotal</span>
-                                                                        <span>${auction?.currentBid}</span>
-                                                                    </div>
-
-                                                                    <div className="flex justify-between">
-                                                                        <span>Shipping</span>
-                                                                        <span>$55</span>
-                                                                    </div>
-
-                                                                    <div className="flex justify-between font-bold border-t pt-2 mt-2">
-                                                                        <span>Total</span>
-                                                                        <span>${auction?.currentBid + 55}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <Button
-                                                                    className="w-full mt-6 bg-blue-500 hover:bg-blue-600 text-white"
-                                                                    onClick={() => console.log("Processing payment...")}
-                                                                >
-                                                                    Pay With <span className="font-semibold ml-1 text-xl">stripe</span>
-                                                                </Button>
-                                                            </div>
+                                                                </form>
+                                                            </Form>
                                                         </div>
                                                     </DialogContent>
                                                 </Dialog>
                                             </div>
-                                        )
-                                    }
+                                        )}
+                                    </div>
                                 </div>
                             )
                                 :

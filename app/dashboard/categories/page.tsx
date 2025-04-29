@@ -37,6 +37,8 @@ import {
 
 import Image from "next/image";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { apiService } from "@/lib/api-service";
+import { useSession } from "next-auth/react";
 
 interface Category {
   _id: string;
@@ -49,12 +51,12 @@ export default function CategoriesPage() {
   const createCategoryMutation = useCreateCategory();
   const deleteCategoryMutation = useDeleteCategory();
   const updateCategoryMutation = useUpdateCategory();
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const [categories, setCategories] = useState<any>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1); // Initialize to 1
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
@@ -65,6 +67,15 @@ export default function CategoriesPage() {
   });
   const [previewUrl, setPreviewUrl] = useState("");
   const [editPreviewUrl, setEditPreviewUrl] = useState("");
+  const session = useSession();
+  const user = session.data?.user;
+
+  // Set token whenever user changes
+  useEffect(() => {
+    if (user?.accessToken) {
+      apiService.setToken(user.accessToken);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (categoriesData?.data) {
@@ -226,6 +237,8 @@ export default function CategoriesPage() {
                           src={previewUrl || "/placeholder.svg"}
                           alt="Preview"
                           className="max-h-40 object-contain"
+                          width={200}
+                          height={200}
                         />
                         <Button
                           type="button"
@@ -241,10 +254,12 @@ export default function CategoriesPage() {
                     ) : (
                       <div className="flex flex-col items-center gap-2">
                         <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                          <Image
+                          {/* <Image
                             src="/placeholder.svg?height=40&width=40"
                             alt="Upload"
-                          />
+                            width={100}
+                            height={100}
+                          /> */}
                         </div>
                         <p className="text-sm text-center text-muted-foreground">
                           Drag and drop image here, or click add image
@@ -282,13 +297,12 @@ export default function CategoriesPage() {
             </DialogContent>
           </Dialog>
 
-          <Button
+          {/* <Button
             className="bg-[#6b614f] hover:bg-[#5c5343] gap-2"
             onClick={() => setIsAddDialogOpen(true)}
           >
             <Plus className="h-4 w-4" /> Add Category
-          </Button>
-
+          </Button> */}
         </div>
 
         {isLoading ? (
@@ -511,12 +525,12 @@ export default function CategoriesPage() {
                 ) : (
                   <div className="flex flex-col items-center gap-2">
                     <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                      <Image
+                      {/* <Image
                         src="/placeholder.svg?height=40&width=40"
                         alt="Upload"
                         height={100}
                         width={100}
-                      />
+                      /> */}
                     </div>
                     <p className="text-sm text-center text-muted-foreground">
                       Drag and drop image here, or click add image

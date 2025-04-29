@@ -6,6 +6,7 @@ import { apiService } from "@/lib/api-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingCart, Users, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useSession } from "next-auth/react";
 
 interface Auction {
   _id: string;
@@ -25,15 +26,21 @@ interface TopBidder {
 export default function Dashboard() {
   const [recentAuctions, setRecentAuctions] = useState<Auction[]>([]);
   const [topBidders, setTopBidders] = useState<TopBidder[]>([]);
-  const [stats, setStats] = useState({
+  const stats = useState({
     revenue: 11020,
     sellers: 8020,
     bidders: 6020,
     liveAuctions: 20,
   });
-  console.log(setStats);
+  const session = useSession();
+  const user = session.data?.user;
 
-  console.log(setStats);
+  // Set token whenever user changes
+  useEffect(() => {
+    if (user?.accessToken) {
+      apiService.setToken(user.accessToken);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,8 +78,10 @@ export default function Dashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Revenue</p>
-              <div className="text-2xl font-bold">${stats.revenue}</div>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Total Revenue
+              </p>
+              <div className="text-2xl font-bold">${stats[0].revenue}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2695FF] text-white">
@@ -82,8 +91,10 @@ export default function Dashboard() {
 
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Seller</p>
-              <div className="text-2xl font-bold">{stats.sellers}</div>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Total Seller
+              </p>
+              <div className="text-2xl font-bold">{stats[0].sellers}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
@@ -93,8 +104,10 @@ export default function Dashboard() {
 
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Total Bidders</p>
-              <div className="text-2xl font-bold">{stats.bidders}</div>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Total Bidders
+              </p>
+              <div className="text-2xl font-bold">{stats[0].bidders}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F59E0B] text-white">
@@ -104,8 +117,10 @@ export default function Dashboard() {
 
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">Live Auctions</p>
-              <div className="text-2xl font-bold">{stats.liveAuctions}</div>
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                Live Auctions
+              </p>
+              <div className="text-2xl font-bold">{stats[0].liveAuctions}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EF4444] text-white">
@@ -161,7 +176,9 @@ export default function Dashboard() {
               <CardTitle>Top Bidders</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2"> {/* Changed from space-y-8 to space-y-0 */}
+              <div className="space-y-2">
+                {" "}
+                {/* Changed from space-y-8 to space-y-0 */}
                 {topBidders.map((bidder) => (
                   <div
                     key={bidder._id}

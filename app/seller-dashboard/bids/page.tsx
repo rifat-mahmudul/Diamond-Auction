@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/dashboard/layout";
+import { apiService } from "@/lib/api-service";
 import {
   Table,
   TableBody,
@@ -25,7 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
-import { useAllBidders, useDeleteBidder } from "@/hooks/use-queries";
+import { toast } from "sonner";
 
 interface Bidder {
   userId: string;
@@ -39,45 +40,34 @@ interface Bidder {
   winAuctions: number;
 }
 
-export default function BiddersPage() {
-  const { data: biddersData, isLoading } = useAllBidders();
-  const deleteBidderMutation = useDeleteBidder();
-
+export default function Bids() {
   const [bidders, setBidders] = useState<Bidder[]>([]);
   const [filteredBidders, setFilteredBidders] = useState<Bidder[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const [isBidderLoading, setIsBidderLoading] = useState(false);
-
-
-  // const fetchBidders = async () => {
-  //   setIsBidderLoading(true);
-  //   try {
-  //     const response = await apiService.getAllBidders();
-  //     if (response.status === true && response.data) {
-  //       setBidders(response.data as Bidder[]);
-  //       setFilteredBidders(response.data as Bidder[]);
-  //       setTotalPages(response.totalPages || 1);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching bidders:", error);
-  //     toast.error("Failed to fetch bidders");
-  //   } finally {
-  //     setIsBidderLoading(false);
-  //   }
-  // };
-
+  const fetchBidders = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiService.getAllBidders();
+      if (response.status === true && response.data) {
+        setBidders(response.data as Bidder[]);
+        setFilteredBidders(response.data as Bidder[]);
+        setTotalPages(response.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching bidders:", error);
+      toast.error("Failed to fetch bidders");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (biddersData?.data) {
-      const data = biddersData.data as Bidder[];
-      setBidders(data);
-      setFilteredBidders(data);
-      setTotalPages(biddersData.totalPages || 1);
-    }
-  }, [biddersData]);
+    fetchBidders();
+  }, [currentPage]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -97,7 +87,16 @@ export default function BiddersPage() {
   };
 
   const handleDeleteBidder = async (id: string) => {
-    deleteBidderMutation.mutate(id);
+    try {
+      const response = await apiService.deleteBidder(id);
+      if (response.status === true) {
+        toast.success("Bidder deleted successfully");
+        fetchBidders();
+      }
+    } catch (error) {
+      console.error("Error deleting bidder:", error);
+      toast.error("Failed to delete bidder");
+    }
   };
 
   return (
@@ -136,10 +135,9 @@ export default function BiddersPage() {
                 <TableHeader>
                   <TableRow className="bg-[#F9FAFB] h-14 border-none">
                     <TableHead className="pl-20">Bidder</TableHead>
-                    <TableHead className="text-center">Contact</TableHead>
-                    <TableHead className="text-center">Join Date</TableHead>
-                    <TableHead className="text-center">Total Bids</TableHead>
-                    <TableHead className="text-center">Win Auctions</TableHead>
+                    <TableHead className="text-center">Bid</TableHead>
+                    <TableHead className="text-center">Bidding Items</TableHead>
+                    <TableHead className="text-center">Bidding Time</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
