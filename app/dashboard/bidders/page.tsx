@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Trash2, Filter, User } from "lucide-react";
+import { Search, Trash2, User } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
 import { toast } from "sonner";
-
+import { useSession } from "next-auth/react";
 
 interface Bidder {
   userId: string;
@@ -49,7 +49,15 @@ export default function BiddersPage() {
   const [totalPages, setTotalPages] = useState(1);
 
   const [isBidderLoading, setIsBidderLoading] = useState(false);
+  const session = useSession();
+  const user = session.data?.user;
 
+  // Set token whenever user changes
+  useEffect(() => {
+    if (user?.accessToken) {
+      apiService.setToken(user.accessToken);
+    }
+  }, [user]);
 
   const fetchBidders = async () => {
     setIsBidderLoading(true);
@@ -68,11 +76,9 @@ export default function BiddersPage() {
     }
   };
 
-
   useEffect(() => {
     fetchBidders();
   }, [currentPage]);
-
 
   useEffect(() => {
     if (searchTerm) {
@@ -123,10 +129,10 @@ export default function BiddersPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button variant="outline" className="gap-2">
+          {/* <Button variant="outline" className="gap-2">
             <Filter className="h-4 w-4" />
             Filter
-          </Button>
+          </Button> */}
         </div>
 
         <div className="bg-white rounded-md">
@@ -156,7 +162,10 @@ export default function BiddersPage() {
                     </TableRow>
                   ) : (
                     filteredBidders.map((bidder) => (
-                      <TableRow key={bidder.userId} className="text-center h-20 !border-b border-[#E5E7EB]">
+                      <TableRow
+                        key={bidder.userId}
+                        className="text-center h-20 !border-b border-[#E5E7EB]"
+                      >
                         <TableCell className="flex items-center gap-3 pl-6 pt-5">
                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                             <User className="h-5 w-5 text-gray-500" />
@@ -187,7 +196,9 @@ export default function BiddersPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
                                   This action cannot be undone. This will
                                   permanently delete the bidder account.
