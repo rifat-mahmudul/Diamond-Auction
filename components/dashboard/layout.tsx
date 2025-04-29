@@ -4,7 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import { AppSidebar } from "./app-sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
-import { Bell, Menu, Settings, LogOut } from "lucide-react";
+import { Menu, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -63,12 +63,12 @@ export default function Layout({ children }: LayoutProps) {
           <div className="md:hidden w-6"></div> {/* Spacer for mobile */}
           <div className="hidden md:block"></div> {/* Empty div for desktop */}
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="relative">
+            {/* <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
                 1
               </span>
-            </Button>
+            </Button> */}
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">
                 {user?.name || "User"}
