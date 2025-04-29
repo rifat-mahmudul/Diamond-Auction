@@ -1,8 +1,8 @@
 "use client";
 
-import { useSession } from 'next-auth/react';
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { useSession } from "next-auth/react";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { io, Socket } from "socket.io-client";
 
 interface NotificationData {
   _id: string;
@@ -25,7 +25,9 @@ interface SocketContextType {
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
-export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
   const session = useSession();
@@ -34,7 +36,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   useEffect(() => {
     if (token && !socket) {
-      const socket = io('http://localhost:5100', {
+      const socket = io(`${process.env.NEXT_PUBLIC_API_URL}`, {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
@@ -43,16 +45,16 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     if (socket && !listenerSet) {
-        socket.on('notification', (data: NotificationData) => {
-          setNotifications((prevNotifications) => [data, ...prevNotifications]);
-          console.log("notification:", data);
-        });
-        setListenerSet(true);
-      }
+      socket.on("notification", (data: NotificationData) => {
+        setNotifications((prevNotifications) => [data, ...prevNotifications]);
+        console.log("notification:", data);
+      });
+      setListenerSet(true);
+    }
   }, [token, socket, listenerSet]);
 
-  console.log(socket)
-  console.log('all notifications : ', notifications)
+  console.log(socket);
+  console.log("all notifications : ", notifications);
 
   return (
     <SocketContext.Provider value={{ socket, notifications, setNotifications }}>
@@ -64,7 +66,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 export const useSocketContext = () => {
   const context = useContext(SocketContext);
   if (!context) {
-    throw new Error('useSocketContext must be used within a SocketProvider');
+    throw new Error("useSocketContext must be used within a SocketProvider");
   }
   return context;
 };

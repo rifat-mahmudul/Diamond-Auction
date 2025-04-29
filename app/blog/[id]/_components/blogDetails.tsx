@@ -28,7 +28,9 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     const fetchBlog = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/blogs/${blogId}`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/blogs/${blogId}`
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -110,7 +112,12 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
         </div>
 
         <div className="text-[#444444] font-[16px] leading-[19.2px]">
-          <div className="list-item list-none" dangerouslySetInnerHTML={{ __html: blog?.content ?? "Blog Description" }} />
+          <div
+            className="list-item list-none"
+            dangerouslySetInnerHTML={{
+              __html: blog?.content ?? "Blog Description",
+            }}
+          />
         </div>
 
         <div className="mt-12">

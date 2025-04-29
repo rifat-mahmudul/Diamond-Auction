@@ -58,7 +58,10 @@ export function ArticlesSection() {
               </div>
               <div className="col-span-2 lg:col-span-1">
                 <p className="">
-                  Dive into expert insights, auction tips, and inspiring stories from the world of rare collectibles. Our articles are designed to keep you informed, engaged, and ready to make confident bidding decisions.
+                  Dive into expert insights, auction tips, and inspiring stories
+                  from the world of rare collectibles. Our articles are designed
+                  to keep you informed, engaged, and ready to make confident
+                  bidding decisions.
                 </p>
               </div>
             </div>
