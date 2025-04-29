@@ -22,6 +22,7 @@ interface AuctionItem {
   startTime: string
   endTime: string
   badges?: string[]
+  status: string
 }
 
 interface Category {
@@ -387,6 +388,7 @@ export default function AllAuction() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {filteredAuctions?.map((auction: AuctionItem) => (
                 <AuctionCard
+                  status={auction.status}
                   key={auction._id}
                   image={auction.images[0]}
                   title={auction.title}
