@@ -154,62 +154,64 @@ export default function VerifyOTPPage() {
       toast("OTP has been resent to your email");
     } catch (error) {
       toast("Failed to resend OTP. Please try again.");
-      console.log(error)
+      console.log(error);
       setResendDisabled(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md p-8 bg-[#f8f3ea] rounded-3xl shadow-lg">
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-semibold text-[#6b5d4d]">Enter OTP</h1>
-          <p className="text-[#6b5d4d] text-center px-4">
-            An OTP has been sent to your email address
-            <br />
-            please verify it below
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex justify-center gap-2">
-            {[0, 1, 2, 3, 4, 5].map((index) => (
-              <input
-                key={index}
-                ref={(el) => {
-                  inputRefs.current[index] = el;
-                }}
-                type="text"
-                maxLength={1}
-                value={otp[index]}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                onPaste={index === 0 ? handlePaste : undefined}
-                className="w-12 h-14 text-center text-xl font-semibold border border-[#6b5d4d] border-opacity-30 rounded-md bg-transparent focus:border-[#6b5d4d] focus:ring-0 text-[#6b5d4d]"
-              />
-            ))}
+    <div className="bg-gradient-to-l from-[#F5EDE2] to-[#645949] w-full h-screen flex flex-col items-center justify-center">
+      <div className="container lg:p-8 bg-[#f8f3ea] rounded-3xl shadow-xl h-[500px]">
+        <div className="space-y-6 lg:max-w-xl mx-auto h-full flex flex-col items-center justify-center">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-semibold text-[#6b5d4d]">Enter OTP</h1>
+            <p className="text-[#6b5d4d] text-center px-4">
+              An OTP has been sent to your email address
+              <br />
+              please verify it below
+            </p>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full py-6 bg-[#6b5d4d] hover:bg-[#5a4d3d] text-white"
-            disabled={isLoading}
-          >
-            {isLoading ? "Verifying..." : "Verify"}
-          </Button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="flex justify-center gap-2">
+              {[0, 1, 2, 3, 4, 5].map((index) => (
+                <input
+                  key={index}
+                  ref={(el) => {
+                    inputRefs.current[index] = el;
+                  }}
+                  type="text"
+                  maxLength={1}
+                  value={otp[index]}
+                  onChange={(e) => handleChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  onPaste={index === 0 ? handlePaste : undefined}
+                  className="w-12 h-14 text-center text-xl font-semibold border border-[#6b5d4d] border-opacity-30 rounded-md bg-transparent focus:border-[#6b5d4d] focus:ring-0 text-[#6b5d4d]"
+                />
+              ))}
+            </div>
 
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={handleResendOTP}
-            disabled={resendDisabled}
-            className="text-[#6b5d4d] text-sm underline disabled:opacity-50 disabled:no-underline"
-          >
-            {resendDisabled
-              ? `Resend OTP in ${countdown}s`
-              : "Didn't receive OTP? Resend"}
-          </button>
+            <Button
+              type="submit"
+              className="w-full py-6 bg-[#6b5d4d] hover:bg-[#5a4d3d] text-white"
+              disabled={isLoading}
+            >
+              {isLoading ? "Verifying..." : "Verify"}
+            </Button>
+          </form>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={handleResendOTP}
+              disabled={resendDisabled}
+              className="text-[#6b5d4d] text-sm underline disabled:opacity-50 disabled:no-underline"
+            >
+              {resendDisabled
+                ? `Resend OTP in ${countdown}s`
+                : "Didn't receive OTP? Resend"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
