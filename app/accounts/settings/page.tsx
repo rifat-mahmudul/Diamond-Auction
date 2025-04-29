@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
-const BASE_URL = "http://localhost:5100/api/v1";
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 
 const placeholderImg = "data:image/jpeg;base64,/9j/..."; // Truncated for brevity
 
@@ -130,13 +130,16 @@ export default function SettingsPage() {
         formData.append("image", selectedImage);
       }
 
-      const profileResponse = await fetch(`${BASE_URL}/profile/update/${userID}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const profileResponse = await fetch(
+        `${BASE_URL}/profile/update/${userID}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       const profileData = await profileResponse.json();
 
@@ -164,18 +167,21 @@ export default function SettingsPage() {
     setChangingPassword(true);
 
     try {
-      const passwordResponse = await fetch(`${BASE_URL}/profile/password/${userID}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          currentPassword: data.currentPassword,
-          newPassword: data.newPassword,
-          confirmPassword: data.confirmPassword,
-        }),
-      });
+      const passwordResponse = await fetch(
+        `${BASE_URL}/profile/password/${userID}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            currentPassword: data.currentPassword,
+            newPassword: data.newPassword,
+            confirmPassword: data.confirmPassword,
+          }),
+        }
+      );
 
       const passwordData = await passwordResponse.json();
 
@@ -202,7 +208,9 @@ export default function SettingsPage() {
         {/* Personal Info */}
         <Card className="bg-[#eee5da] p-5">
           <CardHeader>
-            <CardTitle className="text-xl font-bold mb-5">Edit Personal Information</CardTitle>
+            <CardTitle className="text-xl font-bold mb-5">
+              Edit Personal Information
+            </CardTitle>
           </CardHeader>
           <div className="flex items-center space-x-4 mb-6">
             <div className="relative">
@@ -232,7 +240,11 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" {...register("firstName")} className="p-3" />
+                <Input
+                  id="firstName"
+                  {...register("firstName")}
+                  className="p-3"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name</Label>
@@ -241,7 +253,11 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="bio">Bio</Label>
-              <Textarea id="bio" {...register("bio")} className="min-h-[100px]" />
+              <Textarea
+                id="bio"
+                {...register("bio")}
+                className="min-h-[100px]"
+              />
             </div>
           </CardContent>
         </Card>
@@ -249,7 +265,9 @@ export default function SettingsPage() {
         {/* Address */}
         <Card className="bg-[#eee5da] p-5">
           <CardHeader>
-            <CardTitle className="text-xl font-bold mb-5">Edit Address</CardTitle>
+            <CardTitle className="text-xl font-bold mb-5">
+              Edit Address
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -267,7 +285,10 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="address.postalCode">Postal Code</Label>
-                <Input id="address.postalCode" {...register("address.postalCode")} />
+                <Input
+                  id="address.postalCode"
+                  {...register("address.postalCode")}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="address.taxId">TAX ID</Label>
@@ -291,21 +312,35 @@ export default function SettingsPage() {
         {/* Password */}
         <Card className="bg-[#eee5da] p-5">
           <CardHeader>
-            <CardTitle className="text-xl font-bold mb-5">Change Password</CardTitle>
+            <CardTitle className="text-xl font-bold mb-5">
+              Change Password
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="currentPassword">Current Password</Label>
-              <Input id="currentPassword" type="password" {...register("currentPassword")} />
+              <Input
+                id="currentPassword"
+                type="password"
+                {...register("currentPassword")}
+              />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="newPassword">New Password</Label>
-                <Input id="newPassword" type="password" {...register("newPassword")} />
+                <Input
+                  id="newPassword"
+                  type="password"
+                  {...register("newPassword")}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <Input id="confirmPassword" type="password" {...register("confirmPassword")} />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  {...register("confirmPassword")}
+                />
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm">
                     {errors.confirmPassword.message}

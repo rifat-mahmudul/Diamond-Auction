@@ -1,8 +1,8 @@
-"use client"
-import { useEffect } from 'react';
-import { formatDistanceToNow } from 'date-fns';
-import { useSocketContext } from '@/Provider/SocketProvider';
-import { useSession } from 'next-auth/react';
+"use client";
+import { useEffect } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { useSocketContext } from "@/Provider/SocketProvider";
+import { useSession } from "next-auth/react";
 
 const Notifications = () => {
   const { notifications, setNotifications } = useSocketContext();
@@ -13,19 +13,25 @@ const Notifications = () => {
     const fetchInitialNotifications = async () => {
       if (token) {
         try {
-          const response = await fetch('http://localhost:5100/api/v1/bids/notifications', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
           const data = await response.json();
           if (data.status && data.data) {
             setNotifications(data.data);
           } else {
-            console.error('Failed to fetch initial notifications:', data.message);
+            console.error(
+              "Failed to fetch initial notifications:",
+              data.message
+            );
           }
         } catch (error) {
-          console.error('Error fetching initial notifications:', error);
+          console.error("Error fetching initial notifications:", error);
         }
       }
     };
@@ -46,7 +52,10 @@ const Notifications = () => {
               <p className="text-sm text-gray-600">
                 {notification.message}
                 {notification.auction && (
-                  <span className="font-semibold"> ({notification.auction.title})</span>
+                  <span className="font-semibold">
+                    {" "}
+                    ({notification.auction.title})
+                  </span>
                 )}
               </p>
               <p className="text-xs text-gray-400">

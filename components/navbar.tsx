@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -10,6 +10,7 @@ import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -23,7 +24,7 @@ const navLinks = [
 // Function to fetch wishlist data
 const fetchWishlist = async (token: string | undefined) => {
   if (!token) return null;
-  const response = await fetch("http://localhost:5100/api/v1/wishlist", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -38,12 +39,15 @@ const fetchWishlist = async (token: string | undefined) => {
 // Function to fetch notification data
 const fetchNotification = async (token: string | undefined) => {
   if (!token) return null;
-  const response = await fetch("http://localhost:5100/api/v1/bids/notifications", {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch wishlist");
   }
@@ -51,6 +55,8 @@ const fetchNotification = async (token: string | undefined) => {
 };
 
 export function Navbar() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
   const isMobile = useMobile();
   const pathname = usePathname();
   const { status } = useSession();
@@ -62,15 +68,14 @@ export function Navbar() {
     queryKey: ["wishlist-length"],
     queryFn: () => fetchWishlist(token),
     enabled: isLoggedIn,
-    refetchInterval: 5000
+    refetchInterval: 5000,
   });
-
 
   const { data: notificationData } = useQuery({
     queryKey: ["notification-length"],
     queryFn: () => fetchNotification(token),
     enabled: isLoggedIn,
-    refetchInterval: 5000
+    refetchInterval: 5000,
   });
 
   const wishlists = wishlistData?.data?.auctions || [];
@@ -98,6 +103,15 @@ export function Navbar() {
     // Special case for home page
     if (href === "/") return pathname === href;
     return pathname.startsWith(href);
+  };
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchTerm.trim()) {
+      router.push(
+        `/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`
+      );
+      setSearchTerm("");
+    }
   };
 
   return (
@@ -142,6 +156,9 @@ export function Navbar() {
             <Input
               placeholder="Search..."
               className="pr-8 h-[32px] w-full border border-[#D1D1D1] focus:outline-none placeholder:text-gray-400 text-white text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearch}
             />
             <Search className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-white" />
           </div>

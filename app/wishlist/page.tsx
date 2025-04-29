@@ -1,39 +1,50 @@
 "use client";
 
-import { WishlistCard } from '@/components/card/wishlistCard';
-import PathTracker from '@/Shared/PathTracker';
-import React, { useEffect } from 'react';
-import { Auction } from './_components/type';
-import { useSession } from 'next-auth/react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { WishlistCard } from "@/components/card/wishlistCard";
+import PathTracker from "@/Shared/PathTracker";
+import React, { useEffect } from "react";
+import { Auction } from "./_components/type";
+import { useSession } from "next-auth/react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-const fetchWishlist = async (token: string | undefined): Promise<{ data: { auctions: Auction[] } }> => {
+const fetchWishlist = async (
+  token: string | undefined
+): Promise<{ data: { auctions: Auction[] } }> => {
   if (!token) {
     return { data: { auctions: [] } };
   }
-  const response = await fetch('http://localhost:5100/api/v1/wishlist', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch wishlist');
+    throw new Error("Failed to fetch wishlist");
   }
   return response.json();
 };
 
-const removeFromWishlist = async ({ auctionId, token }: { auctionId: string, token: string }) => {
-  const response = await fetch(`http://localhost:5100/api/v1/wishlist/remove/${auctionId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  });
+const removeFromWishlist = async ({
+  auctionId,
+  token,
+}: {
+  auctionId: string;
+  token: string;
+}) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/wishlist/remove/${auctionId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   if (!response.ok) {
-    throw new Error('Failed to remove from wishlist');
+    throw new Error("Failed to remove from wishlist");
   }
   return response.json();
 };
@@ -50,7 +61,7 @@ function Page() {
     error: errorObject,
     refetch,
   } = useQuery({
-    queryKey: ['wishlist'],
+    queryKey: ["wishlist"],
     queryFn: () => fetchWishlist(token),
     enabled: !!token,
   });
@@ -58,11 +69,11 @@ function Page() {
   const removeMutation = useMutation({
     mutationFn: removeFromWishlist,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
-      toast.success('Item removed from wishlist');
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+      toast.success("Item removed from wishlist");
     },
     onError: () => {
-      toast.error('Failed to remove item from wishlist');
+      toast.error("Failed to remove item from wishlist");
     },
   });
 
@@ -95,7 +106,9 @@ function Page() {
         <div className="border-b border-black pb-5">
           <PathTracker />
         </div>
-        <div>Error: {(errorObject as Error)?.message || 'Failed to load wishlist'}</div>
+        <div>
+          Error: {(errorObject as Error)?.message || "Failed to load wishlist"}
+        </div>
       </section>
     );
   }
