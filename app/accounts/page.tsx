@@ -109,7 +109,7 @@ export default function ProfilePage() {
                 {profile.address?.country} {profile.address?.postalCode}
               </p>
               <Button className="mt-4 bg-[#645949] text-white" asChild>
-                <Link href="/dashboard">
+                <Link href="/seller-dashboard">
                   <span className="flex items-center">
                     Go To Dashboard <ArrowRight className="ml-2 h-4 w-4" />
                   </span>
