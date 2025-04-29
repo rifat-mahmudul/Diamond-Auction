@@ -11,14 +11,10 @@ const page = async ({ params }: { params: { sessionId: string } }) => {
     const sessionId = params.sessionId
 
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment/status-check?stripeSessionId=${sessionId}`);
-
-        const data = await response.json();
-        console.log(data);
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment/status-check?stripeSessionId=${sessionId}`);
     } catch (error) {
         console.error("Error fetching payment status:", error);
     }
-
 
 
     return (
