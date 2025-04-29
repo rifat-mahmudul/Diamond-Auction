@@ -32,7 +32,7 @@ export function WishlistCard({
         endTime: auctionData.endTime,
         status: auctionData.status,
         seller: auctionData.seller,
-        _id: auctionData._id
+        _id: auctionData._id,
       }
     : null;
 
@@ -83,9 +83,9 @@ export function WishlistCard({
   const handleRemove = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent link navigation
     e.stopPropagation(); // Stop event bubbling
-    
+
     if (!auction?._id || !onRemove) return;
-    
+
     try {
       onRemove(auction._id); // Call the parent's remove function
       toast.success("Item removed from wishlist");
@@ -129,7 +129,7 @@ export function WishlistCard({
                 {auctionStatus.toUpperCase()}
               </span>
               <div>
-                <button 
+                <button
                   onClick={handleRemove}
                   className="px-[10px] py-[10px] rounded-full bg-[#0000004D] backdrop-blur-sm text-white hover:bg-[#00000066] transition-colors"
                   aria-label="Remove from wishlist"
@@ -166,15 +166,17 @@ export function WishlistCard({
         <CardContent className="py-4 space-y-2">
           <div className="space-y-2">
             <h3 className="text-[14px] font-normal text-[#645949]">
-              {auction?.title || "Round Brilliant"}
+              {auction?.title}
             </h3>
             <p className="text-[20px] font-medium text-black">
-              {auction?.description || "Classic and timeless"}
+              {auction?.description}
             </p>
           </div>
 
           <div className="flex items-centermt-4 gap-2">
-            <p className="text-[16px] font-normal text-[#FFF3F3]">Current bid:</p>
+            <p className="text-[16px] font-normal text-[#FFF3F3]">
+              Current bid:
+            </p>
             <p className="text-[16px] font-normal text-[#FFF3F3]">
               {formattedBid}
             </p>

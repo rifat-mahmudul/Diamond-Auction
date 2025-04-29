@@ -14,6 +14,7 @@ interface Auction {
   currentBid: number;
   status: string;
   endsIn?: string;
+  bidCount: number; // Added bidCount property
 }
 
 interface TopBidder {
@@ -106,7 +107,6 @@ export default function Dashboard() {
             <div className="space-y-1">
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Bidders
-                
               </p>
               <div className="text-2xl font-bold">{stats[0].bidders}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
@@ -138,11 +138,11 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-8">
                 <div className="grid grid-cols-5 text-sm font-medium text-muted-foreground">
-                  <div>Item</div>
-                  <div>Bids</div>
-                  <div>Highest Bid</div>
-                  <div>Ends In</div>
-                  <div>Status</div>
+                  <div className="text-center">Item</div>
+                  <div className="text-center">Bids</div>
+                  <div className="text-center">Highest Bid</div>
+                  <div className="text-center">Ends In</div>
+                  <div className="text-center">Status</div>
                 </div>
                 <div className="space-y-4">
                   {recentAuctions.map((auction) => (
@@ -150,16 +150,37 @@ export default function Dashboard() {
                       key={auction._id}
                       className="grid grid-cols-5 items-center border-b border-gray-200 last:border-b-0 py-2"
                     >
-                      <div className="font-medium">Classic and timeless</div>
-                      <div>22</div>
-                      <div>${auction.currentBid || 2022}</div>
-                      <div>2 hours</div>
-                      <div>
+                      <div className="font-medium text-center">{auction.title}</div>
+                      <div className="text-center">{auction.bidCount}</div>
+                      <div className="text-center">${auction.currentBid || 2022}</div>
+                      <div className="text-center">2 hours</div>
+                      <div className="text-center">
                         <Badge
                           variant="outline"
-                          className="bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
+                          className={` capitalize
+    ${
+      auction.status === "completed" &&
+      "bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
+    }
+    ${
+      auction.status === "live" &&
+      "bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800"
+    }
+    ${
+      auction.status === "pending" &&
+      "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800"
+    }
+    ${
+      auction.status === "cancelled" &&
+      "bg-red-100 text-red-800 hover:bg-red-100 hover:text-red-800"
+    }
+    ${
+      auction.status === "scheduled" &&
+      "bg-purple-100 text-purple-800 hover:bg-purple-100 hover:text-purple-800"
+    }
+  `}
                         >
-                          Active
+                          {auction.status}
                         </Badge>
                       </div>
                     </div>

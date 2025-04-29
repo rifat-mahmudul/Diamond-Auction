@@ -106,7 +106,7 @@ export default function AllAuction() {
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
-    }, 5000);
+    }, 1500);
 
     return () => {
       clearTimeout(timerId);
@@ -224,7 +224,7 @@ export default function AllAuction() {
   const FilterSidebar = () => (
     <div className="flex flex-col gap-5 p-5 rounded-md bg-[#DFC5A2] overflow-y-auto">
       {/* Search Input */}
-      <div className="relative">
+      {/* <div className="relative">
         <Input
           onChange={handleSearchChange}
           value={searchQuery}
@@ -232,7 +232,7 @@ export default function AllAuction() {
           placeholder="Search by title, description..."
         />
         <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 text-[#645949]" />
-      </div>
+      </div> */}
 
       {/* Category List */}
       <div>
@@ -400,7 +400,7 @@ export default function AllAuction() {
 
   return (
     <section className="py-12">
-      <div className="text-center lg:pb-10 pb-8 relative">
+      <div className="text-center lg:pb-0 pb-8 relative ">
         <div className="absolute left-0 top-1/2 -translate-y-1/2 lg:hidden">
           <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <SheetTrigger asChild>
@@ -438,17 +438,21 @@ export default function AllAuction() {
       </div>
 
       {/* Mobile search bar */}
-      <div className="relative mb-6 lg:hidden">
-        <Input
-          onChange={handleSearchChange}
-          value={searchQuery}
-          className="text-[#645949] border-[#645949] pl-3 pr-10"
-          placeholder="Search by title, description..."
-        />
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 text-[#645949]" />
+      <div className="lg:flex justify-end lg:translate-y-[-50px]">
+        <div className="">
+          <div className="relative mb-6 lg:w-[300px]">
+            <Input
+              onChange={handleSearchChange}
+              value={searchQuery}
+              className="text-[#645949] border-[#645949] pl-3 pr-10"
+              placeholder="Search by title, description..."
+            />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 text-[#645949]" />
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-11 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-11 gap-6 lg:translate-y-[-20px]">
         <div className="col-span-1 lg:col-span-8">
           {filteredAuctions?.length === 0 ? (
             <div className="text-center py-10">

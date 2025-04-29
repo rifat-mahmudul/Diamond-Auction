@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -10,6 +10,7 @@ import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -54,6 +55,8 @@ const fetchNotification = async (token: string | undefined) => {
 };
 
 export function Navbar() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
   const isMobile = useMobile();
   const pathname = usePathname();
   const { status } = useSession();
@@ -102,6 +105,15 @@ export function Navbar() {
     return pathname.startsWith(href);
   };
 
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchTerm.trim()) {
+      router.push(
+        `/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`
+      );
+      setSearchTerm("");
+    }
+  };
+
   return (
     <header className="fixed top-0 z-50 w-full border-b bg-[#817667] h-[83px] flex justify-center flex-col">
       <div className="container flex h-16 items-center justify-between">
@@ -144,6 +156,9 @@ export function Navbar() {
             <Input
               placeholder="Search..."
               className="pr-8 h-[32px] w-full border border-[#D1D1D1] focus:outline-none placeholder:text-gray-400 text-white text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearch}
             />
             <Search className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-white" />
           </div>

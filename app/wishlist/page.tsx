@@ -34,7 +34,7 @@ const removeFromWishlist = async ({
   token: string;
 }) => {
   const response = await fetch(
-    `http://localhost:5100/api/v1/wishlist/remove/${auctionId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/wishlist/remove/${auctionId}`,
     {
       method: "DELETE",
       headers: {
