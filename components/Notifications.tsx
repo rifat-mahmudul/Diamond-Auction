@@ -1,7 +1,6 @@
 "use client"
 import { useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import Image from 'next/image';
 import { useSocketContext } from '@/Provider/SocketProvider';
 import { useSession } from 'next-auth/react';
 
@@ -37,24 +36,15 @@ const Notifications = () => {
 //   console.log('Current notifications:', notifications);
 
   return (
-    <div className="bg-neutral-100 p-6 rounded-md shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Notifications</h2>
+    <div>
+      <h2 className="text-3xl font-semibold mb-4 text-center">Notifications</h2>
       <ul className="space-y-4">
         {notifications.map((notification) => (
           <li
             key={notification._id}
-            className="bg-white rounded-md p-4 flex items-center space-x-4"
+            className="p-4  space-x-4 border-b border-[#dfc5a2]"
           >
-            <div className="w-10 h-10 rounded-full overflow-hidden">
-              <Image
-                src="/default-profile.png"
-                alt="Profile"
-                className="w-full h-full object-cover"
-                width={24}
-                height={24}
-              />
-            </div>
-            <div className="flex-1">
+            <div className="flex items-center justify-between">
               <p className="text-sm text-gray-600">
                 {notification.message}
                 {notification.auction && (
@@ -66,22 +56,6 @@ const Notifications = () => {
                   addSuffix: true,
                 })}
               </p>
-            </div>
-            <div className="text-gray-500 cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-                />
-              </svg>
             </div>
           </li>
         ))}
