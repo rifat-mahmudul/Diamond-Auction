@@ -28,7 +28,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ id }) => {
     const fetchBlog = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5100/api/v1/admin/blogs/${blogId}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/blogs/${blogId}`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -15,7 +15,7 @@ export function ArticlesSection() {
     const fetchArticles = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5100/api/v1/admin/blogs/all"
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/blogs/all`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

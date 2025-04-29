@@ -147,7 +147,7 @@ export function WishlistCard({
             {auction?.title || "Round Brilliant"}
           </h3>
           <p className="text-[20px] font-medium text-black">
-            {auction?.description || "Classic and timeless"}
+            {auction?.title || "Classic and timeless"}
           </p>
         </div>
 

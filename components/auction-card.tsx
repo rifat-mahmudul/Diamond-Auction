@@ -41,7 +41,6 @@ export function AuctionCard({
   image,
   title,
   currentBid,
-  badges,
   auctionId,
   endTime,
   status,
@@ -82,7 +81,7 @@ export function AuctionCard({
     toast.success("Added to wishlist!");
     return response.json();
   };
-console.log(status)
+
   return (
     <Card className="overflow-hidden border-none bg-[#dfc5a2] p-2">
       <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -106,7 +105,7 @@ console.log(status)
                 height={10}
                 width={10}
               />
-              {badges}
+              {status}
             </Badge>
           </div>
         )}

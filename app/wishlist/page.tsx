@@ -11,7 +11,7 @@ const fetchWishlist = async (token: string | undefined): Promise<{ data: { aucti
   if (!token) {
     return { data: { auctions: [] } };
   }
-  const response = await fetch('http://localhost:5100/api/v1/wishlist', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
@@ -22,6 +22,8 @@ const fetchWishlist = async (token: string | undefined): Promise<{ data: { aucti
   }
   return response.json();
 };
+
+
 
 function Page() {
   const session = useSession();
@@ -67,6 +69,8 @@ function Page() {
   }
 
   console.log(wishlistItems);
+console.log(token)
+
 
   return (
     <section className="container mt-24">

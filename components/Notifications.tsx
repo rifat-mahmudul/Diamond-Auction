@@ -13,7 +13,7 @@ const Notifications = () => {
     const fetchInitialNotifications = async () => {
       if (token) {
         try {
-          const response = await fetch('http://localhost:5100/api/v1/bids/notifications', {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
