@@ -15,6 +15,7 @@ interface AuctionItem {
   endTime: string;
   badges?: string[];
   auctionId: string;
+  status: string;
 }
 
 export function LatestAuctionSection() {
@@ -59,6 +60,7 @@ export function LatestAuctionSection() {
             .slice(0, 8)
             .map((auction: AuctionItem) => (
               <AuctionCard
+                status={auction.status}
                 key={auction._id}
                 image={auction.images[0]}
                 title={auction.title}

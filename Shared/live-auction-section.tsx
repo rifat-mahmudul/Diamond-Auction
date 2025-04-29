@@ -14,7 +14,7 @@ interface AuctionItem {
   currentBid: string;
   startTime: string;
   endTime: string;
-  status?: string[];
+  status: string;
   auctionId: string;
 }
 
