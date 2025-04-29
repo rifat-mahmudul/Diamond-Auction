@@ -92,12 +92,42 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         },
         refetchInterval: 5000,
         refetchIntervalInBackground: false,
-
     });
 
     const auction = auctionData?.data?.auction;
 
     const token = session?.data?.user?.accessToken
+
+
+    // Fetch billing details
+    const {
+        data: billingData,
+    } = useQuery({
+        queryKey: ["billing-info", token],
+        queryFn: async () => {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/billing/get`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            );
+            return response.json();
+        },
+
+        select: (data) => data?.data
+
+    });
+
+    console.log(token)
+    console.log(billingData)
+
+    const isPaid = billingData?.some(
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        (item: any) => item.auction._id === auctionId && item.paymentStatus === "paid"
+    );
 
 
     // Handle bidding
@@ -203,23 +233,13 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         return response.json();
     };
 
-    // Handle add to wishlist
-    useMutation({
-        mutationFn: handleAddToWishlist,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["wishlist"] });
-        },
-        onError: (err) => {
-            console.log("Error: ", err);
-        },
-    });
-
+    // Handle add to wishlis
 
 
     // Check if the user has already added the auction to their wishlist
 
     const { data: wishlist } = useQuery({
-        queryKey: ['wishlist'],
+        queryKey: ['wishlist', token],
         queryFn: async () => {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/wishlist`,
@@ -233,8 +253,20 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         },
         select: (apiData) => apiData?.data?.auctions
     });
-/* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const isInWishlist = !!wishlist?.some((item: any) => item._id === auctionId);
+
+
+    useMutation({
+        mutationFn: handleAddToWishlist,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["wishlist", token] });
+        },
+        onError: (err) => {
+            console.log("Error: ", err);
+        },
+    });
+
 
 
 
@@ -274,7 +306,8 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     const user = session?.data?.user?.id
 
 
-    // Handle form submission
+
+    // Handle form submission / billing
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsProcessing(true)
         // Simulate payment processing
@@ -289,11 +322,12 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         }, 1500)
 
         const billingResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/billing/create`,
+            `${process.env.NEXT_PUBLIC_API_URL}/billing/create/${auctionId}`,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     fullName: values.fullName,
@@ -309,6 +343,10 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         if (!billingResponse.ok) {
             return <div>Error processing billing</div>
         }
+
+
+        queryClient.invalidateQueries({ queryKey: ["billing-info", token] });
+
 
 
         const response = await fetch(
@@ -327,6 +365,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         router.push(paymentResponse.url);
 
     }
+
 
 
     return (
@@ -367,10 +406,10 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8"
+                                        className="h-8 w-8 bg-[#C8B291]"
                                         onClick={() => handleAddToWishlist({ auctionId: auction._id, token: session?.data?.user?.accessToken || "" })}
                                     >
-                                        <Heart fill={isInWishlist ? "#645949" : "none"} className="h-5 w-5 border-none" />
+                                        <Heart fill={isInWishlist ? "#8a8170" : "none"} className="!h-5 !w-5 !border-none" />
                                     </Button>
                                 </div>
                             }
@@ -509,17 +548,17 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
 
                                     {/* Winner Payment*/}
 
-                                    <div className="p-6 max-w-4xl mx-auto">
+                                    <div className="pt-6 max-w-4xl mx-auto">
                                         {winner === user && (
                                             <div className="pt-6">
                                                 <h4 className="font-semibold text-[#645949] pb-4">You won the bid: ${auction.currentBid}</h4>
                                                 <Button
                                                     variant="outline"
                                                     onClick={() => setIsOpen(true)}
-                                                    disabled={!auction || isPlacingBid}
-                                                    className="text-white h-12 w-32 bg-[#645949] hover:bg-[#645949]/90"
+                                                    disabled={!auction || isPlacingBid || isPaid}
+                                                    className="text-white lg:h-12 h-9 lg:w-32 w-28 bg-[#645949] hover:bg-[#645949]/90 hover:text-white"
                                                 >
-                                                    Pay Now
+                                                    {isPaid ? "Paid" : "Pay Now"}
                                                 </Button>
                                                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
                                                     <DialogContent className="sm:max-w-[900px] p-0 bg-[#F5EDE2] text-[#645949] w-[95vw] max-h-[90vh] overflow-y-auto">
@@ -549,7 +588,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                                                                             Full Name <span className="text-red-500">*</span>
                                                                                         </FormLabel>
                                                                                         <FormControl>
-                                                                                            <Input placeholder="John Doe" {...field} />
+                                                                                            <Input placeholder="e.g. John Doe" {...field} />
                                                                                         </FormControl>
                                                                                         <FormMessage />
                                                                                     </FormItem>
@@ -565,7 +604,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                                                                             Address <span className="text-red-500">*</span>
                                                                                         </FormLabel>
                                                                                         <FormControl>
-                                                                                            <Input placeholder="123 Main St, City, Country" {...field} />
+                                                                                            <Input placeholder="e.g. 123 Main St, City, Country" {...field} />
                                                                                         </FormControl>
                                                                                         <FormMessage />
                                                                                     </FormItem>
@@ -581,7 +620,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                                                                             Email address <span className="text-red-500">*</span>
                                                                                         </FormLabel>
                                                                                         <FormControl>
-                                                                                            <Input type="email" placeholder="your@email.com" {...field} />
+                                                                                            <Input type="email" placeholder="e.g. your@email.com" {...field} />
                                                                                         </FormControl>
                                                                                         <FormMessage />
                                                                                     </FormItem>
@@ -597,7 +636,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                                                                                             Phone Number <span className="text-red-500">*</span>
                                                                                         </FormLabel>
                                                                                         <FormControl>
-                                                                                            <Input placeholder="+1 (555) 123-4567" {...field} />
+                                                                                            <Input placeholder="e.g. +1 (555) 123-4567" {...field} />
                                                                                         </FormControl>
                                                                                         <FormMessage />
                                                                                     </FormItem>

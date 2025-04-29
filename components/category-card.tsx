@@ -10,7 +10,7 @@ interface CategoryCardProps {
 export function CategoryCard({ icon, title, auctions }: CategoryCardProps) {
   return (
     <Link
-      href={'/auctions'}
+      href={`/auctions?category=${title}`}
       className="flex flex-col items-center justify-center gap-3 bg-[#645949] p-4 text-center transition-all hover:bg-[#645949]/90 h-[100px] w-[150px] relative mt-10"
     >
       {icon && (
