@@ -32,13 +32,14 @@ type Bid = {
   createdAt: string;
 };
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5; // Adjust items per page for smaller screens if needed
 
 export default function BidHistoryPage() {
   const [bidHistory, setBidHistory] = useState<Bid[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const { data: session } = useSession();
   const token = session?.user?.accessToken;
@@ -70,6 +71,23 @@ export default function BidHistoryPage() {
     if (token) fetchBidHistory();
   }, [token]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // Adjust breakpoint as needed
+    };
+
+    // Initial check
+    handleResize();
+
+    // Listen for window resize events
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const getStatus = (endTime: string) => {
     const now = new Date();
     const end = new Date(endTime);
@@ -91,7 +109,7 @@ export default function BidHistoryPage() {
 
   return (
     <Card>
-      <CardContent>
+      <CardContent className="overflow-x-auto">
         {bidHistory.length === 0 ? (
           <div className="text-center text-gray-500 py-10">
             No Bid History Found
@@ -103,7 +121,7 @@ export default function BidHistoryPage() {
                 <TableRow>
                   <TableHead>Auction Name</TableHead>
                   <TableHead>Bid Amount</TableHead>
-                  <TableHead>Bidding Time</TableHead>
+                  {!isMobile && <TableHead>Bidding Time</TableHead>}
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">View</TableHead>
                 </TableRow>
@@ -113,20 +131,23 @@ export default function BidHistoryPage() {
                   const status = getStatus(bid.auction.endTime);
                   return (
                     <TableRow key={bid._id}>
-                      <TableCell className="font-medium px-5">
+                      <TableCell className="font-medium px-5 truncate">
                         {bid.auction.title}
                       </TableCell>
                       <TableCell>${bid.amount}</TableCell>
-                      <TableCell>
-                        {format(new Date(bid.createdAt), "dd MMM yyyy, h:mm a")}
-                      </TableCell>
+                      {!isMobile && (
+                        <TableCell>
+                          {format(
+                            new Date(bid.createdAt),
+                            "dd MMM yyyy, h:mm a"
+                          )}
+                        </TableCell>
+                      )}
                       <TableCell className={getStatusColor(status)}>
                         {status}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Link
-                        href={`/auctions/${bid?.auction?._id}`}
-                        >
+                        <Link href={`/auctions/${bid?.auction?._id}`}>
                           <Button variant="ghost" size="icon">
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -138,11 +159,11 @@ export default function BidHistoryPage() {
               </TableBody>
             </Table>
 
-            <div className="flex justify-end gap-3 items-center mt-4">
+            <div className="flex justify-center md:justify-end gap-3 items-center mt-4">
               <Button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => prev - 1)}
-                className="bg-[#645949]"
+                className="bg-[#645949] text-white"
               >
                 Previous
               </Button>
@@ -152,7 +173,7 @@ export default function BidHistoryPage() {
               <Button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="bg-[#645949]"
+                className="bg-[#645949] text-white"
               >
                 Next
               </Button>
