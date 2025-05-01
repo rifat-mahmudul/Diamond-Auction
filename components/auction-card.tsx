@@ -152,7 +152,6 @@ export function AuctionCard({
       </div>
 
       <CardContent className="my-2">
-        <h1 className="text-[#645949]">Round Brilliant</h1>
         <h3 className="font-medium text-xl my-1">{title}</h3>
         {currentBid && (
           <p className="text-sm text-white font-semibold">

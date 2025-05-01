@@ -23,25 +23,25 @@ export function WishlistCard({
 
   const auction = auctionData
     ? {
-        title: auctionData.title,
-        description: auctionData.description,
-        caratWeight: auctionData.caratWeight,
-        currentBid: auctionData.currentBid,
-        images: auctionData.images,
-        startTime: auctionData.startTime,
-        endTime: auctionData.endTime,
-        status: auctionData.status,
-        seller: auctionData.seller,
-        _id: auctionData._id,
-      }
+      title: auctionData.title,
+      description: auctionData.description,
+      caratWeight: auctionData.caratWeight,
+      currentBid: auctionData.currentBid,
+      images: auctionData.images,
+      startTime: auctionData.startTime,
+      endTime: auctionData.endTime,
+      status: auctionData.status,
+      seller: auctionData.seller,
+      _id: auctionData._id,
+    }
     : null;
 
   // Format bid amount with commas and two decimal places
   const formattedBid = auction?.currentBid
     ? `$${auction.currentBid.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`
     : "$0.00";
 
   const auctionStatus = auction?.status?.toLowerCase() || "completed";
@@ -111,13 +111,12 @@ export function WishlistCard({
           <CardHeader>
             <div className="flex justify-between p-4">
               <span
-                className={`flex gap-2 items-center rounded-md px-3 py-1 text-sm font-medium text-white ${
-                  auctionStatus === "live"
+                className={`flex gap-2 items-center rounded-md px-3 py-1 text-sm font-medium text-white ${auctionStatus === "live"
                     ? "bg-[#0000004D] backdrop-blur-sm"
                     : auctionStatus === "completed"
-                    ? "bg-gray-600"
-                    : "bg-blue-600"
-                }`}
+                      ? "bg-gray-600"
+                      : "bg-blue-600"
+                  }`}
               >
                 <Image
                   src={"/assets/live.png"}
@@ -168,9 +167,18 @@ export function WishlistCard({
             <h3 className="text-[14px] font-normal text-[#645949]">
               {auction?.title}
             </h3>
-            <p className="text-[20px] font-medium text-black">
-              {auction?.description}
-            </p>
+
+            <p 
+              className="list-item list-none overflow-hidden text-ellipsis"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+            }}
+              dangerouslySetInnerHTML={{
+                __html: auction?.description ?? "Blog Description",
+              }}
+            />
           </div>
 
           <div className="flex items-centermt-4 gap-2">
