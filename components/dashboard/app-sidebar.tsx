@@ -41,8 +41,16 @@ export function AppSidebar({ }: AppSidebarProps) {
   };
 
   const isSellerActive = (path: string) => {
-    return pathname.startsWith(path);
+    // For the dashboard paths, we want exact matches
+    if (path === "/seller-dashboard" || path === "/dashboard") {
+      return pathname === path || pathname === path + "/";
+    }
+    // For other paths, check if it starts with the path (but not the dashboards)
+    return pathname.startsWith(path) && 
+           path !== "/seller-dashboard" && 
+           path !== "/dashboard";
   };
+
 
   return (
     <>

@@ -158,26 +158,21 @@ export default function Dashboard() {
                         <Badge
                           variant="outline"
                           className={` capitalize
-    ${
-      auction.status === "completed" &&
-      "bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
-    }
-    ${
-      auction.status === "live" &&
-      "bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800"
-    }
-    ${
-      auction.status === "pending" &&
-      "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800"
-    }
-    ${
-      auction.status === "cancelled" &&
-      "bg-red-100 text-red-800 hover:bg-red-100 hover:text-red-800"
-    }
-    ${
-      auction.status === "scheduled" &&
-      "bg-purple-100 text-purple-800 hover:bg-purple-100 hover:text-purple-800"
-    }
+    ${auction.status === "completed" &&
+                            "bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
+                            }
+    ${auction.status === "live" &&
+                            "bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800"
+                            }
+    ${auction.status === "pending" &&
+                            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800"
+                            }
+    ${auction.status === "cancelled" &&
+                            "bg-red-100 text-red-800 hover:bg-red-100 hover:text-red-800"
+                            }
+    ${auction.status === "scheduled" &&
+                            "bg-purple-100 text-purple-800 hover:bg-purple-100 hover:text-purple-800"
+                            }
   `}
                         >
                           {auction.status}
