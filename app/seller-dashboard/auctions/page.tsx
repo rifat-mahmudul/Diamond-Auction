@@ -1,43 +1,54 @@
+// auctions/page.tsx
 "use client";
 
-import React, { Suspense } from "react";
-
-import { useState, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
+import { Pencil, Trash2, Plus } from "lucide-react";
 import Layout from "@/components/dashboard/layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Plus } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Pagination } from "@/components/dashboard/pagination";
 import { CreateAuctionDialog } from "./_components/create-auction-dialog";
 import { Loading } from "./_components/loading";
+import { EditAuctionDialog } from "./_components/EditAuctionDialog";
 
-// Base URL from environment variable
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://your-api-url.com";
+
+export interface Seller {
+  _id: string;
+  displayName: string;
+  username: string;
+}
+
+interface Auction {
+  _id: string;
+  title: string;
+  category: string;
+  sku?: string;
+  seller: Seller; // Consider defining a proper Seller type
+  startTime: string;
+  endTime: string;
+  currentBid?: number;
+  bidCount?: number;
+  status: 'live' | 'pending' | 'scheduled' | 'completed' | 'end';
+  description?: string;
+  caratWeight?: number;
+  startingBid?: number;
+  bidIncrement?: number;
+  reservePrice?: number;
+}
+
+interface AuctionsResponse {
+  data: Auction[];
+  totalPages: number;
+}
 
 function AuctionsPageContent() {
   const router = useRouter();
@@ -50,20 +61,19 @@ function AuctionsPageContent() {
   const [currentPage, setCurrentPage] = useState(Number.parseInt(pageParam));
   const [searchQuery, setSearchQuery] = useState(searchParam);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [editingAuction, setEditingAuction] = useState<Auction | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  // Get session and token
   const session = useSession();
   const token = session?.data?.user?.accessToken;
-
   const queryClient = useQueryClient();
 
-  // API headers with authentication
   const headers = {
     Authorization: `Bearer ${token}`,
   };
 
   // Fetch all auctions
-  const { data: allAuctionsData, isLoading: isAllAuctionsLoading } = useQuery({
+  const { data: allAuctionsData, isLoading: isAllAuctionsLoading } = useQuery<AuctionsResponse>({
     queryKey: ["auctions", "all", currentPage, searchQuery],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -92,38 +102,29 @@ function AuctionsPageContent() {
       queryClient.invalidateQueries({ queryKey: ["auctions"] });
       toast.success("Auction deleted successfully");
     },
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to delete auction");
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to delete auction");
+      } else {
+        toast.error("Failed to delete auction");
+      }
     },
   });
 
   // Filter auctions based on status
-  const getFilteredAuctions = () => {
+  const getFilteredAuctions = (): Auction[] => {
     if (!allAuctionsData?.data) return [];
 
     switch (activeTab) {
       case "active":
-        return allAuctionsData.data.filter(
-          /* eslint-disable @typescript-eslint/no-explicit-any */
-          (auction: any) => auction.status === "live"
-        );
+        return allAuctionsData.data.filter((auction) => auction.status === "live");
       case "pending":
-        return allAuctionsData.data.filter(
-          /* eslint-disable @typescript-eslint/no-explicit-any */
-          (auction: any) => auction.status === "pending"
-        );
+        return allAuctionsData.data.filter((auction) => auction.status === "pending");
       case "scheduled":
-        return allAuctionsData.data.filter(
-          /* eslint-disable @typescript-eslint/no-explicit-any */
-          (auction: any) => auction.status === "scheduled"
-        );
+        return allAuctionsData.data.filter((auction) => auction.status === "scheduled");
       case "end":
-        return allAuctionsData.data.filter(
-          /* eslint-disable @typescript-eslint/no-explicit-any */
-          (auction: any) =>
-            auction.status === "completed" || auction.status === "end"
-        );
+        return allAuctionsData.data.filter((auction) =>
+          auction.status === "completed" || auction.status === "end");
       default:
         return allAuctionsData.data;
     }
@@ -163,17 +164,16 @@ function AuctionsPageContent() {
     deleteAuction.mutate(id);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")} ${String(
-      date.getHours()
-    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  const handleEditAuction = (auction: Auction) => {
+    setEditingAuction(auction);
+    setIsEditDialogOpen(true);
   };
 
-  // Sync URL with state
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  };
+
   useEffect(() => {
     setActiveTab(tabParam);
     setCurrentPage(Number.parseInt(pageParam));
@@ -204,9 +204,6 @@ function AuctionsPageContent() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="max-w-sm"
             />
-            {/* <Button type="submit" variant="secondary">
-              Search
-            </Button> */}
           </form>
         </div>
 
@@ -217,67 +214,31 @@ function AuctionsPageContent() {
           className="w-full"
         >
           <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16 border border-[#645949]">
-            <TabsTrigger
-              value="active"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
+            <TabsTrigger value="active" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
               Active
             </TabsTrigger>
-            <TabsTrigger
-              value="pending"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
+            <TabsTrigger value="pending" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
               Pending
             </TabsTrigger>
-            <TabsTrigger
-              value="scheduled"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
+            <TabsTrigger value="scheduled" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
               Scheduled
             </TabsTrigger>
-            <TabsTrigger
-              value="end"
-              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
-            >
+            <TabsTrigger value="end" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
               End
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="mt-4">
-            <AuctionsTable
-              auctions={filteredAuctions}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
-
-          <TabsContent value="pending" className="mt-4">
-            <AuctionsTable
-              auctions={filteredAuctions}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
-
-          <TabsContent value="scheduled" className="mt-4">
-            <AuctionsTable
-              auctions={filteredAuctions}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
-
-          <TabsContent value="end" className="mt-4">
-            <AuctionsTable
-              auctions={filteredAuctions}
-              onDelete={handleDeleteAuction}
-              formatDate={formatDate}
-              isLoading={isLoading}
-            />
-          </TabsContent>
+          {["active", "pending", "scheduled", "end"].map((tab) => (
+            <TabsContent key={tab} value={tab} className="mt-4">
+              <AuctionsTable
+                auctions={filteredAuctions}
+                onDelete={handleDeleteAuction}
+                onEdit={handleEditAuction}
+                formatDate={formatDate}
+                isLoading={isLoading}
+              />
+            </TabsContent>
+          ))}
         </Tabs>
 
         <div className="p-4">
@@ -294,14 +255,23 @@ function AuctionsPageContent() {
         onOpenChange={setIsCreateDialogOpen}
         token={token}
       />
+
+      {editingAuction && (
+        <EditAuctionDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          token={token}
+          auctionData={editingAuction}
+        />
+      )}
     </div>
   );
 }
 
 interface AuctionsTableProps {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  auctions: any[];
+  auctions: Auction[];
   onDelete: (id: string) => void;
+  onEdit: (auction: Auction) => void;
   formatDate: (date: string) => string;
   isLoading?: boolean;
 }
@@ -309,9 +279,41 @@ interface AuctionsTableProps {
 function AuctionsTable({
   auctions,
   onDelete,
+  onEdit,
   formatDate,
   isLoading,
 }: AuctionsTableProps) {
+  const session = useSession();
+  const token = session?.data?.user?.accessToken;
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  interface Category {
+    _id: string;
+    name: string;
+  }
+
+  interface CategoriesResponse {
+    data: Category[];
+  }
+
+  const { data: categories } = useQuery<CategoriesResponse>({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await axios.get(`${baseURL}/categories`, { headers });
+      return response.data;
+    },
+    enabled: !!token,
+  });
+
+  const getCategoryName = (categoryId: string) => {
+    if (!categories?.data) return "Loading...";
+    const category = categories.data.find((cat) => cat._id === categoryId);
+    return category?.name || "Unknown";
+  };
+
   if (isLoading) {
     return (
       <div className="rounded-md border p-8 flex justify-center">
@@ -349,11 +351,7 @@ function AuctionsTable({
               className="text-center h-16 !border-b border-[#E5E7EB]"
             >
               <TableCell className="font-medium">{auction.title}</TableCell>
-              <TableCell>
-                {typeof auction.category === "object"
-                  ? auction.category.name
-                  : "Unknown"}
-              </TableCell>
+              <TableCell>{getCategoryName(auction.category)}</TableCell>
               <TableCell>{auction.sku || "#212-121"}</TableCell>
               <TableCell>
                 {typeof auction.seller === "object" ? (
@@ -381,35 +379,45 @@ function AuctionsTable({
               <TableCell>${auction.currentBid || 0}</TableCell>
               <TableCell>{auction.bidCount || 0}</TableCell>
               <TableCell>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete the auction.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => onDelete(auction._id)}
-                        className="bg-red-500 hover:bg-red-700"
+                <div className="flex gap-2 justify-center">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => onEdit(auction)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700"
                       >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the auction.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onDelete(auction._id)}
+                          className="bg-red-500 hover:bg-red-700"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </TableCell>
             </TableRow>
           ))
