@@ -57,6 +57,7 @@ interface Auction {
   bidCount: number;
   status: string;
   approved: boolean;
+  total: number;
 }
 
 export default function AuctionsPage() {
@@ -64,6 +65,7 @@ export default function AuctionsPage() {
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(1);
 
   const session = useSession();
   const user = session.data?.user;
@@ -97,6 +99,7 @@ export default function AuctionsPage() {
     if (currentQuery?.data?.data) {
       setAuctions(currentQuery.data.data as Auction[]);
       setTotalPages(currentQuery.data.totalPages || 1);
+      setTotalCount(currentQuery.data.total || 1);
     }
   }, [currentQuery?.data, activeTab]);
 
@@ -132,6 +135,8 @@ export default function AuctionsPage() {
   };
 
   const isLoading = currentQuery?.isLoading;
+
+  console.log(auctions)
 
   return (
     <Layout>
@@ -215,6 +220,7 @@ export default function AuctionsPage() {
           </Tabs>
 
           <Pagination
+            totalCount={totalCount}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
