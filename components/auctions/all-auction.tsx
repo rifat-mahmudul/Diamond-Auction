@@ -20,6 +20,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "../dashboard/pagination";
 
 interface AuctionItem {
   _id: number;
@@ -70,6 +71,28 @@ function AllAuctionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const initialPage = parseInt(searchParams.get("page") || "1", 10);
+  const limit = 9; // or whatever page size you want
+
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    params.set("page", currentPage.toString());
+
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [currentPage]);
+
+
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   // Initialize state from URL params
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("searchTerm") || ""
@@ -89,7 +112,6 @@ function AllAuctionContent() {
   const [selectedSalesType, setSelectedSalesType] = useState(
     searchParams.get("typeOfSales") || undefined
   );
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Update URL when filters change
   useEffect(() => {
@@ -156,8 +178,9 @@ function AllAuctionContent() {
   });
 
   // Fetch auctions with all filters including time range
+
   const {
-    data: filteredAuctions,
+    data: filteredAuctionsResponse,
     isLoading: isAuctionsLoading,
     isError: isAuctionsError,
     error: auctionsError,
@@ -169,30 +192,43 @@ function AllAuctionContent() {
       selectedTimeRange,
       selectedCaratRange,
       selectedSalesType,
+      currentPage,
+      limit,
     ],
     queryFn: async () => {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL;
       const queryParams = new URLSearchParams();
 
-      if (debouncedSearchQuery)
-        queryParams.set("searchQuery", debouncedSearchQuery);
+      // Add all filter parameters
+      if (debouncedSearchQuery) queryParams.set("searchQuery", debouncedSearchQuery);
       if (selectedCategory) queryParams.set("category", selectedCategory);
-      if (selectedCaratRange)
-        queryParams.set("caratWeight", selectedCaratRange);
+      if (selectedCaratRange) queryParams.set("caratWeight", selectedCaratRange);
       if (selectedSalesType) queryParams.set("typeOfSales", selectedSalesType);
-
       if (selectedTimeRange !== "allday") {
         queryParams.set("timeRange", selectedTimeRange);
       }
 
-      const url = `${baseUrl}/auctions/search?${queryParams.toString()}`;
+      // Always include pagination parameters
+      queryParams.set("page", currentPage.toString());
+      queryParams.set("limit", limit.toString());
+
+      // Use the combined endpoint
+      const url = `${baseUrl}/auctions/get-all-auctions?status=active&${queryParams.toString()}`;
       const res = await fetch(url);
-      if (!res.ok)
-        throw new Error(`Failed to fetch auctions: ${res.statusText}`);
+      if (!res.ok) throw new Error(`Failed to fetch auctions: ${res.statusText}`);
       return res.json();
     },
-    select: (responseData) => responseData.data ?? responseData.auctions ?? [],
   });
+
+  const filteredAuctions = filteredAuctionsResponse?.data ?? filteredAuctionsResponse?.auctions ?? [];
+  const totalCount = filteredAuctionsResponse?.total ?? 0;
+
+  useEffect(() => {
+    if (filteredAuctionsResponse?.totalPages) {
+      setTotalPages(filteredAuctionsResponse.totalPages);
+    }
+  }, [filteredAuctionsResponse]);
+
 
   // Handlers
   const handleCategoryChange = (categoryName: string, isChecked: boolean) => {
@@ -383,12 +419,15 @@ function AllAuctionContent() {
           {isAuctionsError && isCategoriesError
             ? `Error fetching auctions and categories: ${auctionsError?.message} / ${categoriesError?.message}`
             : isAuctionsError
-            ? `Error fetching auctions: ${auctionsError?.message}`
-            : `Error fetching categories: ${categoriesError?.message}`}
+              ? `Error fetching auctions: ${auctionsError?.message}`
+              : `Error fetching categories: ${categoriesError?.message}`}
         </p>
       </section>
     );
   }
+
+  console.log("filteredAuctionsResponse", filteredAuctionsResponse);
+
 
   const hasActiveFilters =
     searchQuery !== "" ||
@@ -466,19 +505,28 @@ function AllAuctionContent() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-              {filteredAuctions?.map((auction: AuctionItem) => (
-                <AuctionCard
-                  status={auction.status}
-                  key={auction._id}
-                  image={auction.images[0]}
-                  title={auction.title}
-                  currentBid={auction.currentBid}
-                  auctionId={auction._id.toString()}
-                  startTime={auction.startTime}
-                  endTime={auction.endTime}
-                />
-              ))}
+            <div className="">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+                {filteredAuctions?.map((auction: AuctionItem) => (
+                  <AuctionCard
+                    status={auction.status}
+                    key={auction._id}
+                    image={auction.images[0]}
+                    title={auction.title}
+                    currentBid={auction.currentBid}
+                    auctionId={auction._id.toString()}
+                    startTime={auction.startTime}
+                    endTime={auction.endTime}
+                  />
+                ))}
+              </div>
+
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalCount={totalCount}
+              />
             </div>
           )}
         </div>

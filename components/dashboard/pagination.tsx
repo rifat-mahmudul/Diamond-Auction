@@ -6,10 +6,11 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 interface PaginationProps {
   currentPage: number
   totalPages: number
+  totalCount: number // Add this prop for the total number of results
   onPageChange: (page: number) => void
 }
 
-export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+export function Pagination({ currentPage, totalPages, totalCount, onPageChange }: PaginationProps) {
   const renderPageNumbers = () => {
     const pageNumbers = []
     const maxPagesToShow = 5
@@ -26,7 +27,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             onClick={() => onPageChange(i)}
           >
             {i}
-          </Button>,
+          </Button>
         )
       }
     } else {
@@ -40,7 +41,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           onClick={() => onPageChange(1)}
         >
           1
-        </Button>,
+        </Button>
       )
 
       // Calculate start and end of page numbers to show
@@ -59,7 +60,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         pageNumbers.push(
           <Button key="ellipsis1" variant="outline" size="icon" className="w-10 h-10" disabled>
             <MoreHorizontal className="h-4 w-4" />
-          </Button>,
+          </Button>
         )
       }
 
@@ -74,7 +75,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             onClick={() => onPageChange(i)}
           >
             {i}
-          </Button>,
+          </Button>
         )
       }
 
@@ -83,7 +84,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         pageNumbers.push(
           <Button key="ellipsis2" variant="outline" size="icon" className="w-10 h-10" disabled>
             <MoreHorizontal className="h-4 w-4" />
-          </Button>,
+          </Button>
         )
       }
 
@@ -97,16 +98,22 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
           onClick={() => onPageChange(totalPages)}
         >
           {totalPages}
-        </Button>,
+        </Button>
       )
     }
 
     return pageNumbers
   }
 
+  // Calculate start and end of the current page range (for "Showing X to Y of Z results")
+  const startIndex = (currentPage - 1) * 9 + 1
+  const endIndex = Math.min(currentPage * 9, totalCount)
+
   return (
     <div className="flex items-center justify-between py-4 px-5">
-      <div className="text-sm text-muted-foreground">Showing 1 to 5 of 12 results</div>
+      <div className="text-sm text-muted-foreground">
+        Showing {startIndex} to {endIndex} of {totalCount} results
+      </div>
       <div className="flex items-center space-x-2">
         <Button
           variant="outline"
