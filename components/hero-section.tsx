@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export function HeroSection() {
   // Sample auction items data
@@ -18,10 +19,11 @@ export function HeroSection() {
     {
       id: "1",
       title: "Diamond Ring",
-      description: "Turn Your Luck To Buy Diamond - Auction It to the Highest Bidder!",
+      description:
+        "Turn Your Luck To Buy Diamond - Auction It to the Highest Bidder!",
       price: "$5,000",
       image: "/assets/carouselimg1.png",
-      seller: "@Seller/Shop-name"
+      seller: "@Seller/Shop-name",
     },
     {
       id: "2",
@@ -29,7 +31,7 @@ export function HeroSection() {
       description: "Bid on this exclusive timepiece - Limited Edition",
       price: "$3,500",
       image: "/assets/carouselimg1.png",
-      seller: "@Seller/Shop-name"
+      seller: "@Seller/Shop-name",
     },
     {
       id: "3",
@@ -37,12 +39,13 @@ export function HeroSection() {
       description: "Own this rare collector's item - Only 10 made worldwide",
       price: "$2,800",
       image: "/assets/carouselimg1.png",
-      seller: "@Seller/Shop-name"
-    }
+      seller: "@Seller/Shop-name",
+    },
   ];
 
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const { status } = useSession();
 
   useEffect(() => {
     if (!api) {
@@ -55,7 +58,7 @@ export function HeroSection() {
   }, [api]);
 
   const handleRadioChange = (value: string) => {
-    const index = auctionItems.findIndex(item => item.id === value);
+    const index = auctionItems.findIndex((item) => item.id === value);
     if (index >= 0 && api) {
       api.scrollTo(index);
     }
@@ -74,15 +77,18 @@ export function HeroSection() {
               Discover Exclusive Auctions for Luxury Own Your Dream
             </h1>
             <p className="text-[16px] text-[#595959]">
-              Explore Exclusive Auctions and Bid on Premium Products.Win Big
-              and Own the Luxury You Deserve!
+              Explore Exclusive Auctions and Bid on Premium Products.Win Big and
+              Own the Luxury You Deserve!
             </p>
             <div className="flex gap-4 mt-4">
-              <Link href="/sign-up">
-                <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white h-[51px] lg:w-[191px] text-[16px]">
-                  Register
-                </Button>
-              </Link>
+              {status !== "authenticated" && (
+                <Link href="/sign-up">
+                  <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white h-[51px] lg:w-[191px] text-[16px]">
+                    Register
+                  </Button>
+                </Link>
+              )}
+
               <Link href="/auctions">
                 <Button
                   variant="outline"
@@ -137,7 +143,7 @@ export function HeroSection() {
               ))}
             </CarouselContent>
           </Carousel>
-          
+
           {/* Radio Button Controls */}
           <div className="absolute bottom-6 right-6 z-20">
             <RadioGroup

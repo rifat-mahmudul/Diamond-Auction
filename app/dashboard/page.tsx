@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingCart, Users, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface Auction {
   _id: string;
@@ -150,29 +151,38 @@ export default function Dashboard() {
                       key={auction._id}
                       className="grid grid-cols-5 items-center border-b border-gray-200 last:border-b-0 py-2"
                     >
-                      <div className="font-medium text-center">{auction.title}</div>
+                      <div className="font-medium text-center">
+                        {auction.title}
+                      </div>
                       <div className="text-center">{auction.bidCount}</div>
-                      <div className="text-center">${auction.currentBid || 2022}</div>
+                      <div className="text-center">
+                        ${auction.currentBid || 2022}
+                      </div>
                       <div className="text-center">2 hours</div>
                       <div className="text-center">
                         <Badge
                           variant="outline"
                           className={` capitalize
-    ${auction.status === "completed" &&
-                            "bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
-                            }
-    ${auction.status === "live" &&
-                            "bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800"
-                            }
-    ${auction.status === "pending" &&
-                            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800"
-                            }
-    ${auction.status === "cancelled" &&
-                            "bg-red-100 text-red-800 hover:bg-red-100 hover:text-red-800"
-                            }
-    ${auction.status === "scheduled" &&
-                            "bg-purple-100 text-purple-800 hover:bg-purple-100 hover:text-purple-800"
-                            }
+    ${
+      auction.status === "completed" &&
+      "bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
+    }
+    ${
+      auction.status === "live" &&
+      "bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800"
+    }
+    ${
+      auction.status === "pending" &&
+      "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800"
+    }
+    ${
+      auction.status === "cancelled" &&
+      "bg-red-100 text-red-800 hover:bg-red-100 hover:text-red-800"
+    }
+    ${
+      auction.status === "scheduled" &&
+      "bg-purple-100 text-purple-800 hover:bg-purple-100 hover:text-purple-800"
+    }
   `}
                         >
                           {auction.status}
@@ -181,9 +191,13 @@ export default function Dashboard() {
                     </div>
                   ))}
                 </div>
-                <div className="text-sm text-blue-500 hover:underline cursor-pointer">
+
+                <Link
+                  href="/dashboard/auctions"
+                  className="text-sm text-blue-500 hover:underline cursor-pointer"
+                >
                   View All Auctions →
-                </div>
+                </Link>
               </div>
             </CardContent>
           </Card>
@@ -226,9 +240,12 @@ export default function Dashboard() {
                     <div className="font-medium text-green-600">$14,250</div>
                   </div>
                 ))}
-                <div className="pt-4 text-sm text-blue-500 hover:underline cursor-pointer">
+                <Link
+                  href="/dashboard/bidders"
+                  className="pt-4 text-sm text-blue-500 hover:underline cursor-pointer"
+                >
                   View All Bidders →
-                </div>
+                </Link>
               </div>
             </CardContent>
           </Card>

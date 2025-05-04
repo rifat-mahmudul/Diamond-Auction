@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Trash2, User } from "lucide-react";
+import { Trash2, User } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -119,8 +119,8 @@ export default function BiddersPage() {
         </div>
 
         <div className="flex justify-between items-center">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full max-w-sm flex ">
+            {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /> */}
             <Input
               type="search"
               placeholder="Search bidders..."
@@ -229,6 +229,7 @@ export default function BiddersPage() {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
+            totalCount={bidders.length}
             onPageChange={handlePageChange}
           />
         </div>

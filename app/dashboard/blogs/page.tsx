@@ -13,11 +13,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Pagination } from "@/components/dashboard/pagination";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useAllBlogs, useCreateBlog, useUpdateBlog, useDeleteBlog } from "@/hooks/use-queries"; // <-- assume you have useUpdateBlog
+  useAllBlogs,
+  useCreateBlog,
+  useUpdateBlog,
+  useDeleteBlog,
+} from "@/hooks/use-queries"; // <-- assume you have useUpdateBlog
 import Image from "next/image";
 import AddEditBlogs from "./_components/addEditBlogs";
 import DeleteModal from "./_components/detetemodal";
@@ -73,7 +75,11 @@ export default function BlogsPage() {
   const handleAddOrEditBlog = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formBlog.title || !formBlog.content || (!formBlog.image && !editingBlog)) {
+    if (
+      !formBlog.title ||
+      !formBlog.content ||
+      (!formBlog.image && !editingBlog)
+    ) {
       return;
     }
 
@@ -124,7 +130,9 @@ export default function BlogsPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return `${date.getDate()} ${date.toLocaleString("default", { month: "short" })}, ${date.getFullYear()}`;
+    return `${date.getDate()} ${date.toLocaleString("default", {
+      month: "short",
+    })}, ${date.getFullYear()}`;
   };
 
   return (
@@ -132,17 +140,22 @@ export default function BlogsPage() {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Blogs Management</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              Blogs Management
+            </h1>
             <p className="text-muted-foreground">Manage your Blogs</p>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            if (!open) {
-              setEditingBlog(null);
-              setFormBlog({ title: "", content: "", image: null });
-              setPreviewUrl("");
-            }
-            setIsDialogOpen(open);
-          }}>
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              if (!open) {
+                setEditingBlog(null);
+                setFormBlog({ title: "", content: "", image: null });
+                setPreviewUrl("");
+              }
+              setIsDialogOpen(open);
+            }}
+          >
             <DialogTrigger asChild>
               <Button className="bg-[#6b614f] hover:bg-[#5c5343]">
                 <Plus className="mr-2 h-4 w-4" /> Add Blog
@@ -150,7 +163,9 @@ export default function BlogsPage() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[50%]">
               <DialogHeader>
-                <DialogTitle>{editingBlog ? "Edit Blog" : "Add Blog"}</DialogTitle>
+                <DialogTitle>
+                  {editingBlog ? "Edit Blog" : "Add Blog"}
+                </DialogTitle>
               </DialogHeader>
               <AddEditBlogs
                 handleAddBlog={handleAddOrEditBlog}
@@ -163,7 +178,6 @@ export default function BlogsPage() {
                 updateBlogMutation={updateBlogMutation}
                 editingBlog={!!editingBlog} // <--- FIX HERE
               />
-
             </DialogContent>
           </Dialog>
         </div>
@@ -193,7 +207,7 @@ export default function BlogsPage() {
                 ) : (
                   blogs.map((blog) => (
                     <tr key={blog._id} className="border-t">
-                      <td className="p-4">
+                      <td className="p-4 w-2/4">
                         <div className="flex items-center gap-3">
                           <Image
                             src={blog.image || "/placeholder.svg"}
