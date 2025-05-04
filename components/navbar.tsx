@@ -11,6 +11,7 @@ import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useSocketContext } from "@/Provider/SocketProvider";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -21,7 +22,6 @@ const navLinks = [
   { name: "Contact", href: "/contact" },
 ];
 
-// Function to fetch wishlist data
 const fetchWishlist = async (token: string | undefined) => {
   if (!token) return null;
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
@@ -30,24 +30,6 @@ const fetchWishlist = async (token: string | undefined) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!response.ok) {
-    throw new Error("Failed to fetch wishlist");
-  }
-  return response.json();
-};
-
-// Function to fetch notification data
-const fetchNotification = async (token: string | undefined) => {
-  if (!token) return null;
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
   if (!response.ok) {
     throw new Error("Failed to fetch wishlist");
   }
@@ -71,19 +53,31 @@ export function Navbar() {
     refetchInterval: 5000,
   });
 
-  const { data: notificationData } = useQuery({
-    queryKey: ["notification-length"],
-    queryFn: () => fetchNotification(token),
-    enabled: isLoggedIn,
-    refetchInterval: 5000,
-  });
-
   const wishlists = wishlistData?.data?.auctions || [];
-  const notifications = notificationData?.data || [];
+
+  const { notificationCount, setNotificationCount } = useSocketContext();
+
+  const markNotificationsAsRead = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bids/notifications/mark-as-read`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      localStorage.removeItem("notificationCount");
+      setNotificationCount(null);
+      if (!res.ok) throw new Error("Failed to mark notifications as read");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const iconLinks = [
     { icon: Heart, href: "/wishlist", count: wishlists?.length },
-    { icon: BellRing, href: "/notifications", count: notifications?.length },
+    { icon: BellRing, href: "/notifications", count: notificationCount },
     { icon: UserRound, href: "/accounts" },
   ];
 
@@ -100,16 +94,13 @@ export function Navbar() {
     pathname.startsWith(href) ? "text-[#E6C475]" : "text-white";
 
   const isActive = (href: string) => {
-    // Special case for home page
     if (href === "/") return pathname === href;
     return pathname.startsWith(href);
   };
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchTerm.trim()) {
-      router.push(
-        `/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`
-      );
+      router.push(`/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`);
       setSearchTerm("");
     }
   };
@@ -163,7 +154,7 @@ export function Navbar() {
             <Search className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-white" />
           </div>
 
-          {/* Login Button - shown when not logged in */}
+          {/* Login Button */}
           {!isLoggedIn && (
             <Link href="/login" className="hidden md:block">
               <Button variant="default" className="px-6 hidden lg:block">
@@ -172,19 +163,38 @@ export function Navbar() {
             </Link>
           )}
 
-          {/* Icon Links - shown when logged in */}
+          {/* Icons when logged in */}
           {isLoggedIn && (
             <div className="flex items-center gap-2 sm:gap-4">
-              {iconLinks.map(({ icon: Icon, href, count }) => (
-                <Link key={href} href={href} className={getIconClasses(href)}>
-                  <Icon className={getIconColor(href)} size={20} />
-                  {count > 0 && (
-                    <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
-                      {count}
-                    </span>
-                  )}
-                </Link>
-              ))}
+              {iconLinks.map(({ icon: Icon, href, count }) =>
+                href === "/notifications" ? (
+                  <button
+                    key={href}
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      await markNotificationsAsRead();
+                      router.push("/notifications");
+                    }}
+                    className={getIconClasses(href)}
+                  >
+                    <Icon className={getIconColor(href)} size={20} />
+                    {count > 0 && (
+                      <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                ) : (
+                  <Link key={href} href={href} className={getIconClasses(href)}>
+                    <Icon className={getIconColor(href)} size={20} />
+                    {count > 0 && (
+                      <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                        {count}
+                      </span>
+                    )}
+                  </Link>
+                )
+              )}
             </div>
           )}
 
@@ -197,10 +207,7 @@ export function Navbar() {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent
-                side="right"
-                className="w-[280px] sm:w-[300px] bg-[#f5f0e8]"
-              >
+              <SheetContent side="right" className="w-[280px] sm:w-[300px] bg-[#f5f0e8]">
                 <nav className="flex flex-col gap-4 pt-10">
                   {navLinks.map((link) => (
                     <Link
@@ -235,19 +242,23 @@ export function Navbar() {
                           </span>
                         )}
                       </Link>
-                      <Link
-                        href="/notifications"
+                      <button
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await markNotificationsAsRead();
+                          router.push("/notifications");
+                        }}
                         className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
                           isActive("/notifications") ? "text-foreground" : ""
                         }`}
                       >
                         Notifications
-                        {notifications?.length > 0 && (
+                        {typeof notificationCount === "number" && notificationCount > 0 && (
                           <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
-                            {notifications.length}
+                            {notificationCount}
                           </span>
                         )}
-                      </Link>
+                      </button>
                       <Link
                         href="/accounts"
                         className={`text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${

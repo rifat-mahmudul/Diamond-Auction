@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 interface PaginationProps {
   currentPage: number
   totalPages: number
-  totalCount: number // Add this prop for the total number of results
+  totalCount?: number // Add this prop for the total number of results
   onPageChange: (page: number) => void
 }
 
@@ -107,7 +107,7 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
 
   // Calculate start and end of the current page range (for "Showing X to Y of Z results")
   const startIndex = (currentPage - 1) * 9 + 1
-  const endIndex = Math.min(currentPage * 9, totalCount)
+  const endIndex = Math.min(currentPage * 9, totalCount ?? 0)
 
   return (
     <div className="flex items-center justify-between py-4 px-5">
