@@ -17,7 +17,6 @@ import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import Link from "next/link";
 
-// Define the type for bid data
 type Bid = {
   _id: string;
   amount: number;
@@ -26,7 +25,7 @@ type Bid = {
     title: string;
     currentBid: number;
     endTime: string;
-  };
+  } | null;
   user: string;
   isAuto: boolean;
   createdAt: string;
@@ -76,13 +75,8 @@ export default function BidHistoryPage() {
       setIsMobile(window.innerWidth < 768);
     };
 
-  
     handleResize();
-
-    
     window.addEventListener("resize", handleResize);
-
-    
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -100,9 +94,11 @@ export default function BidHistoryPage() {
     return "";
   };
 
-  const totalPages = Math.ceil(bidHistory.length / ITEMS_PER_PAGE);
+  // Filter out invalid bids with missing auction
+  const validBids = bidHistory.filter((bid) => bid.auction !== null);
+  const totalPages = Math.ceil(validBids.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentBids = bidHistory.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentBids = validBids.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -110,7 +106,7 @@ export default function BidHistoryPage() {
   return (
     <Card>
       <CardContent className="overflow-x-auto">
-        {bidHistory.length === 0 ? (
+        {validBids.length === 0 ? (
           <div className="text-center text-gray-500 py-10">
             No Bid History Found
           </div>
@@ -128,11 +124,13 @@ export default function BidHistoryPage() {
               </TableHeader>
               <TableBody className="bg-[#e7dfd3]">
                 {currentBids.map((bid) => {
-                  const status = getStatus(bid.auction.endTime);
+                  const status = bid.auction
+                    ? getStatus(bid.auction.endTime)
+                    : "Unknown";
                   return (
                     <TableRow key={bid._id}>
                       <TableCell className="font-medium px-5 truncate">
-                        {bid.auction.title}
+                        {bid.auction ? bid.auction.title : "Auction Deleted"}
                       </TableCell>
                       <TableCell>${bid.amount}</TableCell>
                       {!isMobile && (
@@ -147,8 +145,18 @@ export default function BidHistoryPage() {
                         {status}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/auctions/${bid?.auction?._id}`}>
-                          <Button variant="ghost" size="icon">
+                        <Link
+                          href={
+                            bid.auction
+                              ? `/auctions/${bid.auction._id}`
+                              : "#"
+                          }
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={!bid.auction}
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
