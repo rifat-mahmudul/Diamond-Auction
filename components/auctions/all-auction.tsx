@@ -85,7 +85,7 @@ function AllAuctionContent() {
     params.set("page", currentPage.toString());
 
     router.replace(`?${params.toString()}`, { scroll: false });
-  }, [currentPage]);
+  }, [currentPage, router]);
 
 
 
