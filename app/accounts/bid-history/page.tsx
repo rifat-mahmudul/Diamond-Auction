@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import Link from "next/link";
+import { Suspense } from "react";
 
 type Bid = {
   _id: string;
@@ -33,7 +34,7 @@ type Bid = {
 
 const ITEMS_PER_PAGE = 10;
 
-export default function BidHistoryPage() {
+function BidHistoryContent() {
   const [bidHistory, setBidHistory] = useState<Bid[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -147,9 +148,7 @@ export default function BidHistoryPage() {
                       <TableCell className="text-right">
                         <Link
                           href={
-                            bid.auction
-                              ? `/auctions/${bid.auction._id}`
-                              : "#"
+                            bid.auction ? `/auctions/${bid.auction._id}` : "#"
                           }
                         >
                           <Button
@@ -190,5 +189,13 @@ export default function BidHistoryPage() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+export default function BidHistoryPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BidHistoryContent />
+    </Suspense>
   );
 }

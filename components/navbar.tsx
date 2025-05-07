@@ -10,7 +10,7 @@ import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSocketContext } from "@/Provider/SocketProvider";
 
 const navLinks = [
@@ -69,13 +69,16 @@ export function Navbar() {
   const markNotificationsAsRead = async () => {
     if (!token) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bids/notifications/mark-as-read`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications/mark-as-read`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       localStorage.removeItem("notificationCount");
       setNotificationCount(null);
       if (!res.ok) throw new Error("Failed to mark notifications as read");
@@ -109,7 +112,9 @@ export function Navbar() {
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchTerm.trim()) {
-      router.push(`/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`);
+      router.push(
+        `/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`
+      );
       setSearchTerm("");
     }
     setSearchTerm("");
@@ -217,7 +222,10 @@ export function Navbar() {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] sm:w-[300px] bg-[#f5f0e8]">
+              <SheetContent
+                side="right"
+                className="w-[280px] sm:w-[300px] bg-[#f5f0e8]"
+              >
                 <nav className="flex flex-col gap-4 pt-10">
                   {navLinks.map((link) => (
                     <Link
@@ -267,11 +275,12 @@ export function Navbar() {
                         }`}
                       >
                         Notifications
-                        {typeof notificationCount === "number" && notificationCount > 0 && (
-                          <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
-                            {notificationCount}
-                          </span>
-                        )}
+                        {typeof notificationCount === "number" &&
+                          notificationCount > 0 && (
+                            <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                              {notificationCount}
+                            </span>
+                          )}
                       </button>
                       <Link
                         href="/accounts"
