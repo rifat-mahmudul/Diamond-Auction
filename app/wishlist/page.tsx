@@ -70,7 +70,7 @@ function Page() {
     mutationFn: removeFromWishlist,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] });
-      toast.success("Item removed from wishlist");
+      // toast.success("Item removed from wishlist");
     },
     onError: () => {
       toast.error("Failed to remove item from wishlist");

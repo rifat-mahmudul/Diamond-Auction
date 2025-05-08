@@ -50,6 +50,9 @@ export function LiveAuctionSection() {
     },
   })
 
+  console.log(liveAuctionData);
+  
+
   const nextSlide = () => {
     if (currentIndex + itemsToShow < liveAuctionData.length) {
       setCurrentIndex(currentIndex + 1)
@@ -117,7 +120,7 @@ export function LiveAuctionSection() {
               startTime={auction.startTime}
               endTime={auction.endTime}
               auctionId={auction._id.toString()}
-              status={status}
+              status={auction.status}
             />
           ))}
         </div>

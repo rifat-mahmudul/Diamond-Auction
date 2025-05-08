@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface BlogCommentsProps {
     blogId: string;
@@ -41,7 +42,8 @@ function BlogComments({ blogId }: BlogCommentsProps) {
             const result = await response.json();
 
             if (response.ok) {
-                setMessage('Comment submitted successfully!');
+                // setMessage('Comment submitted successfully!');
+                toast.success('Comment submitted successfully!',{position: 'top-right'});
                 setFormData({ name: '', email: '', message: '' });
                 if (!saveInfo) {
                     localStorage.removeItem('blogCommentInfo');

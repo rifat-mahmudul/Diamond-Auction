@@ -46,6 +46,8 @@ export function AuctionCard({
   status
 }: AuctionCardProps) {
   const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft(endTime));
+  console.log(status);
+  
 
   useEffect(() => {
     const timer = setInterval(() => {
