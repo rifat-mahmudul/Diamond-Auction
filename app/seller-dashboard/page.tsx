@@ -34,7 +34,7 @@ export default function DashboardPage() {
     },
     enabled: !!token,
   });
-
+  
   // Fetch active auctions
   const { data: auctionsData, isLoading: isAuctionsLoading } = useQuery({
     queryKey: ["auctions", "active", 1, "", 5],
@@ -66,6 +66,8 @@ export default function DashboardPage() {
   });
 
   const stats = statsData?.data
+    
+    
     ? [
         {
           revenue: statsData.data.totalRevenue?.replace("$", "") || "0",
@@ -122,17 +124,18 @@ export default function DashboardPage() {
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2695FF] text-white">
               <DollarSign className="h-8 w-8 text-white" />
+              
             </div>
           </Card>
 
           <Card className="flex items-center justify-between p-4 bg-white">
-            {/* <div className="space-y-1">
+            <div className="space-y-1">
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Successful Auctions
               </p>
               <div className="text-2xl font-bold">{stats[0].sellers}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
-            </div> */}
+            </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
               <DollarSign className="h-8 w-8 text-white" />
             </div>

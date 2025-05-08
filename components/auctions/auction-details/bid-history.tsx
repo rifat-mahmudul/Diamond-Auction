@@ -8,7 +8,10 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 
 interface BidHistoryProps {
-    auctionId: string
+    auctionId: string;
+    startingBid: number;
+    currentBid: number;
+    bidIncrement: number;
 }
 
 interface Bid {
@@ -17,6 +20,7 @@ interface Bid {
     user: { _id: string, username: string }
     createdAt: string
     isAuto: boolean
+    startingBid: number
 }
 
 export default function BidHistory({ auctionId }: BidHistoryProps) {

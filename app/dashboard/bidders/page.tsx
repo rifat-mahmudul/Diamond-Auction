@@ -32,6 +32,8 @@ import { useSession } from "next-auth/react";
 interface Bidder {
   userId: string;
   bidder: string;
+  email: string;
+  phone: string;
   contact: {
     email: string;
     phone: string;
@@ -84,8 +86,8 @@ export default function BiddersPage() {
     if (searchTerm) {
       const filtered = bidders.filter(
         (bidder) =>
-          bidder.bidder.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          bidder.contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+          bidder?.bidder?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          bidder?.email?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredBidders(filtered);
     } else {
@@ -174,15 +176,15 @@ export default function BiddersPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span>{bidder.contact.email}</span>
+                            <span>{bidder?.email}</span>
                             <span className="text-muted-foreground">
-                              {bidder.contact.phone}
+                              {bidder?.phone}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>{bidder.joinDate}</TableCell>
-                        <TableCell>{bidder.totalBids}</TableCell>
-                        <TableCell>{bidder.winAuctions}</TableCell>
+                        <TableCell>{bidder?.joinDate}</TableCell>
+                        <TableCell>{bidder?.totalBids}</TableCell>
+                        <TableCell>{bidder?.winAuctions}</TableCell>
                         <TableCell>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>

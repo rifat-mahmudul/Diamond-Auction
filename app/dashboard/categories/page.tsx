@@ -198,11 +198,11 @@ export default function CategoriesPage() {
                 <Plus className="mr-2 h-4 w-4" /> Add Category
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] ">
               <DialogHeader>
                 <DialogTitle>Add Category</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAddCategory} className="space-y-4 pt-4">
+              <form onSubmit={handleAddCategory} className="space-y-4 pt-4 ">
                 <div className="space-y-2">
                   <Label htmlFor="name">Category Name</Label>
                   <Input

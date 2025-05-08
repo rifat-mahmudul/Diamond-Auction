@@ -1,184 +1,224 @@
 // auctions/page.tsx
-"use client";
+"use client"
 
-import React, { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { toast } from "sonner";
-import { Pencil, Trash2, Plus } from "lucide-react";
-import Layout from "@/components/dashboard/layout";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Pagination } from "@/components/dashboard/pagination";
-import { CreateAuctionDialog } from "./_components/create-auction-dialog";
-import { Loading } from "./_components/loading";
-import { EditAuctionDialog } from "./_components/EditAuctionDialog";
+import type React from "react"
+import { Suspense, useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import axios from "axios"
+import { toast } from "sonner"
+import { Pencil, Trash2, Plus } from "lucide-react"
+import Layout from "@/components/dashboard/layout"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Pagination } from "@/components/dashboard/pagination"
+import { CreateAuctionDialog } from "./_components/create-auction-dialog"
+import { Loading } from "./_components/loading"
+import { EditAuctionDialog } from "./_components/EditAuctionDialog"
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://your-api-url.com";
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://your-api-url.com"
 
 export interface Seller {
-  _id: string;
-  displayName: string;
-  username: string;
+  _id: string
+  displayName: string
+  username: string
 }
 
 interface Auction {
-  _id: string;
-  title: string;
-  category: string;
-  sku?: string;
-  seller: Seller; // Consider defining a proper Seller type
-  startTime: string;
-  endTime: string;
-  currentBid?: number;
-  bidCount?: number;
-  status: 'live' | 'pending' | 'scheduled' | 'completed' | 'end';
-  description?: string;
-  caratWeight?: number;
-  startingBid?: number;
-  bidIncrement?: number;
-  reservePrice?: number;
+  _id: string
+  category: {
+    _id: string
+    name: string
+  }
+  title: string
+
+  sku?: string
+  seller: Seller // Consider defining a proper Seller type
+  startTime: string
+  endTime: string
+  currentBid?: number
+  bidCount?: number
+  status: "live" | "pending" | "scheduled" | "completed" | "end"
+  description?: string
+  caratWeight?: number
+  startingBid?: number
+  bidIncrement?: number
+  reservePrice?: number
+  categoryDetails?: {
+    _id: string
+    name: string
+  }
 }
 
 interface AuctionsResponse {
-  data: Auction[];
-  totalPages: number;
+  data: Auction[]
+  totalPages: number
+  totalCount: number
 }
 
 function AuctionsPageContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const tabParam = searchParams.get("tab") || "active";
-  const pageParam = searchParams.get("page") || "1";
-  const searchParam = searchParams.get("search") || "";
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const tabParam = searchParams.get("tab") || "active"
+  const pageParam = searchParams.get("page") || "1"
+  const searchParam = searchParams.get("search") || ""
 
-  const [activeTab, setActiveTab] = useState(tabParam);
-  const [currentPage, setCurrentPage] = useState(Number.parseInt(pageParam));
-  const [searchQuery, setSearchQuery] = useState(searchParam);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingAuction, setEditingAuction] = useState<Auction | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(tabParam)
+  const [currentPage, setCurrentPage] = useState(Number.parseInt(pageParam))
+  const [searchQuery, setSearchQuery] = useState(searchParam)
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [editingAuction, setEditingAuction] = useState<Auction | null>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
-  const session = useSession();
-  const token = session?.data?.user?.accessToken;
-  const queryClient = useQueryClient();
+  const session = useSession()
+  const token = session?.data?.user?.accessToken
+  const queryClient = useQueryClient()
 
   const headers = {
     Authorization: `Bearer ${token}`,
-  };
+  }
 
   // Fetch all auctions
   const { data: allAuctionsData, isLoading: isAllAuctionsLoading } = useQuery<AuctionsResponse>({
-    queryKey: ["auctions", "all", currentPage, searchQuery],
+    queryKey: ["auctions", "all", currentPage, searchQuery, activeTab],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append("page", currentPage.toString());
-      if (searchQuery) params.append("search", searchQuery);
+      const params = new URLSearchParams()
+      params.append("page", currentPage.toString())
+      params.append("status", activeTab)
+      if (searchQuery) params.append("search", searchQuery)
 
-      const response = await axios.get(
-        `${baseURL}/auctions/get-all-auctions?${params.toString()}`,
-        { headers }
-      );
-      return response.data;
+      const response = await axios.get(`${baseURL}/auctions/get-all-auctions?${params.toString()}`, { headers })
+      return response.data
     },
     enabled: !!token,
-  });
+  })
+  console.log("allAuctionsData", allAuctionsData)
 
   // Delete auction mutation
   const deleteAuction = useMutation({
     mutationFn: async (id: string) => {
-      const response = await axios.delete(
-        `${baseURL}/auctions/delete-auction/${id}`,
-        { headers }
-      );
-      return response.data;
+      const response = await axios.delete(`${baseURL}/auctions/delete-auction/${id}`, { headers })
+      return response.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auctions"] });
-      toast.success("Auction deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["auctions"] })
+      toast.success("Auction deleted successfully")
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "Failed to delete auction");
+        toast.error(error.response?.data?.message || "Failed to delete auction")
       } else {
-        toast.error("Failed to delete auction");
+        toast.error("Failed to delete auction")
       }
     },
-  });
+  })
 
   // Filter auctions based on status
   const getFilteredAuctions = (): Auction[] => {
-    if (!allAuctionsData?.data) return [];
+    if (!allAuctionsData?.data) return []
+
+    // First filter by status
+    let statusFiltered = allAuctionsData.data
 
     switch (activeTab) {
       case "active":
-        return allAuctionsData.data.filter((auction) => auction.status === "live");
+        statusFiltered = allAuctionsData.data.filter((auction) => auction.status === "live")
+        break
       case "pending":
-        return allAuctionsData.data.filter((auction) => auction.status === "pending");
+        statusFiltered = allAuctionsData.data.filter((auction) => auction.status === "pending")
+        break
       case "scheduled":
-        return allAuctionsData.data.filter((auction) => auction.status === "scheduled");
+        statusFiltered = allAuctionsData.data.filter((auction) => auction.status === "scheduled")
+        break
       case "end":
-        return allAuctionsData.data.filter((auction) =>
-          auction.status === "completed" || auction.status === "end");
+        statusFiltered = allAuctionsData.data.filter(
+          (auction) => auction.status === "completed" || auction.status === "end",
+        )
+        break
       default:
-        return allAuctionsData.data;
+        statusFiltered = allAuctionsData.data
     }
-  };
 
-  const filteredAuctions = getFilteredAuctions();
-  const totalPages = allAuctionsData?.totalPages || 1;
-  const isLoading = isAllAuctionsLoading;
+    // Then filter by search query if it exists
+    if (searchQuery.trim() === "") {
+      return statusFiltered
+    }
+
+    // Search in title, SKU, and seller name
+    return statusFiltered.filter(
+      (auction) =>
+        auction.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (auction.sku && auction.sku.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (typeof auction?.seller === "object" &&
+          ((auction?.seller?.displayName &&
+            auction?.seller?.displayName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (auction?.seller?.username && auction.seller.username.toLowerCase().includes(searchQuery.toLowerCase())))),
+    )
+  }
+
+  const filteredAuctions = getFilteredAuctions()
+  const totalPages = allAuctionsData?.totalPages
+  const isLoading = isAllAuctionsLoading
 
   // Handlers
   const handleTabChange = (value: string) => {
-    setActiveTab(value);
-    setCurrentPage(1);
-    updateUrl(value, 1, searchQuery);
-  };
+    setActiveTab(value)
+    setCurrentPage(1)
+    updateUrl(value, 1, searchQuery)
+  }
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    updateUrl(activeTab, page, searchQuery);
-  };
+    setCurrentPage(page)
+    updateUrl(activeTab, page, searchQuery)
+  }
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    updateUrl(activeTab, 1, searchQuery);
-  };
+    e.preventDefault()
+    setCurrentPage(1)
+    updateUrl(activeTab, 1, searchQuery)
+  }
 
   const updateUrl = (tab: string, page: number, search: string) => {
-    const params = new URLSearchParams();
-    params.set("tab", tab);
-    params.set("page", page.toString());
-    if (search) params.set("search", search);
-    router.push(`/seller-dashboard/auctions?${params.toString()}`);
-  };
+    const params = new URLSearchParams()
+    params.set("tab", tab)
+    params.set("page", page.toString())
+    if (search) params.set("search", search)
+    router.push(`/seller-dashboard/auctions?${params.toString()}`)
+  }
 
   const handleDeleteAuction = (id: string) => {
-    deleteAuction.mutate(id);
-  };
+    deleteAuction.mutate(id)
+  }
 
   const handleEditAuction = (auction: Auction) => {
-    setEditingAuction(auction);
-    setIsEditDialogOpen(true);
-  };
+    setEditingAuction(auction)
+    setIsEditDialogOpen(true)
+  }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-  };
+    const date = new Date(dateString)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`
+  }
 
   useEffect(() => {
-    setActiveTab(tabParam);
-    setCurrentPage(Number.parseInt(pageParam));
-    setSearchQuery(searchParam);
-  }, [tabParam, pageParam, searchParam]);
+    setActiveTab(tabParam)
+    setCurrentPage(Number.parseInt(pageParam))
+    setSearchQuery(searchParam)
+  }, [tabParam, pageParam, searchParam])
 
   return (
     <div className="space-y-4">
@@ -187,10 +227,7 @@ function AuctionsPageContent() {
           <h1 className="text-2xl font-bold tracking-tight">Auctions</h1>
           <p className="text-muted-foreground">Manage your auction listings</p>
         </div>
-        <Button
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="bg-[#6b614f] hover:bg-[#5a5142]"
-        >
+        <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-[#6b614f] hover:bg-[#5a5142]">
           <Plus className="mr-2 h-4 w-4" /> Add Auction
         </Button>
       </div>
@@ -204,26 +241,34 @@ function AuctionsPageContent() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="max-w-sm"
             />
+         
           </form>
         </div>
 
-        <Tabs
-          defaultValue="active"
-          value={activeTab}
-          onValueChange={handleTabChange}
-          className="w-full"
-        >
+        <Tabs defaultValue="active" value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-4 rounded-lg bg-[#e9dcc9] h-16 border border-[#645949]">
-            <TabsTrigger value="active" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
+            <TabsTrigger
+              value="active"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
               Active
             </TabsTrigger>
-            <TabsTrigger value="pending" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
+            <TabsTrigger
+              value="pending"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
               Pending
             </TabsTrigger>
-            <TabsTrigger value="scheduled" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
+            <TabsTrigger
+              value="scheduled"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
               Scheduled
             </TabsTrigger>
-            <TabsTrigger value="end" className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full">
+            <TabsTrigger
+              value="end"
+              className="rounded-md data-[state=active]:bg-[#6b614f] data-[state=active]:text-white h-full"
+            >
               End
             </TabsTrigger>
           </TabsList>
@@ -242,19 +287,11 @@ function AuctionsPageContent() {
         </Tabs>
 
         <div className="p-4">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          <Pagination currentPage={currentPage} totalPages={totalPages ||0} onPageChange={handlePageChange} />
         </div>
       </div>
 
-      <CreateAuctionDialog
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        token={token}
-      />
+      <CreateAuctionDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} token={token} />
 
       {editingAuction && (
         <EditAuctionDialog
@@ -265,61 +302,52 @@ function AuctionsPageContent() {
         />
       )}
     </div>
-  );
+  )
 }
 
 interface AuctionsTableProps {
-  auctions: Auction[];
-  onDelete: (id: string) => void;
-  onEdit: (auction: Auction) => void;
-  formatDate: (date: string) => string;
-  isLoading?: boolean;
+  auctions: Auction[]
+  onDelete: (id: string) => void
+  onEdit: (auction: Auction) => void
+  formatDate: (date: string) => string
+  isLoading?: boolean
 }
 
-function AuctionsTable({
-  auctions,
-  onDelete,
-  onEdit,
-  formatDate,
-  isLoading,
-}: AuctionsTableProps) {
-  const session = useSession();
-  const token = session?.data?.user?.accessToken;
+function AuctionsTable({ auctions, onDelete, onEdit, formatDate, isLoading }: AuctionsTableProps) {
+  // const session = useSession()
+  // const token = session?.data?.user?.accessToken
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
 
-  interface Category {
-    _id: string;
-    name: string;
-  }
+  // const headers = {
+  //   Authorization: `Bearer ${token}`,
+  // }
 
-  interface CategoriesResponse {
-    data: Category[];
-  }
+  // interface Category {
+  //   _id: string
+  //   name: string
+  // }
 
-  const { data: categories } = useQuery<CategoriesResponse>({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const response = await axios.get(`${baseURL}/categories`, { headers });
-      return response.data;
-    },
-    enabled: !!token,
-  });
+  // interface CategoriesResponse {
+  //   data: Category[]
+  // }
 
-  const getCategoryName = (categoryId: string) => {
-    if (!categories?.data) return "Loading...";
-    const category = categories.data.find((cat) => cat._id === categoryId);
-    return category?.name || "Unknown";
-  };
+  // const { data: categories } = useQuery<CategoriesResponse>({
+  //   queryKey: ["categories"],
+  //   queryFn: async () => {
+  //     const response = await axios.get(`${baseURL}/categories`, { headers })
+  //     return response.data
+  //   },
+  //   enabled: !!token,
+  // })
+
+ 
 
   if (isLoading) {
     return (
       <div className="rounded-md border p-8 flex justify-center">
         <Loading />
       </div>
-    );
+    )
   }
 
   return (
@@ -346,36 +374,24 @@ function AuctionsTable({
           </TableRow>
         ) : (
           auctions.map((auction) => (
-            <TableRow
-              key={auction._id}
-              className="text-center h-16 !border-b border-[#E5E7EB]"
-            >
+            <TableRow key={auction._id} className="text-center h-16 !border-b border-[#E5E7EB]">
               <TableCell className="font-medium">{auction.title}</TableCell>
-              <TableCell>{getCategoryName(auction.category)}</TableCell>
+              <TableCell>{auction?.category.name}</TableCell>
               <TableCell>{auction.sku || "#212-121"}</TableCell>
               <TableCell>
                 {typeof auction.seller === "object" ? (
                   <>
-                    <h5>
-                      {auction?.seller?.displayName?.split("#")[0] ||
-                        auction?.seller?.username}
-                    </h5>
+                    <h5>{auction?.seller?.displayName?.split("#")[0] || auction?.seller?.username}</h5>
                     {auction?.seller?.displayName?.split("#")[1] && (
-                      <span>
-                        #{auction?.seller?.displayName?.split("#")[1]}
-                      </span>
+                      <span>#{auction?.seller?.displayName?.split("#")[1]}</span>
                     )}
                   </>
                 ) : (
                   "Unknown Seller"
                 )}
               </TableCell>
-              <TableCell>
-                {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
-              </TableCell>
-              <TableCell>
-                {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
-              </TableCell>
+              <TableCell>{formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}</TableCell>
+              <TableCell>{formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}</TableCell>
               <TableCell>${auction.currentBid || 0}</TableCell>
               <TableCell>{auction.bidCount || 0}</TableCell>
               <TableCell>
@@ -391,11 +407,7 @@ function AuctionsTable({
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-red-500 hover:text-red-700"
-                      >
+                      <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
@@ -424,7 +436,7 @@ function AuctionsTable({
         )}
       </TableBody>
     </Table>
-  );
+  )
 }
 
 export default function AuctionsPage() {
@@ -434,5 +446,5 @@ export default function AuctionsPage() {
         <AuctionsPageContent />
       </Suspense>
     </Layout>
-  );
+  )
 }
