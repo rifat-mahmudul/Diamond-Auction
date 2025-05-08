@@ -54,8 +54,8 @@ export function LoginForm() {
 
       // console.log("login data df", response);
       if (response?.error) {
-        toast.error(response?.error);
-        alert(response?.error);
+        toast.error("Invalid username or password",{position: "top-right"});
+        // alert(response?.error);
       } else {
         toast.success("Login successful");
         // router.push("/dashboard");

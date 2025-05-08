@@ -99,7 +99,7 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
                             <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[120px]">Date</TableHead>
                             <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[100px]">Bid</TableHead>
                             <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[100px]">User</TableHead>
-                            <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[80px]">Auto</TableHead>
+                            {/* <TableHead className="border font-medium text-foreground py-3 px-4 w-1/4 min-w-[80px]">Auto</TableHead> */}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -110,7 +110,7 @@ export default function BidHistory({ auctionId }: BidHistoryProps) {
                                 </TableCell>
                                 <TableCell className="border py-3 px-4">{formatCurrency(bid.amount)}</TableCell>
                                 <TableCell className="border py-3 px-4">{bid?.user?.username}</TableCell>
-                                <TableCell className="border py-3 px-4">{bid.isAuto ? "Yes" : "No"}</TableCell>
+                                {/* <TableCell className="border py-3 px-4">{bid.isAuto ? "Yes" : "No"}</TableCell> */}
                             </TableRow>
                         ))}
                     </TableBody>

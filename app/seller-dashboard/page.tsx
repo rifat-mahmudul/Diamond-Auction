@@ -126,13 +126,13 @@ export default function DashboardPage() {
           </Card>
 
           <Card className="flex items-center justify-between p-4 bg-white">
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Seller
               </p>
               <div className="text-2xl font-bold">{stats[0].sellers}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
-            </div>
+            </div> */}
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
               <Store className="h-8 w-8 text-white" />
             </div>
