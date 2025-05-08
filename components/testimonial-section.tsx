@@ -7,23 +7,24 @@ import { useState } from "react";
 
 const testimonials = [
   {
-    text: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.`,
+    text: `Our experience with the diamond auction was seamless and transparent. Every step was clearly explained, and the bidding process was fair.`,
     name: "Courtney Henry",
     role: "CEO at Company",
     image: "/assets/hero.png",
   },
   {
-    text: `Ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet.`,
+    text: `The quality of diamonds at the auction exceeded our expectations. The platform made it easy to evaluate and bid competitively.`,
     name: "Tommy Rivers",
     role: "CTO at Startup",
     image: "/assets/hero.png",
   },
   {
-    text: `Nunc ut sem vitae risus tristique posuere. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla.`,
+    text: `Participating in the diamond auction was efficient and enjoyable. We found rare pieces and received excellent customer service throughout.`,
     name: "Alexa Smith",
     role: "CMO at Brand",
     image: "/assets/hero.png",
-  },
+  }
+
 ];
 
 export function TestimonialSection() {

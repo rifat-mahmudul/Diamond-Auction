@@ -1,8 +1,10 @@
 "use client";
 
+import type React from "react";
+
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -10,7 +12,7 @@ import { useMobile } from "@/hooks/use-mobile-nav";
 import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSocketContext } from "@/Provider/SocketProvider";
 
 const navLinks = [
@@ -39,21 +41,12 @@ const fetchWishlist = async (token: string | undefined) => {
 export function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const isMobile = useMobile();
+  const pathname = usePathname();
   const { status } = useSession();
   const isLoggedIn = status === "authenticated";
   const session = useSession();
   const token = session?.data?.user?.accessToken;
-
-  // Sync search term with URL
-  useEffect(() => {
-    const searchTermFromUrl = searchParams.get("searchTerm");
-    if (searchTermFromUrl) {
-      setSearchTerm(searchTermFromUrl);
-    }
-  }, [searchParams]);
 
   const { data: wishlistData } = useQuery({
     queryKey: ["wishlist-length"],
@@ -98,7 +91,7 @@ export function Navbar() {
     ${
       pathname.startsWith(href)
         ? "border-[#E6C475]"
-        : "border-[#D1D1D1] hover:border-[#E4C072] hover:bg-[#E4C072]"
+        : "border-[#D1D1D1] hover:border-[#E6C475] hover:bg-[#E6C475]"
     }
   `;
 
@@ -117,7 +110,6 @@ export function Navbar() {
       );
       setSearchTerm("");
     }
-    setSearchTerm("");
   };
 
   return (
@@ -144,8 +136,8 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-[16px] font-medium transition-colors hover:text-[#E4C072] ${
-                    isActive(link.href) ? "text-[#E4C072]" : "text-white"
+                  className={`text-[16px] font-medium transition-colors hover:text-[#E6C475] ${
+                    isActive(link.href) ? "text-[#E6C475]" : "text-white"
                   }`}
                 >
                   {link.name}
@@ -231,8 +223,10 @@ export function Navbar() {
                     <Link
                       key={link.name}
                       href={link.href}
-                      className={`text-base font-medium transition-colors hover:text-[#E4C072] ${
-                        isActive(link.href) ? "text-[#E4C072]" : "text-gray-800"
+                      className={`text-base font-medium transition-colors hover:text-[#E6C475] ${
+                        isActive(link.href)
+                          ? "text-[#E6C475]"
+                          : "text-muted-foreground"
                       }`}
                     >
                       {link.name}
@@ -241,9 +235,7 @@ export function Navbar() {
                   {!isLoggedIn ? (
                     <Link
                       href="/login"
-                      className={`text-base font-medium transition-colors hover:text-[#E4C072] ${
-                        isActive("/login") ? "text-[#E4C072]" : "text-gray-800"
-                      }`}
+                      className="text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
                       Login
                     </Link>
@@ -251,10 +243,10 @@ export function Navbar() {
                     <>
                       <Link
                         href="/wishlist"
-                        className={`relative text-base font-medium transition-colors hover:text-[#E4C072] ${
+                        className={`relative text-base font-medium transition-colors hover:text-[#E6C475] ${
                           isActive("/wishlist")
-                            ? "text-[#E4C072]"
-                            : "text-gray-800"
+                            ? "text-[#E6C475]"
+                            : "text-muted-foreground"
                         }`}
                       >
                         Wishlist
@@ -270,8 +262,10 @@ export function Navbar() {
                           await markNotificationsAsRead();
                           router.push("/notifications");
                         }}
-                        className={`relative text-base font-medium text-muted-foreground transition-colors hover:text-foreground ${
-                          isActive("/notifications") ? "text-foreground" : ""
+                        className={`relative text-base font-medium transition-colors hover:text-[#E6C475] ${
+                          isActive("/notifications")
+                            ? "text-[#E6C475]"
+                            : "text-muted-foreground"
                         }`}
                       >
                         Notifications
@@ -284,10 +278,10 @@ export function Navbar() {
                       </button>
                       <Link
                         href="/accounts"
-                        className={`text-base font-medium transition-colors hover:text-[#E4C072] ${
+                        className={`text-base font-medium transition-colors hover:text-[#E6C475] ${
                           isActive("/accounts")
-                            ? "text-[#E4C072]"
-                            : "text-gray-800"
+                            ? "text-[#E6C475]"
+                            : "text-muted-foreground"
                         }`}
                       >
                         My Account

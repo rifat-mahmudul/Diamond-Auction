@@ -317,7 +317,7 @@ export default function ContactForm() {
                 )}
               />
 
-              <div className="flex justify-end relative">
+              <div className="flex justify-end relative pb-4">
                 <Button
                   type="submit"
                   className="bg-[#6b5d4d] hover:bg-[#5a4d3d] px-8 py-2"
