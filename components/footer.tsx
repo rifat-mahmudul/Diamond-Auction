@@ -46,7 +46,7 @@ export function Footer() {
               </Link>
             </div>
             <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
-              <Linkedin className="w-4 h-4" />
+              <Linkedin className="w-4 h-[16px]" />
               <Link href="">
                 <Linkedin className="w-4 h-4" />
               </Link>
