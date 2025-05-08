@@ -1,5 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@radix-ui/react-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
@@ -9,7 +14,10 @@ interface LogOutModalProps {
   setIsLogoutDialogOpen: (open: boolean) => void;
 }
 
-const LogOutModal = ({ isLogoutDialogOpen, setIsLogoutDialogOpen }: LogOutModalProps) => {
+const LogOutModal = ({
+  isLogoutDialogOpen,
+  setIsLogoutDialogOpen,
+}: LogOutModalProps) => {
   return (
     <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
       <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />

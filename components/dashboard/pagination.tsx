@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 interface PaginationProps {
   currentPage: number
@@ -10,10 +10,15 @@ interface PaginationProps {
   onPageChange: (page: number) => void
 }
 
-export function Pagination({ currentPage, totalPages, totalCount, onPageChange }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  totalPages,
+  totalCount,
+  onPageChange,
+}: PaginationProps) {
   const renderPageNumbers = () => {
-    const pageNumbers = []
-    const maxPagesToShow = 5
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
 
     if (totalPages <= maxPagesToShow) {
       // Show all pages if total pages are less than or equal to maxPagesToShow
@@ -23,12 +28,14 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
             key={i}
             variant={currentPage === i ? "default" : "outline"}
             size="icon"
-            className={`w-10 h-10 ${currentPage === i ? "bg-[#6b614f] text-white" : ""}`}
+            className={`w-10 h-10 ${
+              currentPage === i ? "bg-[#6b614f] text-white" : ""
+            }`}
             onClick={() => onPageChange(i)}
           >
             {i}
           </Button>
-        )
+        );
       }
     } else {
       // Always show first page
@@ -37,31 +44,39 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
           key={1}
           variant={currentPage === 1 ? "default" : "outline"}
           size="icon"
-          className={`w-10 h-10 ${currentPage === 1 ? "bg-[#6b614f] text-white" : ""}`}
+          className={`w-10 h-10 ${
+            currentPage === 1 ? "bg-[#6b614f] text-white" : ""
+          }`}
           onClick={() => onPageChange(1)}
         >
           1
         </Button>
-      )
+      );
 
       // Calculate start and end of page numbers to show
-      let startPage = Math.max(2, currentPage - 1)
-      let endPage = Math.min(totalPages - 1, currentPage + 1)
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
 
       // Adjust if we're at the start or end
       if (currentPage <= 2) {
-        endPage = 3
+        endPage = 3;
       } else if (currentPage >= totalPages - 1) {
-        startPage = totalPages - 2
+        startPage = totalPages - 2;
       }
 
       // Show ellipsis if needed before middle pages
       if (startPage > 2) {
         pageNumbers.push(
-          <Button key="ellipsis1" variant="outline" size="icon" className="w-10 h-10" disabled>
+          <Button
+            key="ellipsis1"
+            variant="outline"
+            size="icon"
+            className="w-10 h-10"
+            disabled
+          >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
-        )
+        );
       }
 
       // Show middle pages
@@ -71,21 +86,29 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
             key={i}
             variant={currentPage === i ? "default" : "outline"}
             size="icon"
-            className={`w-10 h-10 ${currentPage === i ? "bg-[#6b614f] text-white" : ""}`}
+            className={`w-10 h-10 ${
+              currentPage === i ? "bg-[#6b614f] text-white" : ""
+            }`}
             onClick={() => onPageChange(i)}
           >
             {i}
           </Button>
-        )
+        );
       }
 
       // Show ellipsis if needed after middle pages
       if (endPage < totalPages - 1) {
         pageNumbers.push(
-          <Button key="ellipsis2" variant="outline" size="icon" className="w-10 h-10" disabled>
+          <Button
+            key="ellipsis2"
+            variant="outline"
+            size="icon"
+            className="w-10 h-10"
+            disabled
+          >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
-        )
+        );
       }
 
       // Always show last page
@@ -94,16 +117,18 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
           key={totalPages}
           variant={currentPage === totalPages ? "default" : "outline"}
           size="icon"
-          className={`w-10 h-10 ${currentPage === totalPages ? "bg-[#6b614f] text-white" : ""}`}
+          className={`w-10 h-10 ${
+            currentPage === totalPages ? "bg-[#6b614f] text-white" : ""
+          }`}
           onClick={() => onPageChange(totalPages)}
         >
           {totalPages}
         </Button>
-      )
+      );
     }
 
-    return pageNumbers
-  }
+    return pageNumbers;
+  };
 
   // Calculate start and end of the current page range (for "Showing X to Y of Z results")
   const startIndex = (currentPage - 1) * 9 + 1
@@ -136,5 +161,5 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
         </Button>
       </div>
     </div>
-  )
+  );
 }

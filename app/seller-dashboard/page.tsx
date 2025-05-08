@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { DollarSign, Users, ShoppingCart, Store } from "lucide-react";
+import { DollarSign, Users, HammerIcon } from "lucide-react";
 import Layout from "@/components/dashboard/layout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Base URL from environment variable
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://your-api-url.com";
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DashboardPage() {
   // Get session and token
@@ -54,7 +54,7 @@ export default function DashboardPage() {
   });
 
   // Fetch top bidders
-  const { data: biddersData, isLoading: isBiddersLoading } = useQuery({
+  const {  isLoading: isBiddersLoading } = useQuery({
     queryKey: ["bidders", "top"],
     queryFn: async () => {
       const response = await axios.get(`${baseURL}/bids/top-bidders`, {
@@ -70,7 +70,7 @@ export default function DashboardPage() {
         {
           revenue: statsData.data.totalRevenue?.replace("$", "") || "0",
           sellers: statsData.data.successfulAuctions || 0,
-          bidders: statsData.data.endAuctions || 0,
+          endAuctions: statsData.data.endAuctions || 0,
           liveAuctions: statsData.data.liveAuctions || 0,
         },
       ]
@@ -78,13 +78,13 @@ export default function DashboardPage() {
         {
           revenue: "0",
           sellers: 0,
-          bidders: 0,
+          endAuctions: 0,
           liveAuctions: 0,
         },
       ];
 
   const recentAuctions = auctionsData?.data || [];
-  const topBidders = biddersData?.data || [];
+  const topBidders = auctionsData?.data || [];
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -128,26 +128,13 @@ export default function DashboardPage() {
           <Card className="flex items-center justify-between p-4 bg-white">
             {/* <div className="space-y-1">
               <p className="text-[12px] font-normal text-[#6B7280]">
-                Total Seller
+                Successful Auctions
               </p>
               <div className="text-2xl font-bold">{stats[0].sellers}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div> */}
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
-              <Store className="h-8 w-8 text-white" />
-            </div>
-          </Card>
-
-          <Card className="flex items-center justify-between p-4 bg-white">
-            <div className="space-y-1">
-              <p className="text-[12px] font-normal text-[#6B7280]">
-                Total Bidders
-              </p>
-              <div className="text-2xl font-bold">{stats[0].bidders}</div>
-              <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
-            </div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F59E0B] text-white">
-              <Users className="h-8 w-8 text-white" />
+              <DollarSign className="h-8 w-8 text-white" />
             </div>
           </Card>
 
@@ -159,8 +146,21 @@ export default function DashboardPage() {
               <div className="text-2xl font-bold">{stats[0].liveAuctions}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F59E0B] text-white">
+              <Users className="h-8 w-8 text-white" />
+            </div>
+          </Card>
+
+          <Card className="flex items-center justify-between p-4 bg-white">
+            <div className="space-y-1">
+              <p className="text-[12px] font-normal text-[#6B7280]">
+                End Auctions
+              </p>
+              <div className="text-2xl font-bold">{stats[0].endAuctions}</div>
+              <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
+            </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EF4444] text-white">
-              <ShoppingCart className="h-8 w-8 text-white" />
+              <HammerIcon className="h-8 w-8 text-white" />
             </div>
           </Card>
         </div>
@@ -222,8 +222,8 @@ export default function DashboardPage() {
                   )}
                 </div>
                 <Link
-                  href="/auctions"
-                  className="text-sm text-blue-500 hover:underline cursor-pointer"
+                  href="/seller-dashboard/auctions"
+                  className="text-sm text-blue-500 hover:underline cursor-pointer "
                 >
                   View All Auctions →
                 </Link>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
 
           <Card className="col-span-1 p-4 bg-white">
             <CardHeader className="mb-4">
-              <CardTitle>Top Bidders</CardTitle>
+              <CardTitle>Top Bidding Items</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -251,41 +251,27 @@ export default function DashboardPage() {
                           className="flex items-center justify-between pb-4 border-b border-gray-200 last:border-b-0"
                         >
                           <div className="space-y-1">
-                            <p className="font-medium">{bidder.username}</p>
+                            <p className="font-medium">{bidder.title}</p>
                             <p className="text-sm text-muted-foreground">
-                              {bidder.winAuctions || 0} auctions won
+                              {bidder.bidCount || 0} Bids
                             </p>
                           </div>
                           <div className="font-medium text-green-600">
-                            ${bidder.totalAmount?.toLocaleString() || 0}
+                            ${bidder.currentBid?.toLocaleString() || 0}
                           </div>
                         </div>
                       ))
                     }
-                    {topBidders.length === 0 &&
-                      Array.from({ length: 8 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center justify-between pb-4 border-b border-gray-200 last:border-b-0"
-                        >
-                          <div className="space-y-1">
-                            <p className="font-medium">John Smith</p>
-                            <p className="text-sm text-muted-foreground">
-                              12 auctions won
-                            </p>
-                          </div>
-                          <div className="font-medium text-green-600">
-                            $14,250
-                          </div>
-                        </div>
-                      ))}
+                    {topBidders.length === 0 && (
+                      <div className="text-center py-4">No Items found</div>
+                    )}
                   </>
                 )}
                 <Link
-                  href="/bidders"
+                  href="/seller-dashboard/auctions"
                   className="block pt-4 text-sm text-blue-500 hover:underline cursor-pointer"
                 >
-                  View All Bidders →
+                  View All Auctions →
                 </Link>
               </div>
             </CardContent>

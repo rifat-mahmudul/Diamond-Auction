@@ -45,6 +45,7 @@ export default function ProfilePage() {
 
   const userID = session?.data?.user.id;
   const token = session?.data?.user?.accessToken;
+  const userRole = session?.data?.user?.role;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -73,6 +74,33 @@ export default function ProfilePage() {
 
     fetchProfile();
   }, [userID, token]);
+
+  let dashboardButton = null;
+
+  if (session?.status === "authenticated") {
+    if (userRole === "admin") {
+      dashboardButton = (
+        <Button className="mt-4 bg-[#645949] text-white" asChild>
+          <Link href="/dashboard">
+            <span className="flex items-center">
+              Go To Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+            </span>
+          </Link>
+        </Button>
+      );
+    } else if (userRole === "seller") {
+      dashboardButton = (
+        <Button className="mt-4 bg-[#645949] text-white" asChild>
+          <Link href="/seller-dashboard">
+            <span className="flex items-center">
+              Go To Seller Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+            </span>
+          </Link>
+        </Button>
+      );
+    }
+    // If userRole is 'bidder' or anything else, dashboardButton remains null
+  }
 
   if (loading) {
     return <div className="flex justify-center p-8">Loading profile...</div>;
@@ -105,16 +133,18 @@ export default function ProfilePage() {
               </h2>
               <p className="text-muted-foreground">@{profile.username}</p>
               <p className="mt-1">
-                {profile.address?.street}, {profile.address?.city},{" "}
-                {profile.address?.country} {profile.address?.postalCode}
+                {profile.address?.street && (
+                  <span>{profile.address.street}, </span>
+                )}
+                {profile.address?.city && <span>{profile.address.city}, </span>}
+                {profile.address?.country && (
+                  <span>{profile.address.country}</span>
+                )}
+                {profile.address?.postalCode && (
+                  <span> {profile.address.postalCode}</span>
+                )}
               </p>
-              <Button className="mt-4 bg-[#645949] text-white" asChild>
-                <Link href="/seller-dashboard">
-                  <span className="flex items-center">
-                    Go To Dashboard <ArrowRight className="ml-2 h-4 w-4" />
-                  </span>
-                </Link>
-              </Button>
+              {dashboardButton}
             </div>
           </div>
         </CardContent>

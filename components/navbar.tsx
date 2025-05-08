@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useMobile } from "@/hooks/use-mobile-nav"
-import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react"
-import { useSession } from "next-auth/react"
-import { useQuery } from "@tanstack/react-query"
-import { useState } from "react"
-import { useSocketContext } from "@/Provider/SocketProvider"
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useMobile } from "@/hooks/use-mobile-nav";
+import { BellRing, Heart, Menu, Search, UserRound } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useSocketContext } from "@/Provider/SocketProvider";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -22,85 +22,95 @@ const navLinks = [
   { name: "FAQ", href: "/faq" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
-]
+];
 
 const fetchWishlist = async (token: string | undefined) => {
-  if (!token) return null
+  if (!token) return null;
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlist`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  })
+  });
   if (!response.ok) {
-    throw new Error("Failed to fetch wishlist")
+    throw new Error("Failed to fetch wishlist");
   }
-  return response.json()
-}
+  return response.json();
+};
 
 export function Navbar() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const router = useRouter()
-  const isMobile = useMobile()
-  const pathname = usePathname()
-  const { status } = useSession()
-  const isLoggedIn = status === "authenticated"
-  const session = useSession()
-  const token = session?.data?.user?.accessToken
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+  const isMobile = useMobile();
+  const pathname = usePathname();
+  const { status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const session = useSession();
+  const token = session?.data?.user?.accessToken;
 
   const { data: wishlistData } = useQuery({
     queryKey: ["wishlist-length"],
     queryFn: () => fetchWishlist(token),
     enabled: isLoggedIn,
     refetchInterval: 5000,
-  })
+  });
 
-  const wishlists = wishlistData?.data?.auctions || []
+  const wishlists = wishlistData?.data?.auctions || [];
 
-  const { notificationCount, setNotificationCount } = useSocketContext()
+  const { notificationCount, setNotificationCount } = useSocketContext();
 
   const markNotificationsAsRead = async () => {
-    if (!token) return
+    if (!token) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bids/notifications/mark-as-read`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      localStorage.removeItem("notificationCount")
-      setNotificationCount(null)
-      if (!res.ok) throw new Error("Failed to mark notifications as read")
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/bids/notifications/mark-as-read`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.removeItem("notificationCount");
+      setNotificationCount(null);
+      if (!res.ok) throw new Error("Failed to mark notifications as read");
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const iconLinks = [
     { icon: Heart, href: "/wishlist", count: wishlists?.length },
     { icon: BellRing, href: "/notifications", count: notificationCount },
     { icon: UserRound, href: "/accounts" },
-  ]
+  ];
 
   const getIconClasses = (href: string) => `
     relative border-2 rounded-full p-2 transition-colors
-    ${pathname.startsWith(href) ? "border-[#E6C475]" : "border-[#D1D1D1] hover:border-[#E6C475] hover:bg-[#E6C475]"}
-  `
+    ${
+      pathname.startsWith(href)
+        ? "border-[#E6C475]"
+        : "border-[#D1D1D1] hover:border-[#E6C475] hover:bg-[#E6C475]"
+    }
+  `;
 
-  const getIconColor = (href: string) => (pathname.startsWith(href) ? "text-[#E6C475]" : "text-white")
+  const getIconColor = (href: string) =>
+    pathname.startsWith(href) ? "text-[#E6C475]" : "text-white";
 
   const isActive = (href: string) => {
-    if (href === "/") return pathname === href
-    return pathname.startsWith(href)
-  }
+    if (href === "/") return pathname === href;
+    return pathname.startsWith(href);
+  };
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchTerm.trim()) {
-      router.push(`/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`)
-      setSearchTerm("")
+      router.push(
+        `/auctions?searchTerm=${encodeURIComponent(searchTerm.trim())}`
+      );
+      setSearchTerm("");
     }
-  }
+  };
 
   return (
     <header className="fixed top-0 z-50 w-full border-b bg-[#817667] h-[83px] flex justify-center flex-col">
@@ -108,7 +118,13 @@ export function Navbar() {
         {/* Logo */}
         <div>
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/assets/logo.png" alt="Logo" width={46} height={39} className="h-[39px] w-[46px]" />
+            <Image
+              src="/assets/logo.png"
+              alt="Logo"
+              width={46}
+              height={39}
+              className="h-[39px] w-[46px]"
+            />
           </Link>
         </div>
 
@@ -120,8 +136,9 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-[16px] font-medium transition-colors hover:text-[#E6C475] ${isActive(link.href) ? "text-[#E6C475]" : "text-white"
-                    }`}
+                  className={`text-[16px] font-medium transition-colors hover:text-[#E6C475] ${
+                    isActive(link.href) ? "text-[#E6C475]" : "text-white"
+                  }`}
                 >
                   {link.name}
                 </Link>
@@ -161,9 +178,9 @@ export function Navbar() {
                   <button
                     key={href}
                     onClick={async (e) => {
-                      e.preventDefault()
-                      await markNotificationsAsRead()
-                      router.push("/notifications")
+                      e.preventDefault();
+                      await markNotificationsAsRead();
+                      router.push("/notifications");
                     }}
                     className={getIconClasses(href)}
                   >
@@ -183,7 +200,7 @@ export function Navbar() {
                       </span>
                     )}
                   </Link>
-                ),
+                )
               )}
             </div>
           )}
@@ -197,14 +214,20 @@ export function Navbar() {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] sm:w-[300px] bg-[#f5f0e8]">
+              <SheetContent
+                side="right"
+                className="w-[280px] sm:w-[300px] bg-[#f5f0e8]"
+              >
                 <nav className="flex flex-col gap-4 pt-10">
                   {navLinks.map((link) => (
                     <Link
                       key={link.name}
                       href={link.href}
-                      className={`text-base font-medium transition-colors hover:text-[#E6C475] ${isActive(link.href) ? "text-[#E6C475]" : "text-muted-foreground"
-                        }`}
+                      className={`text-base font-medium transition-colors hover:text-[#E6C475] ${
+                        isActive(link.href)
+                          ? "text-[#E6C475]"
+                          : "text-muted-foreground"
+                      }`}
                     >
                       {link.name}
                     </Link>
@@ -220,8 +243,11 @@ export function Navbar() {
                     <>
                       <Link
                         href="/wishlist"
-                        className={`relative text-base font-medium transition-colors hover:text-[#E6C475] ${isActive("/wishlist") ? "text-[#E6C475]" : "text-muted-foreground"
-                          }`}
+                        className={`relative text-base font-medium transition-colors hover:text-[#E6C475] ${
+                          isActive("/wishlist")
+                            ? "text-[#E6C475]"
+                            : "text-muted-foreground"
+                        }`}
                       >
                         Wishlist
                         {wishlists?.length > 0 && (
@@ -232,24 +258,31 @@ export function Navbar() {
                       </Link>
                       <button
                         onClick={async (e) => {
-                          e.preventDefault()
-                          await markNotificationsAsRead()
-                          router.push("/notifications")
+                          e.preventDefault();
+                          await markNotificationsAsRead();
+                          router.push("/notifications");
                         }}
-                        className={`relative text-base font-medium transition-colors hover:text-[#E6C475] ${isActive("/notifications") ? "text-[#E6C475]" : "text-muted-foreground"
-                          }`}
+                        className={`relative text-base font-medium transition-colors hover:text-[#E6C475] ${
+                          isActive("/notifications")
+                            ? "text-[#E6C475]"
+                            : "text-muted-foreground"
+                        }`}
                       >
                         Notifications
-                        {typeof notificationCount === "number" && notificationCount > 0 && (
-                          <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
-                            {notificationCount}
-                          </span>
-                        )}
+                        {typeof notificationCount === "number" &&
+                          notificationCount > 0 && (
+                            <span className="absolute top-[-8px] right-[-8px] bg-[#E4C072] text-white rounded-full text-[10px] px-[6px] font-semibold">
+                              {notificationCount}
+                            </span>
+                          )}
                       </button>
                       <Link
                         href="/accounts"
-                        className={`text-base font-medium transition-colors hover:text-[#E6C475] ${isActive("/accounts") ? "text-[#E6C475]" : "text-muted-foreground"
-                          }`}
+                        className={`text-base font-medium transition-colors hover:text-[#E6C475] ${
+                          isActive("/accounts")
+                            ? "text-[#E6C475]"
+                            : "text-muted-foreground"
+                        }`}
                       >
                         My Account
                       </Link>
@@ -262,5 +295,5 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  )
+  );
 }
