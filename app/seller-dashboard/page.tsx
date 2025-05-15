@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { DollarSign, Users, HammerIcon } from "lucide-react";
+import { DollarSign, Users, ShoppingCart } from "lucide-react";
 import Layout from "@/components/dashboard/layout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -137,7 +137,7 @@ export default function DashboardPage() {
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
-              <DollarSign className="h-8 w-8 text-white" />
+              <ShoppingCart className="h-8 w-8 text-white" />
             </div>
           </Card>
 
@@ -163,7 +163,7 @@ export default function DashboardPage() {
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EF4444] text-white">
-              <HammerIcon className="h-8 w-8 text-white" />
+              <ShoppingCart className="h-8 w-8 text-white" />
             </div>
           </Card>
         </div>
