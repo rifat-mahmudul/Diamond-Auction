@@ -31,7 +31,7 @@ import { useSession } from "next-auth/react";
 
 interface Bidder {
   userId: string;
-  bidder: string;
+  user: string;
   email: string;
   phone: string;
   contact: {
@@ -57,9 +57,11 @@ export default function BiddersPage() {
   // Set token whenever user changes
   useEffect(() => {
     if (user?.accessToken) {
+      console.log("token setttttttttttttttt");
       apiService.setToken(user.accessToken);
+      fetchBidders();
     }
-  }, [user]);
+  }, [user, currentPage]);
 
   const fetchBidders = async () => {
     setIsBidderLoading(true);
@@ -78,15 +80,12 @@ export default function BiddersPage() {
     }
   };
 
-  useEffect(() => {
-    fetchBidders();
-  }, [currentPage]);
 
   useEffect(() => {
     if (searchTerm) {
       const filtered = bidders.filter(
         (bidder) =>
-          bidder?.bidder?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          bidder?.user?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           bidder?.email?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredBidders(filtered);
@@ -172,7 +171,7 @@ export default function BiddersPage() {
                           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                             <User className="h-5 w-5 text-gray-500" />
                           </div>
-                          <span className="font-medium">{bidder.bidder}</span>
+                          <span className="font-medium">{bidder.user}</span>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
