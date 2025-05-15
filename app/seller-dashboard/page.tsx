@@ -45,7 +45,7 @@ export default function DashboardPage() {
       params.append("limit", "5");
 
       const response = await axios.get(
-        `${baseURL}/auctions/get-all-auctions?${params.toString()}`,
+        `${baseURL}/auctions/get-all-auctions-by-seller?${params.toString()}`,
         { headers }
       );
       return response.data;
