@@ -8,6 +8,8 @@ import { DollarSign, ShoppingCart, Users, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 interface Auction {
   _id: string;
@@ -28,14 +30,10 @@ interface TopBidder {
 export default function Dashboard() {
   const [recentAuctions, setRecentAuctions] = useState<Auction[]>([]);
   const [topBidders, setTopBidders] = useState<TopBidder[]>([]);
-  const stats = useState({
-    revenue: 11020,
-    sellers: 8020,
-    bidders: 6020,
-    liveAuctions: 20,
-  });
+
   const session = useSession();
   const user = session.data?.user;
+  const token = session?.data?.user?.accessToken;
 
   // Set token whenever user changes
   useEffect(() => {
@@ -66,7 +64,25 @@ export default function Dashboard() {
 
     fetchData();
   }, []);
-
+  
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const { data: adminstatistics } = useQuery({
+    queryKey: ["admindata", ],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${baseURL}/admin/admin-matrices`,
+        { headers }
+      );
+      return response.data;
+    },
+    enabled: !!token,
+  });
+  console.log("Admin statistics:", adminstatistics);
+  const adminStats = adminstatistics?.data;
+  
   return (
     <Layout>
       <div className="space-y-6 ">
@@ -81,9 +97,9 @@ export default function Dashboard() {
           <Card className="flex items-center justify-between p-4 bg-white">
             <div className="space-y-1">
               <p className="text-[12px] font-normal text-[#6B7280]">
-                Total Revenue
+                End Auctions
               </p>
-              <div className="text-2xl font-bold">${stats[0].revenue}</div>
+              <div className="text-2xl font-bold">{adminStats?.endAuctions}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2695FF] text-white">
@@ -96,7 +112,7 @@ export default function Dashboard() {
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Seller
               </p>
-              <div className="text-2xl font-bold">{stats[0].sellers}</div>
+              <div className="text-2xl font-bold">{adminStats?.totalSellers}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#10B981] text-white">
@@ -109,7 +125,7 @@ export default function Dashboard() {
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Total Bidders
               </p>
-              <div className="text-2xl font-bold">{stats[0].bidders}</div>
+              <div className="text-2xl font-bold">{adminStats?.totalBidders}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F59E0B] text-white">
@@ -122,7 +138,7 @@ export default function Dashboard() {
               <p className="text-[12px] font-normal text-[#6B7280]">
                 Live Auctions
               </p>
-              <div className="text-2xl font-bold">{stats[0].liveAuctions}</div>
+              <div className="text-2xl font-bold">{adminStats?.liveAuctions}</div>
               <p className="text-[16px] font-normal text-[#6B7280]">All Time</p>
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EF4444] text-white">

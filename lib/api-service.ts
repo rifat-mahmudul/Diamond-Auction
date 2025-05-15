@@ -154,7 +154,7 @@ class ApiService {
 
   // Bidders
   async getAllBidders() {
-    return this.request("/bids/all");
+    return this.request("/bids/all-bidders-admin");
   }
 
   async getTopBidders() {

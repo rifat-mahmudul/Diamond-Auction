@@ -6,7 +6,7 @@ export default function AuctionPage({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto py-8 px-4 mt-20">
       <Suspense fallback={<AuctionDetailsSkeleton />}>
-        <AuctionDetails auctionId={params.id} />
+        <AuctionDetails auctionId={params.id} startingBid={0} />
       </Suspense>
     </div>
   )
