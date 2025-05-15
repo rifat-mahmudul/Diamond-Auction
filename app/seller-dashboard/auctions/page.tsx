@@ -101,7 +101,7 @@ function AuctionsPageContent() {
       params.append("status", activeTab)
       if (searchQuery) params.append("search", searchQuery)
 
-      const response = await axios.get(`${baseURL}/auctions/get-all-auctions?${params.toString()}`, { headers })
+      const response = await axios.get(`${baseURL}/auctions/get-all-auctions-by-seller?${params.toString()}`, { headers })
       return response.data
     },
     enabled: !!token,
