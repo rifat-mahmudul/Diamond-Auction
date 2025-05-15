@@ -54,7 +54,7 @@ export function LoginForm() {
 
       // console.log("login data df", response);
       if (response?.error) {
-        toast.error("Invalid username or password",{position: "top-right"});
+        toast.error("Invalid username or password", { position: "top-right" });
         // alert(response?.error);
       } else {
         toast.success("Login successful");
@@ -157,7 +157,7 @@ export function LoginForm() {
 
                 <div className="flex justify-center">
                   <Link
-                    href="/auth/forgot-password"
+                    href="/forgot-password"
                     className="text-xs sm:text-sm text-[#0a1155] hover:underline"
                   >
                     Forgot password?
