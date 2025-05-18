@@ -79,7 +79,7 @@ export function LoginForm() {
               Welcome Back!
             </h3>
             <p className="text-base sm:text-lg lg:text-xl font-semibold text-[#F5EDE2] mb-6">
-              Don’t have an account?
+              Don&apos;t have an account?
             </p>
             <Link href="/sign-up">
               <Button className="px-8 py-3 border border-[#F5EDE2] text-base font-semibold hover:bg-[#F5EDE2] hover:text-[#645949]">
@@ -111,7 +111,7 @@ export function LoginForm() {
                       <FormControl>
                         <Input
                           type="string"
-                          placeholder="Enter your email"
+                          placeholder="Enter your username"
                           {...field}
                           className="h-10 sm:h-12 text-sm sm:text-base"
                         />
