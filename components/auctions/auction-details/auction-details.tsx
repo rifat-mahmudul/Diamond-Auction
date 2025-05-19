@@ -35,7 +35,6 @@ import { useRouter } from "next/navigation";
 
 interface AuctionDetailsProps {
   auctionId: string;
-  startingBid: number;
 }
 
 interface PlaceBidParams {
@@ -59,7 +58,7 @@ const formSchema = z.object({
   saveInfo: z.boolean().optional(),
 });
 
-export default function AuctionDetails({ auctionId,  }: AuctionDetailsProps) {
+export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
   const router = useRouter();
   const [bidAmount, setBidAmount] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("description");

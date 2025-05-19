@@ -24,7 +24,9 @@ interface SocketContextType {
   notifications: NotificationData[];
   setNotifications: React.Dispatch<React.SetStateAction<NotificationData[]>>;
   notificationCount: NotificationData | null;
-  setNotificationCount: React.Dispatch<React.SetStateAction<NotificationData | null>>;
+  setNotificationCount: React.Dispatch<
+    React.SetStateAction<NotificationData | null>
+  >;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -49,13 +51,16 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (notificationCount !== null) {
-      localStorage.setItem("notificationCount", JSON.stringify(notificationCount));
+      localStorage.setItem(
+        "notificationCount",
+        JSON.stringify(notificationCount)
+      );
     }
   }, [notificationCount]);
 
   useEffect(() => {
     if (token && !socket) {
-      const socket = io("http://localhost:5100", {
+      const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,17 +69,17 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (socket) {
-      socket.emit('joinUser', userID);
+      socket.emit("joinUser", userID);
       socket.on("notification", (data: NotificationData) => {
         setNotifications((prevNotifications) => [data, ...prevNotifications]);
         setNotificationCount(data?.notificationCount);
         console.log("notification:", data);
-        toast.success(data.message)
+        toast.success(data.message);
       });
       setListenerSet(true);
       return () => {
         socket.disconnect();
-        setSocket(null)
+        setSocket(null);
       };
     }
   }, [token, socket, listenerSet, userID]);
@@ -84,33 +89,40 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // useEffect(() => {
   //   if (!token || socket || listenerSet) return;
-  
+
   //   const newSocket = io("http://localhost:5100", {
   //     extraHeaders: {
   //       Authorization: `Bearer ${token}`,
   //     },
   //   });
-  
+
   //   newSocket.emit("joinUser", userID);
-  
+
   //   newSocket.on("notification", (data: NotificationData) => {
   //     setNotifications((prev) => [data, ...prev]);
   //     console.log("notification:", data);
   //     toast.success(data.message);
   //   });
-  
+
   //   setSocket(newSocket);
   //   setListenerSet(true);
-  
+
   //   return () => {
   //     newSocket.disconnect();
   //     setSocket(null)
   //   };
   // }, [token, socket, listenerSet, userID]);
-  
 
   return (
-    <SocketContext.Provider value={{ socket, notifications, setNotifications, notificationCount, setNotificationCount }}>
+    <SocketContext.Provider
+      value={{
+        socket,
+        notifications,
+        setNotifications,
+        notificationCount,
+        setNotificationCount,
+      }}
+    >
       {children}
     </SocketContext.Provider>
   );

@@ -136,7 +136,7 @@ export default function AuctionsPage() {
 
   const isLoading = currentQuery?.isLoading;
 
-  console.log(auctions)
+  console.log(auctions);
 
   return (
     <Layout>
@@ -284,21 +284,13 @@ function AuctionsTable({
               <TableCell>{auction.category?.name}</TableCell>
               <TableCell>{auction.sku || "#212-121"}</TableCell>
               <TableCell>
-                <h5>
-                  {auction.seller?.displayName?.split("#")[0] ||
-                    `Mr. John #2561`}
-                </h5>
-                #
-                {auction.seller?.displayName?.split("#")[1] || `Mr. John #2561`}
+                <h5>{auction.seller?.displayName?.split("#")[0]}</h5>#
+                {auction.seller?.displayName?.split("#")[1]}
               </TableCell>
-              <TableCell>
-                {formatDate(auction.startTime || "2023-01-15T10:00:00.000Z")}
-              </TableCell>
-              <TableCell>
-                {formatDate(auction.endTime || "2023-01-20T10:00:00.000Z")}
-              </TableCell>
-              <TableCell>${auction.currentBid || 12450}</TableCell>
-              <TableCell>{auction.bidCount || 12}</TableCell>
+              <TableCell>{formatDate(auction.startTime)}</TableCell>
+              <TableCell>{formatDate(auction.endTime)}</TableCell>
+              <TableCell>${auction.currentBid}</TableCell>
+              <TableCell>{auction.bidCount}</TableCell>
               <TableCell>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>

@@ -1,7 +1,6 @@
 import type React from "react";
 import { Inter } from "next/font/google";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { title } from "process";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,5 +17,5 @@ export default function RootLayout({
 }
 
 export const metadata = {
-  title: "Diamond Auction Dashboard", 
+  title: "Diamond Auction Dashboard",
 };
