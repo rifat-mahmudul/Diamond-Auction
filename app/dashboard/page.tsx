@@ -172,7 +172,7 @@ export default function Dashboard() {
                       </div>
                       <div className="text-center">{auction.bidCount}</div>
                       <div className="text-center">
-                        ${auction.currentBid || 2022}
+                        ${auction.currentBid}
                       </div>
                       <div className="text-center">2 hours</div>
                       <div className="text-center">

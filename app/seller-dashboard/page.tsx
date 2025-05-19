@@ -34,7 +34,7 @@ export default function DashboardPage() {
     },
     enabled: !!token,
   });
-  
+
   // Fetch active auctions
   const { data: auctionsData, isLoading: isAuctionsLoading } = useQuery({
     queryKey: ["auctions", "active", 1, "", 5],
@@ -54,7 +54,7 @@ export default function DashboardPage() {
   });
 
   // Fetch top bidders
-  const {  isLoading: isBiddersLoading } = useQuery({
+  const { isLoading: isBiddersLoading } = useQuery({
     queryKey: ["bidders", "top"],
     queryFn: async () => {
       const response = await axios.get(`${baseURL}/bids/top-bidders`, {
@@ -66,24 +66,24 @@ export default function DashboardPage() {
   });
 
   const stats = statsData?.data
-    
-    
+
+
     ? [
-        {
-          revenue: statsData.data.totalRevenue?.replace("$", "") || "0",
-          sellers: statsData.data.successfulAuctions || 0,
-          endAuctions: statsData.data.endAuctions || 0,
-          liveAuctions: statsData.data.liveAuctions || 0,
-        },
-      ]
+      {
+        revenue: statsData.data.totalRevenue?.replace("$", "") || "0",
+        sellers: statsData.data.successfulAuctions || 0,
+        endAuctions: statsData.data.endAuctions || 0,
+        liveAuctions: statsData.data.liveAuctions || 0,
+      },
+    ]
     : [
-        {
-          revenue: "0",
-          sellers: 0,
-          endAuctions: 0,
-          liveAuctions: 0,
-        },
-      ];
+      {
+        revenue: "0",
+        sellers: 0,
+        endAuctions: 0,
+        liveAuctions: 0,
+      },
+    ];
 
   const recentAuctions = auctionsData?.data || [];
   const topBidders = auctionsData?.data || [];
@@ -96,10 +96,10 @@ export default function DashboardPage() {
     );
 
     if (diffHours < 24) {
-      return `${diffHours} hours`;
+      return `${Math.abs(diffHours)} hours`;
     } else {
       const diffDays = Math.floor(diffHours / 24);
-      return `${diffDays} days`;
+      return `${Math.abs(diffDays)} days`;
     }
   };
 
@@ -124,7 +124,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2695FF] text-white">
               <DollarSign className="h-8 w-8 text-white" />
-              
+
             </div>
           </Card>
 
@@ -203,17 +203,16 @@ export default function DashboardPage() {
                         <div>
                           <Badge
                             variant="outline"
-                            className={`${
-                              auction.status === "live" ||
+                            className={`${auction.status === "live" ||
                               auction.status === "active"
-                                ? "bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
-                                : auction.status === "pending"
+                              ? "bg-green-100 text-green-800 hover:bg-green-100 hover:text-green-800"
+                              : auction.status === "pending"
                                 ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 hover:text-yellow-800"
                                 : auction.status === "completed" ||
                                   auction.status === "end"
-                                ? "bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800"
-                                : "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:text-gray-800"
-                            }`}
+                                  ? "bg-blue-100 text-blue-800 hover:bg-blue-100 hover:text-blue-800"
+                                  : "bg-gray-100 text-gray-800 hover:bg-gray-100 hover:text-gray-800"
+                              }`}
                           >
                             {auction.status === "live"
                               ? "Active"

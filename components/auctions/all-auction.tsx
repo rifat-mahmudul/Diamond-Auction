@@ -27,6 +27,7 @@ interface AuctionItem {
   images: string[];
   title: string;
   currentBid: string;
+  startingBid: string;
   startTime: string;
   endTime: string;
   badges?: string[];
@@ -513,7 +514,8 @@ function AllAuctionContent() {
                     key={auction._id}
                     image={auction.images[0]}
                     title={auction.title}
-                    currentBid={auction.currentBid}
+                    currentBid={Number(auction.currentBid)}
+                    startingBid={Number(auction.startingBid)}
                     auctionId={auction._id.toString()}
                     startTime={auction.startTime}
                     endTime={auction.endTime}

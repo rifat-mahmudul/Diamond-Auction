@@ -11,6 +11,7 @@ interface AuctionItem {
   images: string[];
   title: string;
   currentBid: string;
+  startingBid: string;
   startTime: string;
   endTime: string;
   badges?: string[];
@@ -41,6 +42,7 @@ export function LatestAuctionSection() {
     fetchData();
   }, []);
 
+
   return (
     <section className="container mt-24">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -64,7 +66,8 @@ export function LatestAuctionSection() {
                 key={auction._id}
                 image={auction.images[0]}
                 title={auction.title}
-                currentBid={auction.currentBid}
+                currentBid={Number(auction.currentBid)}
+                startingBid={Number(auction.startingBid)}
                 startTime={auction.startTime}
                 endTime={auction.endTime}
                 auctionId={auction._id.toString()}

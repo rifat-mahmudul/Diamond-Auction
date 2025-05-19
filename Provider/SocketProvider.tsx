@@ -55,7 +55,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (token && !socket) {
-      const socket = io("http://localhost:5100", {
+      const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },

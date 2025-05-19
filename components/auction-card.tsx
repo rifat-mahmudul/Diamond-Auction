@@ -13,7 +13,8 @@ import { useSession } from "next-auth/react";
 interface AuctionCardProps {
   image: string;
   title: string;
-  currentBid?: string;
+  currentBid: number;
+  startingBid: number;
   timeLeft?: string;
   badges?: string | undefined;
   auctionId?: string;
@@ -41,13 +42,14 @@ export function AuctionCard({
   image,
   title,
   currentBid,
+  startingBid,
   auctionId,
   endTime,
   status
 }: AuctionCardProps) {
   const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft(endTime));
   console.log(status);
-  
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -83,7 +85,8 @@ export function AuctionCard({
     toast.success("Added to wishlist!");
     return response.json();
   };
-  
+
+
   return (
     <Card className="overflow-hidden border-none bg-[#dfc5a2] p-2">
       <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -155,11 +158,9 @@ export function AuctionCard({
 
       <CardContent className="my-2">
         <h3 className="font-medium text-xl my-1">{title}</h3>
-        {currentBid && (
-          <p className="text-sm text-white font-semibold">
-            Current bid: {currentBid}
-          </p>
-        )}
+        <p className="text-sm text-white font-semibold">
+          Current bid: {currentBid > 0 ? currentBid : startingBid}
+        </p>
       </CardContent>
 
       <Link href={`/auctions/${auctionId}`}>
