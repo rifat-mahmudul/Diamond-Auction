@@ -5,7 +5,6 @@ import {
   Linkedin,
   Mail,
   MapPin,
-  Phone,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,8 +25,7 @@ export function Footer() {
             />
           </Link>
           <p className="text-gray-300 mb-4">
-            Join us on social media for exclusive updates, auction previews, and
-            special offers!
+            Join us on social media for exclusive updates, auction previews, and special offers!
           </p>
           <div className="flex space-x-4">
             <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
@@ -57,18 +55,17 @@ export function Footer() {
         <div>
           <h3 className="font-semibold text-lg mb-3">Quick Links</h3>
           <ul className="space-y-2 text-gray-300">
-            <li><Link href="/">Home</Link></li>
-            <li><Link href="/auctions">Auctions</Link></li>
-            <li><Link href="/about-us">About Us</Link></li>
-            <li><Link href="/faq">FAQ</Link></li>
-            <li><Link href="/blogs">Blogs</Link></li>
-            <li><Link href="/contact">Contact</Link></li>
+            <li><Link href="/auctions">Upcoming Auctions</Link></li>
+            <li><Link href="/faq">How to Register</Link></li>
+            <li><Link href="/seller-dashboard">Submit Your Item</Link></li>
+            <li><Link href="/faq">Bidding Tips & FAQs</Link></li>
+            <li><Link href="/contact">Contact Support</Link></li>
           </ul>
         </div>
 
         <div>
           <h3 className="font-semibold text-lg mb-3">Categories</h3>
-          <FooterCategories/>
+          <FooterCategories />
         </div>
 
         <div>
@@ -82,8 +79,8 @@ export function Footer() {
             <span>546 Market Street PMB 830066</span>
           </div>
           <div className="flex items-start gap-2 text-gray-300">
-            <Phone size={16} className="mt-1" />
-            <span>(000)0005555445</span>
+            <MapPin size={16} className="mt-1" />
+            <span>San Francisco, CA 94104</span>
           </div>
         </div>
       </div>

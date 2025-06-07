@@ -10,8 +10,8 @@ interface CategoryCardProps {
 export function CategoryCard({ icon, title, auctions }: CategoryCardProps) {
   return (
     <Link
-      href={`/auctions?category=${title}`}
-      className="flex flex-col items-center justify-center gap-3 bg-[#645949] p-4 text-center transition-all hover:bg-[#645949]/90 h-[100px] w-[150px] relative mt-10"
+      href={`/auctions?category=${encodeURIComponent(title)}`}
+      className="flex flex-col items-center justify-center gap-3 bg-[#645949] px-2 py-16 text-center transition-all hover:bg-[#645949]/90 h-[100px] w-[150px] relative mt-10"
     >
       {icon && (
         <div className="absolute w-[110px] h-[80px] -top-10 rounded-md overflow-hidden">
@@ -25,9 +25,9 @@ export function CategoryCard({ icon, title, auctions }: CategoryCardProps) {
       )}
 
       <div className="mt-10">
-        <h1 className="text-[16px] font-medium text-white">{title}</h1>
+        <h1 className="text-[14px] font-medium text-white">{title}</h1>
         {/* Later you can show dynamic auction count */}
-        <h1 className="text-[16px] font-medium text-white">{auctions.length} Items</h1>
+        <h1 className="text-[13px] font-medium text-white">{auctions.length} Items</h1>
       </div>
     </Link>
   );

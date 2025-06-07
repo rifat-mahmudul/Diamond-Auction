@@ -31,7 +31,7 @@ const faqs = [
     {
         question: "Who can I contact for help?",
         answer:
-            "Our support team is available 24/7. Visit our Contact Us page or email support@auctionwebsite.com."
+            "Our support team is available 24/7. Visit our Contact Us page or email info@diamondauctionsllc.com"
     }
 ]
 
