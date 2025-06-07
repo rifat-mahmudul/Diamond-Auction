@@ -53,22 +53,19 @@ export function ArticlesSection() {
             <div className="grid grid-cols-2">
               <div className="col-span-1 lg:col-span-1">
                 <h1 className="text-2xl font-bold tracking-tight md:text-5xl">
-                  Exploring Our Articles
+                  Exploring Our Site
                 </h1>
               </div>
               <div className="col-span-2 lg:col-span-1">
                 <p className="">
-                  Dive into expert insights, auction tips, and inspiring stories
-                  from the world of rare collectibles. Our articles are designed
-                  to keep you informed, engaged, and ready to make confident
-                  bidding decisions.
+                  Stay connected and never miss an opportunity! From exclusive auction previews to selling tips, our articles keep you informed and ahead of the game.
                 </p>
               </div>
             </div>
           </div>
 
           <div className="col-span-1 lg:col-span-1 lg:text-end">
-            <Link href="/blog" className="ml-[-80px] lg:ml-0">
+            <Link href="/auctions" className="ml-[-80px] lg:ml-0">
               <Button className="bg-[#645949]">
                 Explore All <MoveRight />
               </Button>

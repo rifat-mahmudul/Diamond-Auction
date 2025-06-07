@@ -13,6 +13,7 @@ interface AuctionItem {
     images: string[]
     title: string
     currentBid: string
+    startingBid: string
     startTime: string
     endTime: string
     badges?: string[]
@@ -49,7 +50,7 @@ export default function RelatedAuction({ name }: AuctionCategory) {
     return (
         <div className="pt-10 py-12">
             <div className="pb-10">
-                <h2 className="text-3xl md:text-5xl font-bold">Related Products</h2>
+                <h2 className="text-3xl md:text-5xl font-bold">Related Auctions</h2>
             </div>
 
             <div className="relative">
@@ -68,7 +69,8 @@ export default function RelatedAuction({ name }: AuctionCategory) {
                                     key={auction._id}
                                     image={auction.images[0]}
                                     title={auction.title}
-                                    currentBid={auction.currentBid}
+                                    currentBid={Number(auction.currentBid)}
+                                    startingBid={Number(auction.startingBid)}
                                     auctionId={auction._id.toString()}
                                     startTime={auction.startTime}
                                     endTime={auction.endTime}

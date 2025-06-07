@@ -32,9 +32,9 @@ export function ArticleCard({ article }: ArticleCardProps) {
         />
       </div>
 
-      <CardContent className="p-4">
+      <CardContent className="p-4 text-white">
         <h3 className="mb-2 font-medium text-xl line-clamp-1">{title}</h3>
-        <p className="line-clamp-1 sm:text-sm" dangerouslySetInnerHTML={{ __html: content ?? "Blog Description" }} />
+        <p className="line-clamp-2 sm:text-sm !text-white" dangerouslySetInnerHTML={{ __html: content ?? "Blog Description" }} />
       </CardContent>
 
       <Link href={`/blog/${_id}`} className="flex items-center p-4 gap-2">

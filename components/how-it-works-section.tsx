@@ -6,7 +6,7 @@ const steps = [
     number: "/assets/01.png",
     title: "Registration",
     description:
-      "Create your free account in minutes by clicking the Register button. Verify your email to activate your profile and get ready to explore exclusive auctions.",
+      " Sign up for an account by providing your details and verifying your email. Once registered, you can start browsing and bidding.",
     icon: "/assets/work1.png",
     color: "#d0e8ff",
   },
@@ -14,7 +14,7 @@ const steps = [
     number: "/assets/02.png",
     title: "Select Product",
     description:
-      "Browse our curated catalog of rare, high-quality items. From fine jewelry to unique collectibles, find the piece that catches your eye and fits your interest.",
+      "Browse through our auctions and find the items you're interested in. Click on any product to see details and place your bid.",
     icon: "/assets/work2.png",
     color: "#e2ffe7",
   },
@@ -22,7 +22,7 @@ const steps = [
     number: "/assets/03.png",
     title: "Go to Bidding",
     description:
-      "Place your bid with confidence. You can bid manually or set a max bid so our system does the work for you. Transparent bidding ensures a fair and exciting experience.",
+      " Enter your bid amount and join the auction in real time. Keep an eye on updates to stay ahead of other bidders!",
     icon: "/assets/work3.png",
     color: "#ffe1db",
   },
@@ -30,7 +30,7 @@ const steps = [
     number: "/assets/04.png",
     title: "Make Payment",
     description:
-      "If you win, complete your purchase using secure payment options. We’ll process and ship your item promptly, keeping you informed every step of the way.",
+      " If you win, proceed to secure payment through our trusted system. Once complete, your item will be prepared for delivery.",
     icon: "/assets/work4.png",
     color: "#fff9dd",
   },

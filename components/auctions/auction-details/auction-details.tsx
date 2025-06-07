@@ -58,7 +58,7 @@ const formSchema = z.object({
   saveInfo: z.boolean().optional(),
 });
 
-export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
+export default function AuctionDetails({ auctionId, }: AuctionDetailsProps) {
   const router = useRouter();
   const [bidAmount, setBidAmount] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("description");
@@ -184,13 +184,13 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
         auctionId: auctionId,
         amount: Number.parseFloat(bidAmount),
       });
-    } else if (auction) {
+    } else if (auction.currentBid > 0) {
       console.warn(
         `Bid amount must be greater than the current bid: ${formatCurrency(
           auction.currentBid
         )}`
       );
-      // Optionally show a message to the user
+      toast.error("Bid amount must be greater than the current bid");
     } else {
       console.warn("Auction details not loaded yet.");
     }
@@ -264,21 +264,24 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
     if (!auction) return;
     const currentValue = bidAmount
       ? Number.parseFloat(bidAmount)
-      : auction.currentBid;
+      : auction.currentBid > 0 ? auction.currentBid : auction.startingBid;
     setBidAmount((currentValue + auction.bidIncrement).toString());
   };
 
   const handleDecrement = () => {
     if (!auction) return;
+
+    const currentBidFloor = auction.currentBid > 0 ? auction.currentBid : auction.startingBid;
+
     const currentValue = bidAmount
       ? Number.parseFloat(bidAmount)
-      : auction.currentBid;
-    const newValue = Math.max(
-      currentValue - auction.bidIncrement,
-      auction.currentBid
-    );
+      : currentBidFloor;
+
+    const newValue = Math.max(currentValue - auction.bidIncrement, currentBidFloor);
+
     setBidAmount(newValue.toString());
   };
+
 
   if (isLoadingAuction) {
     return <div>Loading auction details...</div>;
@@ -385,25 +388,25 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
               {(auction.status === "live" ||
                 auction.status === "pending" ||
                 auction.status === "scheduled") && (
-                <div className="">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 bg-[#C8B291]"
-                    onClick={() =>
-                      handleAddToWishlist({
-                        auctionId: auction._id,
-                        token: session?.data?.user?.accessToken || "",
-                      })
-                    }
-                  >
-                    <Heart
-                      fill={isInWishlist ? "#8a8170" : "none"}
-                      className="!h-5 !w-5 !border-none"
-                    />
-                  </Button>
-                </div>
-              )}
+                  <div className="">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 bg-[#C8B291]"
+                      onClick={() =>
+                        handleAddToWishlist({
+                          auctionId: auction._id,
+                          token: session?.data?.user?.accessToken || "",
+                        })
+                      }
+                    >
+                      <Heart
+                        fill={isInWishlist ? "#8a8170" : "none"}
+                        className="!h-5 !w-5 !border-none"
+                      />
+                    </Button>
+                  </div>
+                )}
             </div>
           </div>
 
@@ -424,7 +427,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
               <div className="space-y-1 text-[#645949] pb-6">
                 <p className="text-base pb-2">Current bid:</p>
                 <p className="text-2xl font-semibold">
-                  {formatCurrency(auction.currentBid)}
+                  {auction.currentBid > 0 ? formatCurrency(auction.currentBid) : formatCurrency(auction.startingBid)}
                 </p>
               </div>
 
@@ -449,8 +452,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                         : "Reserve price not met"}
                     </p>
                     <p className="text-xs pb-2 text-muted-foreground">
-                      (Enter more than or equal to:{" "}
-                      {formatCurrency(auction.currentBid)})
+                      Enter more than: {auction.currentBid > 0 ? formatCurrency(auction.currentBid) : formatCurrency(auction.startingBid)}
                     </p>
                   </div>
 
@@ -470,7 +472,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                         value={bidAmount || ""}
                         onChange={handleInputChange}
                         placeholder={
-                          auction ? auction.currentBid.toString() : ""
+                          auction.currentBid > 0 ? auction.currentBid.toString() : auction.startingBid.toString()
                         }
                         className="text-center"
                       />
@@ -488,7 +490,7 @@ export default function AuctionDetails({ auctionId }: AuctionDetailsProps) {
                       className="text-white w-52 bg-[#645949] hover:bg-[#645949]/90"
                       onClick={handleBid}
                       disabled={
-                        !bidAmount ||
+                        !bidAmount || bidAmount < auction.startingBid || bidAmount < auction.currentBid ||
                         Number.parseFloat(bidAmount) <= auction.currentBid ||
                         isPlacingBid
                       }

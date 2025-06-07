@@ -12,6 +12,7 @@ interface AuctionItem {
   images: string[];
   title: string;
   currentBid: string;
+  startingBid: string;
   startTime: string;
   endTime: string;
   status: string;
@@ -51,7 +52,7 @@ export function LiveAuctionSection() {
   })
 
   console.log(liveAuctionData);
-  
+
 
   const nextSlide = () => {
     if (currentIndex + itemsToShow < liveAuctionData.length) {
@@ -116,11 +117,12 @@ export function LiveAuctionSection() {
               key={auction._id}
               image={auction.images[0]}
               title={auction.title}
-              currentBid={auction.currentBid}
-              startTime={auction.startTime}
+              currentBid={Number(auction.currentBid)}
+              startingBid={Number(auction.startingBid)}
               endTime={auction.endTime}
               auctionId={auction._id.toString()}
               status={auction.status}
+              startTime={auction.startTime}
             />
           ))}
         </div>

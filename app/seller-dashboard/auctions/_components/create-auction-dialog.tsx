@@ -256,7 +256,7 @@ export function CreateAuctionDialog({
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-12 border-primary">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                       </FormControl>

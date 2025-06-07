@@ -7,21 +7,21 @@ import { useState } from "react";
 
 const testimonials = [
   {
-    text: `Our experience with the diamond auction was seamless and transparent. Every step was clearly explained, and the bidding process was fair.`,
-    name: "Courtney Henry",
-    role: "CEO at Company",
+    text: `This auction platform made it easy to register and start bidding right away. I've won several great items and the process was seamless from start to finish. Highly recommend for beginners and experienced bidders alike!`,
+    name: "Sarah T.",
+    role: "Verified Bidder",
     image: "/assets/hero.png",
   },
   {
-    text: `The quality of diamonds at the auction exceeded our expectations. The platform made it easy to evaluate and bid competitively.`,
-    name: "Tommy Rivers",
-    role: "CTO at Startup",
+    text: `Registering was quick and easy! I started bidding right away and even sold a few collectibles through their seller program. The mailing list keeps me informed about all the hottest auctions!`,
+    name: "Michael R.",
+    role: "Collector & Seller",
     image: "/assets/hero.png",
   },
   {
-    text: `Participating in the diamond auction was efficient and enjoyable. We found rare pieces and received excellent customer service throughout.`,
-    name: "Alexa Smith",
-    role: "CMO at Brand",
+    text: "I was new to online auctions, but Diamond Auctions made me feel confident from day one. Their detailed listings, transparent bidding process, and secure payment system gave me peace of mind. I love receiving early access alerts through their mailing list—it helps me stay ahead of the competition! I highly recommend Diamond Auctions to anyone looking for a trustworthy, top-notch auction house.",
+    name: "Michael R.",
+    role: "First-Time Bidder",
     image: "/assets/hero.png",
   }
 
@@ -51,7 +51,7 @@ export function TestimonialSection() {
 
         <div className="col-span-4">
           <div className="relative mb-5 pl-6">
-            <Quote className="absolute left-0 top-0 h-5 w-5 text-[#8a7357]" />
+            <Quote className="absolute left-0 top-0 h-5 w-5 text-[#8a7357] rotate-180" />
             <p className="text-lg italic text-muted-foreground">{testimonial.text}</p>
           </div>
           <div className="flex items-center gap-4">
