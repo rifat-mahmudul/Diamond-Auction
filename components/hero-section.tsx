@@ -73,8 +73,8 @@ export function HeroSection() {
             <div className="text-[16px] border border-[#6459494D] w-[150px] text-center rounded-sm font-medium text-[#8a7357]">
               Bid Now & Win Big!
             </div>
-            <h1 className="text-4xl text-[#645949] font-bold tracking-tight md:text-5xl lg:text-6xl my-6">
-              Discover Exclusive Auctions for Luxury Own Your Dream
+            <h1 className="text-4xl text-[#645949] font-bold tracking-tight md:text-5xl lg:text-7xl my-6">
+              Bid Boldly. Win Brilliantly. Shine Bright!
             </h1>
             <p className="text-[16px] text-[#595959]">
               Explore Exclusive Auctions and Bid on Premium Products.Win Big and
