@@ -45,11 +45,9 @@ export function AuctionCard({
   startingBid,
   auctionId,
   endTime,
-  status
+  status,
 }: AuctionCardProps) {
   const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft(endTime));
-  console.log(status);
-
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -119,9 +117,7 @@ export function AuctionCard({
           onClick={handleWishlist}
           className={`absolute right-2 top-2 bg-black/50 px-2 py-1 text-xs text-white h-[24px] w-[24px] rounded-full flex flex-col justify-center items-center cursor-pointer`}
         >
-          <Heart
-            className="h-[20px] w-[20px]"
-          />
+          <Heart className="h-[20px] w-[20px]" />
         </div>
 
         {/* Timer */}
@@ -173,8 +169,7 @@ export function AuctionCard({
 
       <Link href={`/auctions/${auctionId}`}>
         <CardFooter>
-          <Button
-            className="w-full bg-[#645949] text-white font-semibold">
+          <Button className="w-full bg-[#645949] text-white font-semibold">
             Bid now
           </Button>
         </CardFooter>

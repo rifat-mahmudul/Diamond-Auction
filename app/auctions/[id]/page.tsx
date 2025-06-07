@@ -1,15 +1,15 @@
-import { Suspense } from "react"
-import { Skeleton } from "@/components/ui/skeleton"
-import AuctionDetails from "@/components/auctions/auction-details/auction-details"
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import AuctionDetails from "@/components/auctions/auction-details/auction-details";
 
 export default function AuctionPage({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto py-8 px-4 mt-20">
       <Suspense fallback={<AuctionDetailsSkeleton />}>
-        <AuctionDetails auctionId={params.id} startingBid={0} />
+        <AuctionDetails auctionId={params.id} />
       </Suspense>
     </div>
-  )
+  );
 }
 
 function AuctionDetailsSkeleton() {
@@ -40,5 +40,5 @@ function AuctionDetailsSkeleton() {
         <Skeleton className="h-40 w-full mt-4" />
       </div>
     </div>
-  )
+  );
 }
