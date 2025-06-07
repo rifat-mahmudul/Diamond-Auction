@@ -98,7 +98,7 @@ export function HeroSection() {
                   <div className="relative w-full h-full overflow-hidden">
                     <Link href={`/auctions/${item._id}`}>
                       <Image
-                        src={item.images[0] || "/placeholder.svg"}
+                        src={item.images[0]}
                         alt={item.title}
                         width={500}
                         height={500}
@@ -110,7 +110,7 @@ export function HeroSection() {
                         <div className="space-y-2">
                           <p className="text-lg leading-tight font-medium">{item.title}</p>
                           <p className="text-sm opacity-80">
-                            {typeof item.seller === "object" ? item.seller.username : item.seller}
+                            {item.seller.username}
                           </p>
                         </div>
                       </div>

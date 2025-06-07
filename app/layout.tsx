@@ -27,7 +27,7 @@ export default function RootLayout({
         <AppProvider>
           <SocketProvider>
             <LayoutShell>{children}</LayoutShell>
-            <Toaster />
+            <Toaster position="top-right" />
           </SocketProvider>
         </AppProvider>
       </body>

@@ -20,7 +20,7 @@ export function ContactSection() {
         <div className="mx-auto max-w-2xl">
           <h2 className="mb-4 text-2xl font-bold tracking-tight md:text-3xl">Get in touch with us</h2>
           <p className="mb-6">
-            Have questions about registering, bidding, or selling? Our team is here to help! Whether you're a first-time bidder or a seasoned seller, we make it easy to get started and succeed.
+            Have questions about registering, bidding, or selling? Our team is here to help! Whether you&apos;re a first-time bidder or a seasoned seller, we make it easy to get started and succeed.
           </p>
           <Link href={"/contact"} >
             <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white">Get Started <MoveRight /></Button>
