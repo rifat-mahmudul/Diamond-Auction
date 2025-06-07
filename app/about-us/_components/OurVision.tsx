@@ -21,14 +21,8 @@ const OurVision = () => {
             Our Vision
           </h2>
           <p className="text-gray-700 text-base md:text-lg leading-relaxed">
-            At Diamond Auctions, our mission is to provide a trusted and dynamic
-            platform where buyers and sellers connect to discover rare,
-            high-quality items through transparent and exciting auctions. We are
-            committed to delivering exceptional service, ensuring authenticity,
-            and creating opportunities for collectors, enthusiasts, and sellers
-            to engage in a seamless, secure, and rewarding auction experience.
-            Our goal is to build a vibrant community driven by trust, integrity,
-            and a shared passion for remarkable finds.
+            At Diamond Auctions, our vision is to redefine the auction experience by bringing transparency, excitement, and accessibility to buyers and sellers around the world. We are committed to curating high-quality, unique items and creating a trusted platform where collectors, investors, and enthusiasts can connect. Whether it&apos;s fine jewelry, rare collectibles, or valuable art, our goal is to offer an exceptional selection that inspires confidence and delivers lasting value. <br /> <br />
+            We envision a future where Diamond Auctions leads the industry in innovation and customer satisfaction. By combining cutting-edge technology with personalized service, we aim to make every auction seamless, secure, and rewarding. Our vision extends beyond transactions—we strive to build a vibrant, engaged community where every bidder and consignor feels valued, supported, and part of something extraordinary.
           </p>
         </div>
       </div>

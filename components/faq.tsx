@@ -6,27 +6,32 @@ const faqs = [
     {
         question: "How do I register for an auction?",
         answer:
-            "Click the Register button at the top of our site. Complete the form with your details and verify your email to activate your account. Once you're verified, you're ready to start bidding!",
+            "Click the Register button at the top of the page. Fill out your information and verify your email to get started.",
     },
     {
         question: "Is there a fee to join or bid?",
         answer:
-            "Registration is completely free! There are no charges to join or place bids. You only pay if you win an item, along with any applicable buyer’s premium and shipping fees.",
+            "No, registration is completely free! You only pay if you win an auction.",
     },
     {
         question: "How do I place a bid?",
         answer:
-            "Once registered and logged in, simply navigate to the item you’re interested in and enter your bid. You can also set a maximum bid and let our system bid incrementally on your behalf up to that limit.",
+            "Once registered, browse items and click Place Bid on any product page. Enter your bid amount and confirm.",
     },
     {
         question: "What payment methods are accepted?",
         answer:
-            "We accept major credit and debit cards, bank transfers, and secure online payment platforms. Full payment details are provided at checkout after you win an item.",
+            "We accept major credit cards, PayPal, and secure bank transfers.",
     },
     {
         question: "How do I receive my item after winning?",
         answer:
-            "After payment is confirmed, we’ll carefully package your item and ship it using a trusted courier. You'll receive a tracking number so you can monitor your delivery every step of the way.",
+            "After payment is complete, your item will be shipped directly to your address. Tracking details will be provided.",
+    },
+    {
+        question: "Who can I contact for help?",
+        answer:
+            "Our support team is available 24/7. Visit our Contact Us page or email info@diamondauctionsllc.com"
     }
 ]
 
@@ -37,7 +42,7 @@ function Faq() {
                 {faqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="rounded-lg">
                         <AccordionTrigger className="text-left text-base md:text-xl lg:text-2xl font-semibold">{faq.question}</AccordionTrigger>
-                        <AccordionContent className="text-[#595959]">{faq.answer}</AccordionContent>
+                        <AccordionContent className="text-[#595959] text-sm lg:text-xl">{faq.answer}</AccordionContent>
                     </AccordionItem>
                 ))}
             </Accordion>

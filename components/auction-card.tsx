@@ -125,31 +125,39 @@ export function AuctionCard({
         </div>
 
         {/* Timer */}
-        <div className="absolute bottom-2 flex translate-x-2 items-center gap-4 font-semibold text-white">
+        <div className="absolute bottom-2 flex translate-x-1.5 items-center gap-4 font-semibold text-white">
           <div>
-            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
-              {String(timeLeft.days).padStart(2, "0")}
+            <div className="flex items-center gap-2">
+              <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+                {String(timeLeft.days).padStart(2, "0")}
+              </div>
+              <p className="bg-black/30 px-1 rounded-md">:</p>
             </div>
             <h1 className="text-center mt-1">DAY</h1>
           </div>
-          :
           <div>
-            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
-              {String(timeLeft.hours).padStart(2, "0")}
+            <div className="flex gap-2 items-center">
+              <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+                {String(timeLeft.hours).padStart(2, "0")}
+              </div>
+              <p className="bg-black/30 px-1 rounded-md">:</p>
             </div>
             <h1 className="text-center mt-1">HR</h1>
           </div>
-          :
           <div>
-            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
-              {String(timeLeft.minutes).padStart(2, "0")}
+            <div className="flex gap-2 items-center">
+              <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+                {String(timeLeft.minutes).padStart(2, "0")}
+              </div>
+              <p className="bg-black/30 px-1 rounded-md">:</p>
             </div>
             <h1 className="text-center mt-1">MIN</h1>
           </div>
-          :
           <div>
-            <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
-              {String(timeLeft.seconds).padStart(2, "0")}
+            <div className="flex gap-2 items-center">
+              <div className="w-[35px] h-[35px] rounded-sm bg-black/30 flex flex-col items-center justify-center">
+                {String(timeLeft.seconds).padStart(2, "0")}
+              </div>
             </div>
             <h1 className="text-center mt-1">SEC</h1>
           </div>

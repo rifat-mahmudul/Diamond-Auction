@@ -45,7 +45,7 @@ function FooterCategories() {
       <ul className="space-y-2 text-gray-300">
         {categories.slice(0, 6).map((category) => (
           <li key={category._id}>
-            <Link href={`/auctions?category=${category.name}`}>
+            <Link href={`/auctions?category=${encodeURIComponent(category.name)}`}>
               {category.name}
             </Link>
           </li>

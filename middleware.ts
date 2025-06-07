@@ -26,9 +26,12 @@ export async function middleware(request: NextRequest) {
     // Redirect based on role
     if (token.role === "admin") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
-    } else if (token.role === "seller") {
+    }
+    if (token.role === "seller") {
       return NextResponse.redirect(new URL("/seller-dashboard", request.url));
-    } else if (token.role === "bidder") {
+    }
+
+    if (token.role === "bidder") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
@@ -42,12 +45,6 @@ export async function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/seller-dashboard")) {
     if (token?.role !== "seller") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
-
-  if (pathname.startsWith("/account")) {
-    if (token?.role !== "bidder") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
