@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MoveRight } from "lucide-react";
 import { Blog } from "@/app/blog/_components/type";
 import Link from "next/link";
-import { styleText } from "util";
 
 
 interface ArticleCardProps {
