@@ -35,7 +35,6 @@ import { useRouter } from "next/navigation";
 
 interface AuctionDetailsProps {
   auctionId: string;
-  startingBid: number;
 }
 
 interface PlaceBidParams {

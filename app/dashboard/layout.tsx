@@ -17,5 +17,5 @@ export default function RootLayout({
 }
 
 export const metadata = {
-  title: "Diamond Auction Dashboard", 
+  title: "Diamond Auction Dashboard",
 };
