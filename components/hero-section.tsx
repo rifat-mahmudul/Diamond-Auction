@@ -20,8 +20,6 @@ export function HeroSection() {
     select: (responseData) => responseData?.data.slice(0, 3),
   })
 
-  console.log(auctionItems)
-
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const { status } = useSession()
@@ -48,44 +46,32 @@ export function HeroSection() {
 
   return (
     <section className="relative w-full overflow-hidden mt-16">
-      <div className="container grid items-center gap-6 py-12 grid-cols-1 lg:grid-cols-2 md:py-16 lg:py-20">
+      <div className="container grid items-center gap-6 py-12 grid-cols-1 lg:grid-cols-2 md:py-16 lg:py-20 h-[700px]">
         {/* Left Content */}
-        <div className="flex flex-col relative">
-          <div className="z-20">
-            <div className="text-[16px] border border-[#6459494D] w-[150px] text-center rounded-sm font-medium text-[#8a7357]">
-              Bid Now & Win Big!
-            </div>
-            <h1 className="text-4xl text-[#645949] font-bold tracking-tight md:text-5xl lg:text-7xl my-6">
-              Bid Boldly. Win Brilliantly. Shine Bright!
-            </h1>
-            <p className="text-[16px] text-[#595959]">
-              Explore Exclusive Auctions and Bid on Premium Products.Win Big and Own the Luxury You Deserve!
-            </p>
-            <div className="flex gap-4 mt-4">
-              {status !== "authenticated" && (
-                <Link href="/sign-up">
-                  <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white h-[51px] lg:w-[191px] text-[16px]">
-                    Register
-                  </Button>
-                </Link>
-              )}
-
-              <Link href="/auctions">
-                <Button variant="outline" className="border-[#8a7357] text-[#8a7357] h-[51px] lg:w-[191px] text-[16px]">
-                  View current auctions
+        <div className="flex flex-col">
+          {/* <div className="text-[16px] border border-[#6459494D] w-[150px] text-center rounded-sm font-medium text-[#8a7357]">
+            Bid Now & Win Big!
+          </div>
+          <h1 className="text-4xl text-[#645949] font-bold tracking-tight md:text-5xl lg:text-5xl my-6">
+            Bid Boldly. Win Brilliantly. Shine Bright!
+          </h1> */}
+          <p className="text-[22px] text-[#595959] text-justify">
+            Diamond Auctions is a full-service auction house specializing in the listing and sale of a wide variety of upscale items, including fine art, vintage and modern collectibles, rare autographs, estate jewelry, designer fashion, memorabilia, and one-of-a-kind historical artifacts. Based in San Francisco with a strong presence on leading online platforms, we curate high-quality auctions that appeal to discerning collectors, passionate enthusiasts, and investors alike. Our team brings decades of experience in appraisals, estate liquidation, and marketing, ensuring each item is presented with expert care, professional photography, and detailed descriptions to maximize visibility and value.
+          </p>
+          <div className="flex gap-4 mt-4">
+            {status !== "authenticated" && (
+              <Link href="/sign-up">
+                <Button className="bg-[#8a7357] hover:bg-[#6d5a44] text-white h-[51px] lg:w-[191px] text-[16px]">
+                  Register
                 </Button>
               </Link>
-            </div>
-          </div>
+            )}
 
-          <div>
-            <Image
-              src={"/assets/hero-union.png"}
-              alt="hero union"
-              width={493}
-              height={112}
-              className="absolute top-8 right-0"
-            />
+            <Link href="/auctions">
+              <Button variant="outline" className="border-[#8a7357] text-[#8a7357] h-[51px] lg:w-[191px] text-[16px]">
+                View current auctions
+              </Button>
+            </Link>
           </div>
         </div>
 
