@@ -46,7 +46,7 @@ export default function TermsConditionsPage() {
       </CardHeader>
       <CardContent className="prose max-w-non mt-5">
         {privacyData?.length === 0 ? (
-          <p>Loading privacy policy...</p>
+          <p>Not set yet</p>
         ) : (
           privacyData?.map((section) => (
             <div key={section._id} className="mb-6">
