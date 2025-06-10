@@ -292,7 +292,7 @@ export default function AuctionDetails({ auctionId, }: AuctionDetailsProps) {
   }
 
   if (!auction) {
-    return <div>Auction not found.</div>;
+    return <div>Auction not found.</div>
   }
 
   const winner = auction?.winner?._id;
@@ -560,7 +560,7 @@ export default function AuctionDetails({ auctionId, }: AuctionDetailsProps) {
               {/* Winner Payment*/}
 
               <div className="pt-6 max-w-4xl mx-auto">
-                {winner === user && (
+                {user && winner === user && (
                   <div className="pt-6">
                     <h4 className="font-semibold text-[#645949] pb-4">
                       You won the bid: ${auction.currentBid}
