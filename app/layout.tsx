@@ -14,6 +14,9 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "Diamond Auction",
   description: "Claim your diamond now!",
+  icons: {
+    icon: "/assets/logo.png", // Path to your favicon
+  },
 };
 
 export default function RootLayout({
