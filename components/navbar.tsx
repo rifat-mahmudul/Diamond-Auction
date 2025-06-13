@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -121,9 +120,9 @@ export function Navbar() {
             <Image
               src="/assets/logo.png"
               alt="Logo"
-              width={46}
-              height={39}
-              className="h-[39px] w-[46px]"
+              width={100}
+              height={100}
+              className="h-[50px] w-[55px]"
             />
           </Link>
         </div>

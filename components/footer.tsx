@@ -9,10 +9,16 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import FooterCategories from "./footerCategories";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  const pathname = usePathname();
   return (
-    <footer className="bg-[#635746] text-white pt-52 pb-8 -mt-36">
+    <footer
+      className={`bg-[#635746] text-white pb-8 ${
+        pathname === "/" ? "pt-10" : "-mt-36 pt-52"
+      }`}
+    >
       <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
         <div>
           <Link href="/">
@@ -25,7 +31,8 @@ export function Footer() {
             />
           </Link>
           <p className="text-gray-300 mb-4">
-            Join us on social media for exclusive updates, auction previews, and special offers!
+            Join us on social media for exclusive updates, auction previews, and
+            special offers!
           </p>
           <div className="flex space-x-4">
             <div className="bg-[#83765b] rounded-full p-2 w-8 h-8 flex items-center justify-center">
@@ -55,11 +62,21 @@ export function Footer() {
         <div>
           <h3 className="font-semibold text-lg mb-3">Quick Links</h3>
           <ul className="space-y-2 text-gray-300">
-            <li><Link href="/auctions">Upcoming Auctions</Link></li>
-            <li><Link href="/faq">How to Register</Link></li>
-            <li><Link href="/seller-dashboard">Submit Your Item</Link></li>
-            <li><Link href="/faq">Bidding Tips & FAQs</Link></li>
-            <li><Link href="/contact">Contact Support</Link></li>
+            <li>
+              <Link href="/auctions">Upcoming Auctions</Link>
+            </li>
+            <li>
+              <Link href="/faq">How to Register</Link>
+            </li>
+            <li>
+              <Link href="/seller-dashboard">Submit Your Item</Link>
+            </li>
+            <li>
+              <Link href="/faq">Bidding Tips & FAQs</Link>
+            </li>
+            <li>
+              <Link href="/contact">Contact Support</Link>
+            </li>
           </ul>
         </div>
 

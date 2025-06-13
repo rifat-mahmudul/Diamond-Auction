@@ -27,11 +27,13 @@ export default function LayoutShell({
     pathname.startsWith(path)
   );
 
+  const isLandingPage = pathname === "/";
+
   return (
     <SessionProvider>
       {!shouldHideLayout && <Navbar />}
       {children}
-      {!shouldHideLayout && <ContactSection />}
+      {!shouldHideLayout && !isLandingPage && <ContactSection />}
       {!shouldHideLayout && <Footer />}
     </SessionProvider>
   );
