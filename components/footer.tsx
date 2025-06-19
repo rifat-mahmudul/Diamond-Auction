@@ -76,7 +76,7 @@ export function Footer() {
           </div>
           <div className="flex items-start gap-2 text-gray-300 mb-2">
             <MapPin size={16} className="mt-1" />
-            <span>546 Market Street PMB 830066</span>
+            <span>548 Market Street PMB 830066</span>
           </div>
           <div className="flex items-start gap-2 text-gray-300">
             <MapPin size={16} className="mt-1" />

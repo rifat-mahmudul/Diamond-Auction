@@ -127,7 +127,7 @@ export default function ContactForm() {
                 </div>
                 <div className="flex items-start gap-4">
                   <MapPin className="h-7 w-7" />
-                  <span>1546 Market Street PMB 830066</span>
+                  <span>548 Market Street PMB 830066</span>
                 </div>
                 <div className="flex items-center gap-4">
                   <MapPin className="h-7 w-7" />
