@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -18,6 +19,11 @@ export default function LandingPage() {
 
   useEffect(() => {
     setMounted(true);
+    // Preload hero image
+    const img = typeof window !== "undefined" ? new window.Image() : null;
+    if (img) {
+      img.src = "/assets/ggb.jpg";
+    }
   }, []);
 
   const testimonials = [
@@ -39,12 +45,12 @@ export default function LandingPage() {
   ];
 
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
+        duration: 0.6,
       },
     },
   };
@@ -54,23 +60,38 @@ export default function LandingPage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
+        staggerChildren: 0.15,
       },
     },
   };
 
-  if (!mounted) return null;
+  if (!mounted)
+    return (
+      <div className="min-h-screen">
+        <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section
-        className="relative h-screen bg-cover bg-center flex flex-col justify-center items-center text-white text-center px-4 overflow-hidden"
-        style={{
-          backgroundImage: "url('/assets/ggb.jpg')",
-          textShadow: "0 2px 5px rgba(0,0,0,0.7)",
-        }}
-      >
+      <section className="relative h-screen flex flex-col justify-center items-center text-white text-center px-4 overflow-hidden">
+        {/* Background Image with priority loading */}
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src="/assets/ggb.jpg"
+            alt="Golden Gate Bridge"
+            fill
+            priority
+            quality={85}
+            className="object-cover"
+          />
+        </div>
+
+        {/* Overlay with subtle gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/40 z-0"></div>
+
+        {/* Content */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -80,10 +101,15 @@ export default function LandingPage() {
           <motion.h1
             variants={fadeInUp}
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2"
+            style={{ textShadow: "0 2px 5px rgba(0,0,0,0.7)" }}
           >
             Rooted in San Francisco. Trusted Nationwide.
           </motion.h1>
-          <motion.p variants={fadeInUp} className="text-xl md:text-2xl mb-8">
+          <motion.p
+            variants={fadeInUp}
+            className="text-xl md:text-2xl mb-8"
+            style={{ textShadow: "0 2px 3px rgba(0,0,0,0.7)" }}
+          >
             Estate & Asset Liquidation Specialists with a Local Legacy
           </motion.p>
           <motion.div variants={fadeInUp}>
@@ -94,26 +120,23 @@ export default function LandingPage() {
             </Link>
           </motion.div>
         </motion.div>
-
-        {/* Overlay with subtle gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/40 z-0"></div>
       </section>
 
       {/* About Section */}
       <motion.section
         id="about"
         className="py-16 px-4 max-w-7xl mx-auto"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
       >
         <motion.h2
           className="text-3xl md:text-4xl font-bold mb-6"
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
           About Us
         </motion.h2>
@@ -122,7 +145,7 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
           Diamond Auctions LLC is a full-service estate liquidation company
           proudly based in San Francisco. With a deep understanding of Bay Area
@@ -137,15 +160,15 @@ export default function LandingPage() {
         className="py-16 px-4 max-w-7xl mx-auto"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
       >
         <motion.h2
           className="text-3xl md:text-4xl font-bold mb-8"
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
           Our Services
         </motion.h2>
@@ -158,12 +181,12 @@ export default function LandingPage() {
           <ServiceCard
             title="Appraisal Services"
             description="Certified appraisals for probate, divorce, insurance, or resale across diverse asset types."
-            delay={0.2}
+            delay={0.1}
           />
           <ServiceCard
             title="Auction Representation"
             description="Showcasing select pieces to global bidders via LiveAuctioneers, Invaluable, and more."
-            delay={0.4}
+            delay={0.2}
           />
         </div>
       </motion.section>
@@ -172,26 +195,26 @@ export default function LandingPage() {
       <motion.section
         id="sf"
         className="py-16 px-4 max-w-7xl mx-auto"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
       >
         <motion.h2
           className="text-3xl md:text-4xl font-bold mb-6"
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
           Our San Francisco Story
         </motion.h2>
         <motion.p
           className="text-lg text-gray-700 mb-4"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
         >
           We&apos;re proud to call the City by the Bay our home. Our team brings
           insider knowledge of San Francisco&apos;s neighborhoods, collectors,
@@ -200,10 +223,10 @@ export default function LandingPage() {
         </motion.p>
         <motion.p
           className="text-lg text-gray-700"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
         >
           Over the years, our reach has grown far beyond the Bay Area. Through
           our robust online auction platform and partnerships with major bidding
@@ -221,8 +244,8 @@ export default function LandingPage() {
         className="py-16 px-4"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
       >
         <div className="max-w-7xl mx-auto">
           <motion.h2
@@ -230,7 +253,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
           >
             What Our Clients Say
           </motion.h2>
@@ -244,7 +267,7 @@ export default function LandingPage() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <div className="bg-[#C8B291] text-white p-6 rounded-lg shadow-md relative">
                       <Quote className="h-8 w-8 text-[#e63946] opacity-50 absolute top-4 left-4" />
@@ -273,36 +296,36 @@ export default function LandingPage() {
       <motion.section
         id="contact"
         className="py-16 px-4 max-w-7xl mx-auto"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
       >
         <motion.h2
           className="text-3xl md:text-4xl font-bold mb-6"
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
           Contact Us
         </motion.h2>
         <motion.p
           className="text-lg text-gray-700 mb-4"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
         >
           Ready to get started? Reach out today to schedule a free estate
           consultation or appraisal appointment.
         </motion.p>
         <motion.p
           className="text-lg font-semibold"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
         >
           Email: info@diamondauctionsllc.com
           <br />
@@ -324,10 +347,10 @@ function ServiceCard({ title, description, delay = 0 }: ServiceCardProps) {
   return (
     <motion.div
       className="bg-[#C8B291] text-white p-6 rounded-lg shadow-md"
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.4, delay }}
       whileHover={{
         scale: 1.03,
         boxShadow:
